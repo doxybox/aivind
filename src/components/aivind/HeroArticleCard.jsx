@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
 import ArticleReactions from "./ArticleReactions";
+import PremiumArticleBadge from "./PremiumArticleBadge";
 
 export default function HeroArticleCard({ article }) {
   const isVideo = article.type === "video";
@@ -35,6 +36,7 @@ export default function HeroArticleCard({ article }) {
                 Sponset
               </span>
             )}
+            <PremiumArticleBadge article={article} compact />
             {isVideo && (
               <span className="flex items-center gap-1 px-1.5 py-0.5 bg-orange-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-sm shadow-sm">
                 <PlayCircle className="w-3 h-3" />

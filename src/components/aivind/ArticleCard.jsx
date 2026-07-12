@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Clock, ExternalLink, PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
 import ArticleReactions from "./ArticleReactions";
+import PremiumArticleBadge from "./PremiumArticleBadge";
 
 export default function ArticleCard({ article }) {
   if (!article) return null;
@@ -35,6 +36,8 @@ export default function ArticleCard({ article }) {
               Sponset
             </span>
           )}
+
+          <PremiumArticleBadge article={article} />
 
           {isVideo && (
             <span className="flex items-center gap-1.5 px-2.5 py-1 bg-orange-500 text-white text-[10px] font-bold uppercase tracking-wider rounded shadow-sm">

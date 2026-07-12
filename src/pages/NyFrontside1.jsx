@@ -10,8 +10,9 @@ import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
+import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 
-const GridCard = ({ image, tag, type, title, href = "#", className, titleClass = "text-xl md:text-2xl", tagClass = "text-[#ff6a00] bg-[#161a22]/80 backdrop-blur-sm border border-white/5", reactions = 0 }) => (
+const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl", tagClass = "text-[#ff6a00] bg-[#161a22]/80 backdrop-blur-sm border border-white/5", reactions = 0 }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
     <div 
       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
@@ -21,11 +22,14 @@ const GridCard = ({ image, tag, type, title, href = "#", className, titleClass =
     <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-transparent to-transparent opacity-80" />
     
     <div className="absolute inset-x-0 bottom-0 p-5 flex flex-col items-start z-10">
-      {tag && (
-        <span className={`text-[10px] font-bold px-2.5 py-1.5 uppercase rounded mb-3 tracking-wider ${tagClass}`}>
-          {tag}
-        </span>
-      )}
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        {tag && (
+          <span className={`text-[10px] font-bold px-2.5 py-1.5 uppercase rounded tracking-wider ${tagClass}`}>
+            {tag}
+          </span>
+        )}
+        <PremiumArticleBadge article={{ type, accessLevel, paywallEnabled }} />
+      </div>
       <h3 className={`font-bold text-white leading-[1.2] ${titleClass}`}>
         {title}
       </h3>
@@ -198,6 +202,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
       title: article.title || fallback.title,
       href: article.href || fallback.href || "#",
       type: article.type || fallback.type,
+      accessLevel: article.accessLevel || fallback.accessLevel,
+      paywallEnabled: article.paywallEnabled ?? fallback.paywallEnabled ?? false,
       reactions: article.comments ?? fallback.reactions ?? 0,
     };
   };
@@ -291,6 +297,9 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
             className="lg:col-span-2 min-h-[400px] lg:min-h-[500px]"
             image={topHero.image}
             tag={topHero.tag}
+            type={topHero.type}
+            accessLevel={topHero.accessLevel}
+            paywallEnabled={topHero.paywallEnabled}
             title={topHero.title}
             titleClass="text-3xl md:text-5xl lg:text-[56px] font-black tracking-tight"
             href={topHero.href}
@@ -303,6 +312,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                 image={card.image}
                 tag={card.tag}
                 type={card.type}
+                accessLevel={card.accessLevel}
+                paywallEnabled={card.paywallEnabled}
                 title={card.title}
                 href={card.href}
                 titleClass="text-xl md:text-2xl"
@@ -321,6 +332,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
               image={card.image}
               tag={card.tag}
               type={card.type}
+              accessLevel={card.accessLevel}
+              paywallEnabled={card.paywallEnabled}
               title={card.title}
               href={card.href}
             />
@@ -334,6 +347,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
             image={bottomFeature.image}
             tag={bottomFeature.tag}
             type={bottomFeature.type}
+            accessLevel={bottomFeature.accessLevel}
+            paywallEnabled={bottomFeature.paywallEnabled}
             title={bottomFeature.title}
             titleClass="text-2xl md:text-4xl lg:text-[40px] font-black tracking-tight"
             href={bottomFeature.href}
@@ -346,6 +361,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                 image={card.image}
                 tag={card.tag}
                 type={card.type}
+                accessLevel={card.accessLevel}
+                paywallEnabled={card.paywallEnabled}
                 title={card.title}
                 href={card.href}
                 titleClass="text-lg md:text-xl"
@@ -378,6 +395,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                   image={article.image}
                   tag={article.category}
                   type={article.type}
+                  accessLevel={article.accessLevel}
+                  paywallEnabled={article.paywallEnabled}
                   title={article.title}
                   href={article.href}
                   reactions={article.comments || 0}

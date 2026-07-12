@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
+import PremiumArticleBadge from "./PremiumArticleBadge";
 
 export default function SearchOverlay({ open, onClose, articles = [] }) {
   const [query, setQuery] = useState("");
@@ -91,9 +92,12 @@ export default function SearchOverlay({ open, onClose, articles = [] }) {
                     className="w-14 h-14 rounded-lg object-cover shrink-0"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-foreground group-hover:text-orange-500 transition-colors line-clamp-1">
-                      {article.title}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="min-w-0 flex-1 text-sm font-semibold text-foreground group-hover:text-orange-500 transition-colors line-clamp-1">
+                        {article.title}
+                      </p>
+                      <PremiumArticleBadge article={article} compact />
+                    </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {article.category} - {article.author || article.authorName || "TEKKNO"} - {article.time || "Nylig"}
                     </p>
