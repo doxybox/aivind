@@ -129,19 +129,6 @@ export default function Footer() {
             </p>
           </div>
           
-          {/* Center: Links */}
-          <div className="shrink-0 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[12px] text-muted-foreground mb-4 md:mb-0">
-            <a href="#" className="hover:text-foreground transition-colors">Personvern</a>
-            <span className="text-border/80">•</span>
-            <a href="#" className="hover:text-foreground transition-colors">Vilkår</a>
-            <span className="text-border/80">•</span>
-            <a href="#" className="hover:text-foreground transition-colors">Redaktørplakaten</a>
-            <span className="text-border/80">•</span>
-            <a href="#" className="hover:text-foreground transition-colors">Tilgjengelighet</a>
-            <span className="text-border/80">•</span>
-            <a href="#" className="hover:text-foreground transition-colors">Kontakt</a>
-          </div>
-
           {/* Right: Toggles */}
           <div className="flex-1 flex justify-center md:justify-end items-center gap-2 w-full md:w-auto">
             <button className="flex items-center gap-1.5 px-3 h-8 rounded-lg border border-border bg-muted/10 hover:bg-muted/30 transition-colors text-[12px] font-medium text-foreground">
