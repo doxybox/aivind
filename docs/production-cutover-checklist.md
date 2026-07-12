@@ -328,9 +328,9 @@ Expected:
 
 ```txt
 Date:
-Release owner:
+Release owner: Eivind Von Døhlen
 Database backup timestamp:
-Migration owner:
+Migration owner: Eivind Von Døhlen
 Public production URL:
 Payload Admin URL:
 
@@ -362,9 +362,9 @@ Smoke test:
 - Payload Admin:
 
 Rollback:
-- Legacy rollback owner:
+- Legacy rollback owner: Eivind Von Døhlen
 - Rollback tested:
-- Restore owner:
+- Restore owner: Eivind Von Døhlen
 
 Decision:
 - Go:

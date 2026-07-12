@@ -33,7 +33,7 @@ Current Payload inventory:
 | PB-01 | Demo content is still active | P0 | Editorial lead (unassigned) | Open | Inventory reports 6 `[DEMO]` records | Replace demo categories, author, articles and frontpage slot with approved editorial content | Run `npm run payload:audit-editorial-content -- --strict`; manually review Payload Admin | Yes |
 | PB-02 | Future-publish workflow is untested | P1 | Editor + QA owner (unassigned) | Open | Inventory reports 0 future-published articles | Create a scheduled test article and complete before/after publication checks | Before time: public route is 404. After time: article is public and appears only where curated | Yes |
 | PB-03 | Supabase password was previously shared | P0 | Project/database owner | Done | Password rotated; public deploy `dpl_9ge4hjcazLsJs4iJxLL9yJ7yEJR1` and admin deploy `dpl_HerHxjxwLC8q3wNFhq6cFRoqbygE` are Ready | Completed 13 July 2026; keep the new credential only in approved secret stores | DB probe, strict Payload verifier, health, Better Auth session, Payload Admin, public smoke and Vercel error-log checks passed | Yes |
-| PB-04 | Backup and restore ownership is not assigned | P0 | Engineering manager (unassigned) | Open | No named backup, restore or migration operator | Assign backup, restore, migration and deploy owners; select Supabase backup method and restore-test date | Record a successful non-production restore test and owner sign-off | Yes |
+| PB-04 | Backup and restore process is not verified | P0 | Eivind Von Døhlen | In progress | Backup, restore, migration and deploy ownership assigned on 13 July 2026 | Select Supabase backup method, schedule and complete a non-production restore test | Record a successful restore test and sign-off from Eivind Von Døhlen | Yes |
 | PB-05 | Logged-in role QA is incomplete | P0 | QA lead (unassigned) | Open | Anonymous smoke is green; role matrix has not been signed off | Test reader, subscriber/member, premium entitlement and staff accounts | Complete the role matrix below and attach evidence without passwords | Yes |
 | PB-06 | Production domain and DNS cutover are not approved | P1 | Release owner + DNS owner (unassigned) | Open | Only staging URLs are approved | Approve production public/admin domains, DNS records, TTL window and certificate plan | Resolve both domains over HTTPS and complete production-origin auth checks | Yes |
 | PB-07 | Moderate dependency findings remain | P2 | Dependency owner (unassigned) | In progress | Root: 8 moderate. Admin: 8 moderate, 1 low. No safe automatic fix | Track upstream fixes; do not use forced breaking upgrades during cutover | `npm audit` has no high/critical; accepted-risk sign-off references exact advisories | No |
@@ -98,10 +98,10 @@ QA evidence to record for every row:
 
 | Responsibility | Named owner | Evidence/status |
 | --- | --- | --- |
-| Backup owner | Unassigned | Open |
-| Restore owner | Unassigned | Open |
-| Migration owner | Unassigned | Open |
-| Deploy owner | Unassigned | Open |
+| Backup owner | Eivind Von Døhlen | Assigned; restore test pending |
+| Restore owner | Eivind Von Døhlen | Assigned; restore test pending |
+| Migration owner | Eivind Von Døhlen | Assigned |
+| Deploy owner | Eivind Von Døhlen | Assigned |
 
 - [ ] Supabase backup method is documented: managed backup/PITR or reviewed `pg_dump` workflow.
 - [ ] Backup retention and access controls are approved.

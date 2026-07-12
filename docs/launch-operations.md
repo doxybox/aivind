@@ -43,7 +43,7 @@ Generate server secrets with a cryptographically secure generator, store them on
 
 ## Database Migration And Restore
 
-Owner: assign one named technical maintainer and one backup owner before launch.
+Owner for backup, restore, migrations and deploy: Eivind Von Døhlen. A non-production restore test is still required before sign-off.
 
 1. Confirm the target database and current deployment SHA.
 2. Take or verify a restorable Supabase backup before migration.

@@ -99,8 +99,8 @@ Date:
 Release candidate commit:
 Editorial owner:
 QA owner:
-Database/restore owner:
-Deploy owner:
+Database/restore owner: Eivind Von Døhlen
+Deploy owner: Eivind Von Døhlen
 
 Anonymous QA: pass / fail
 Logged-in role QA: pass / fail
