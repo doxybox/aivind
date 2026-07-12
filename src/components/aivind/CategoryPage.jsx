@@ -263,9 +263,14 @@ export default function CategoryPage({ slug, payloadCategoryPage = null }) {
     ...linkedArticles,
     ...buildSupplementalStories(slug, linkedArticles),
   ];
-  const reelArticles = payloadCategoryPage?.articles?.length
+  const payloadReelArticles = payloadCategoryPage?.articles?.length
     ? payloadCategoryPage.articles.map(withArticleHref)
-    : articles;
+    : [];
+  const payloadReelTitles = new Set(payloadReelArticles.map((article) => article.title));
+  const reelArticles = [
+    ...payloadReelArticles,
+    ...articles.filter((article) => !payloadReelTitles.has(article.title)),
+  ];
   const reels = reelArticles
     .slice(0, 6)
     .map(toReel);

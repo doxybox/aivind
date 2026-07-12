@@ -10,6 +10,7 @@ import ReelsSection from "@/components/aivind/ReelsSection";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 import { allArticles } from "@/lib/articles";
+import { fillCategoryStories } from "@/lib/category-story-layout";
 
 const defaultCategoryConfig = {
   slug: "ai",
@@ -463,13 +464,18 @@ export default function AiNewspaperPage({
   const categoryPath = `/${category.slug}`;
   const payloadStories = (payloadCategoryPage?.articles || []).map((story) => normalizeAiStory(story, categoryTitle));
   const payloadHasStories = payloadStories.length > 0;
-  const mainStories = payloadMode ? payloadStories : legacyStories.map((story) => normalizeAiStory(story, categoryTitle));
+  const normalizedLegacyStories = legacyStories.map((story) => normalizeAiStory(story, categoryTitle));
+  const normalizedLegacyLatestStories = legacyLatestStories.map((story) => normalizeAiStory(story, categoryTitle));
+  const normalizedLegacySecondaryStories = legacySecondaryStories.map((story) => normalizeAiStory(story, categoryTitle));
+  const mainStories = payloadMode
+    ? fillCategoryStories(payloadStories, normalizedLegacyStories, 7)
+    : normalizedLegacyStories;
   const guideStories = payloadMode
-    ? payloadStories.slice(7, 11)
-    : legacySecondaryStories.map((story) => normalizeAiStory(story, categoryTitle));
+    ? fillCategoryStories(payloadStories.slice(7, 11), normalizedLegacySecondaryStories, 4, { allowFallback: payloadHasStories })
+    : normalizedLegacySecondaryStories;
   const latestStories = payloadMode
-    ? payloadStories.slice(3)
-    : legacyLatestStories.map((story) => normalizeAiStory(story, categoryTitle));
+    ? fillCategoryStories(payloadStories.slice(3), normalizedLegacyLatestStories, 11, { allowFallback: payloadHasStories })
+    : normalizedLegacyLatestStories;
   const searchArticles = payloadMode ? (payloadCategoryPage?.searchArticles || payloadStories) : allArticles;
   const heroImage = category.heroImage || mainStories[0]?.image || defaultCategoryConfig.heroImage;
 
