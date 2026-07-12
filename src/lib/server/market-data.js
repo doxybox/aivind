@@ -7,6 +7,7 @@ const QUOTE_SYMBOLS = [
 
 const FX_SYMBOL = "NOK=X";
 const CACHE_TTL_MS = 15 * 1000;
+const MARKET_OPEN_FRESHNESS_MS = 45 * 60 * 1000;
 
 let memoryCache = null;
 
@@ -71,6 +72,12 @@ export function mapQuoteToNok(definition, meta, usdNokRate) {
   };
 }
 
+export function isMarketOpenFromQuoteTime(marketTime, now = Date.now()) {
+  if (!Number.isFinite(marketTime) || marketTime <= 0) return false;
+  const quoteAge = now - marketTime * 1000;
+  return quoteAge >= 0 && quoteAge <= MARKET_OPEN_FRESHNESS_MS;
+}
+
 export async function getMarketData({ fetchImpl = fetch, now = Date.now(), force = false } = {}) {
   if (!force && memoryCache && memoryCache.expiresAt > now) {
     return memoryCache.value;
@@ -85,15 +92,13 @@ export async function getMarketData({ fetchImpl = fetch, now = Date.now(), force
   const stocks = QUOTE_SYMBOLS.map((definition, index) =>
     mapQuoteToNok(definition, quoteMeta[index], usdNokRate),
   );
-  const latestMarketTime = Math.max(
-    ...stocks.map((stock) => stock.marketTime || 0),
-    Number(fxMeta.regularMarketTime) || 0,
-  );
+  const latestMarketTime = Math.max(...stocks.map((stock) => stock.marketTime || 0));
 
   const value = {
     stocks,
     currency: "NOK",
     delayed: true,
+    marketOpen: isMarketOpenFromQuoteTime(latestMarketTime, now),
     provider: "yahoo-finance",
     asOf: latestMarketTime > 0 ? new Date(latestMarketTime * 1000).toISOString() : new Date(now).toISOString(),
   };

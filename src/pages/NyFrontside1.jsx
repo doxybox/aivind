@@ -80,6 +80,7 @@ const LiveStockWidget = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [asOf, setAsOf] = useState(null);
+  const [marketOpen, setMarketOpen] = useState(false);
 
   const fetchStocks = async () => {
     setError("");
@@ -92,6 +93,7 @@ const LiveStockWidget = () => {
 
       setStocks([...data.stocks].sort((a, b) => b.price - a.price));
       setAsOf(data.asOf || null);
+      setMarketOpen(data.marketOpen === true);
     } catch (e) {
       setStocks([]);
       setError(e.message || "Kunne ikke hente kurser");
@@ -168,7 +170,17 @@ const LiveStockWidget = () => {
         );
       })}
       <p className="mt-4 text-[10px] leading-4 text-zinc-500 dark:text-zinc-400">
-        Forsinkede kurser{asOf ? ` · oppdatert ${new Date(asOf).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Oslo" })}` : ""}
+        {marketOpen ? "Forsinkede kurser" : "Markedet er stengt"}
+        {asOf
+          ? ` · ${marketOpen ? "oppdatert" : "siste kurs"} ${new Date(asOf).toLocaleString("nb-NO", {
+              weekday: marketOpen ? undefined : "short",
+              day: marketOpen ? undefined : "numeric",
+              month: marketOpen ? undefined : "short",
+              hour: "2-digit",
+              minute: "2-digit",
+              timeZone: "Europe/Oslo",
+            })}`
+          : ""}
       </p>
     </div>
   );

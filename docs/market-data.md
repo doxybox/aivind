@@ -15,6 +15,8 @@ No market-data secret or upstream URL is sent from the client. The endpoint is G
 ## Product behavior
 
 - Quotes are marked as delayed and include an `asOf` timestamp.
+- `asOf` is based on the latest stock quote, not the separately fetched FX quote.
+- The widget shows `Markedet er stengt` and the last stock timestamp outside an active quote window.
 - The frontend refreshes every 15 seconds while the browser tab is visible.
 - Polling pauses for hidden tabs and refreshes immediately when the user returns.
 - If the upstream provider is unavailable, the widget shows an honest unavailable state and retry button.

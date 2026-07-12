@@ -6,6 +6,7 @@ import {
   calculatePercentChange,
   clearMarketDataCache,
   getMarketData,
+  isMarketOpenFromQuoteTime,
   mapQuoteToNok,
 } from "../src/lib/server/market-data.js";
 
@@ -26,6 +27,8 @@ test("market quotes convert USD prices to NOK and calculate daily change", () =>
   assert.equal(stock.change, 5.26);
   assert.equal(stock.currency, "NOK");
   assert.equal(Number(calculatePercentChange(90, 100).toFixed(2)), -10);
+  assert.equal(isMarketOpenFromQuoteTime(1700000000, 1700000020000), true);
+  assert.equal(isMarketOpenFromQuoteTime(1700000000, 1700003600000), false);
 });
 
 test("market data fetches four quotes and USD/NOK server-side", async () => {
@@ -55,6 +58,7 @@ test("market data fetches four quotes and USD/NOK server-side", async () => {
   assert.equal(result.stocks[0].price, 1000);
   assert.equal(result.provider, "yahoo-finance");
   assert.equal(result.delayed, true);
+  assert.equal(result.marketOpen, true);
 });
 
 test("market data API is GET-only, rate limited and cached for fifteen seconds", () => {
