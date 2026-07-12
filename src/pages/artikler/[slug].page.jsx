@@ -165,7 +165,7 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
             {article.readTime && <><span className="w-1 h-1 rounded-full bg-[#ff6a00]" /><span>{article.readTime}</span></>}
           </div>
 
-          <ArticleReactions article={article} className="-mt-5 mb-8" />
+          <ArticleReactions article={article} className="-mt-5 mb-8" interactive />
 
           {article.heroImage && (
             <figure className="mb-8 rounded-xl overflow-hidden border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-[#1e232e]">

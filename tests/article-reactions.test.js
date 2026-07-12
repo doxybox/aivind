@@ -9,13 +9,33 @@ function readProjectFile(filePath) {
   return readFileSync(path.join(rootDir, filePath), "utf8");
 }
 
-test("shared article reactions render the requested emojis and include zero counts", () => {
-  const source = readProjectFile("src/components/aivind/ArticleReactions.jsx");
+test("article page offers the requested six clickable reactions", () => {
+  const source = readProjectFile("src/lib/article-reactions.js");
+  const component = readProjectFile("src/components/aivind/ArticleReactions.jsx");
 
-  assert.match(source, /😲/);
-  assert.match(source, /😂/);
-  assert.match(source, /😍/);
-  assert.match(source, /\?\? 0/);
+  for (const reaction of ["🔥", "😍", "😮", "😢", "😂", "😡"]) {
+    assert.match(source, new RegExp(reaction));
+  }
+  assert.match(component, /ARTICLE_REACTIONS\.map/);
+  assert.match(component, /method: "POST"/);
+  assert.match(component, /aria-pressed=\{selected\}/);
+  assert.doesNotMatch(component, />\{reactionCount\}<\/span>/);
+});
+
+test("article cards show the three most-used reactions without a trailing total", async () => {
+  const { getTopArticleReactions } = await import("../src/lib/article-reactions.js");
+  const top = getTopArticleReactions({ fire: 1, love: 8, wow: 4, sad: 0, laugh: 6, angry: 2 });
+
+  assert.deepEqual(top.map(({ key, count }) => ({ key, count })), [
+    { key: "love", count: 8 },
+    { key: "laugh", count: 6 },
+    { key: "wow", count: 4 },
+  ]);
+
+  assert.deepEqual(
+    getTopArticleReactions({}).map(({ key }) => key),
+    ["fire", "love", "wow"],
+  );
 });
 
 test("shared article reactions exclude video content", () => {
@@ -36,4 +56,18 @@ test("homepage, category, standard, hero and article pages use shared reactions"
   ]) {
     assert.match(readProjectFile(filePath), /ArticleReactions/);
   }
+
+  assert.match(readProjectFile("src/pages/artikler/[slug].page.jsx"), /ArticleReactions article=\{article\}[^>]+interactive/);
+});
+
+test("reaction API is actor-scoped, validated and rate limited", () => {
+  const api = readProjectFile("src/pages/api/articles/[slug]/reactions.js");
+  const schema = readProjectFile("src/db/schema.js");
+
+  assert.match(api, /validateArticleReactionInput/);
+  assert.match(api, /validateArticleReactionSlug/);
+  assert.match(api, /enforceRateLimit/);
+  assert.match(api, /HttpOnly; SameSite=Lax/);
+  assert.doesNotMatch(api, /req\.body\.userId/);
+  assert.match(schema, /article_reaction_article_actor_idx/);
 });

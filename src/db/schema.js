@@ -132,6 +132,22 @@ export const savedArticle = pgTable(
   }),
 );
 
+export const articleReaction = pgTable(
+  "article_reaction",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    articleSlug: text("article_slug").notNull(),
+    actorKey: text("actor_key").notNull(),
+    reaction: text("reaction").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    articleSlugIdx: index("article_reaction_article_slug_idx").on(table.articleSlug),
+    articleActorIdx: uniqueIndex("article_reaction_article_actor_idx").on(table.articleSlug, table.actorKey),
+  }),
+);
+
 export const newsletterPreference = pgTable(
   "newsletter_preference",
   {

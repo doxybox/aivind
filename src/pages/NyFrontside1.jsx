@@ -12,7 +12,7 @@ import ReelsSection from "@/components/aivind/ReelsSection";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 
-const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl", reactions = 0 }) => (
+const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl" }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
     <div 
       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
@@ -26,7 +26,7 @@ const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href =
       <h3 className={`font-bold text-white leading-[1.2] ${titleClass}`}>
         {title}
       </h3>
-      <ArticleReactions article={{ tag, type }} count={reactions} className="mt-3" />
+      <ArticleReactions article={{ tag, type, href }} className="mt-3" />
     </div>
   </Link>
 );
@@ -310,7 +310,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                 title={card.title}
                 href={card.href}
                 titleClass="text-xl md:text-2xl"
-                reactions={card.reactions}
               />
             ))}
           </div>
@@ -359,7 +358,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                 title={card.title}
                 href={card.href}
                 titleClass="text-lg md:text-xl"
-                reactions={card.reactions}
               />
             ))}
           </div>
@@ -392,7 +390,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                   paywallEnabled={article.paywallEnabled}
                   title={article.title}
                   href={article.href}
-                  reactions={article.comments || 0}
                 />
               ))}
             </div>
