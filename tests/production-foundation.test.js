@@ -43,4 +43,6 @@ test("Payload prefers its dedicated database connection", () => {
 
   assert.match(config, /process\.env\.PAYLOAD_DATABASE_URL \|\| process\.env\.DATABASE_URI/);
   assert.match(config, /PAYLOAD_DATABASE_POOL_MAX/);
+  assert.match(config, /process\.env\.NODE_ENV === "production" \? 1 : 3/);
+  assert.match(config, /max: payloadPoolMax/);
 });

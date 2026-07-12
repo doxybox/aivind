@@ -60,7 +60,7 @@ Production/staging env should include these groups as applicable:
 - Auth secret: `BETTER_AUTH_SECRET`.
 - Database: `DATABASE_URI` or `DATABASE_URL`, optional `DATABASE_POOL_MAX`.
 - Payload: `PAYLOAD_SECRET`, `PAYLOAD_DATABASE_URL` if different from app DB, `PAYLOAD_PUBLIC_SERVER_URL`.
-- Payload connection pool: `PAYLOAD_DATABASE_POOL_MAX` (recommended staging/production value: `3`).
+- Payload connection pool: `PAYLOAD_DATABASE_POOL_MAX=1` for serverless staging/production. Use the Supabase transaction-pooler URL on port `6543` for `PAYLOAD_DATABASE_URL`; keep direct/session URLs for migrations and other flows that explicitly require them.
 - Supabase Postgres metadata/client compatibility: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; service keys only where server-side code explicitly requires them.
 - Email/social only if enabled: `RESEND_API_KEY`, `EMAIL_FROM`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`.
 - Operations/analytics: `REEL_ANALYTICS_SECRET`, `CRON_SECRET`, optional `REEL_VIEW_RETENTION_DAYS` and `EMAIL_REPLY_TO`.
