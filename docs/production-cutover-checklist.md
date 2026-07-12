@@ -4,12 +4,24 @@ This is the operational checklist for moving TEKKNO from the current production 
 
 Use together with:
 
+- `docs/production-blockers.md` (canonical go/no-go tracker)
+- `docs/staging-checklist.md` (final staging execution sheet)
 - `docs/production-readiness.md`
 - `docs/payload-staging-readiness.md`
 - `docs/payload-editorial-staging-qa.md`
 - `docs/payload-public-rendering.md`
 
 ## Cutover Rule
+
+Current decision: **NO-GO**. PB-01 through PB-06 in `docs/production-blockers.md` must be complete before production-default can be approved.
+
+Current staging baseline:
+
+- Public: `https://staging.tekkno.no`
+- Payload Admin: `https://admin-staging.tekkno.no/admin`
+- Staging content source: `payload`
+- Automated verifier and anonymous smoke: green
+- Editorial data: demo-only for approval purposes; no future-published test record
 
 Do not start production cutover until these are true:
 
@@ -264,6 +276,7 @@ Rollback process:
 1. Change production env in the hosting/deployment platform.
 2. Redeploy or restart the public app.
 3. Smoke-test `/`, `/ai`, one article route, `/login`, `/min-side`, `/abonnement`.
+   Also check retired `/nyfrontside1`; it should remain 404 unless an explicit redirect is approved.
 4. Keep Payload Admin online unless it is the failure source.
 5. Do not delete Payload content during rollback.
 6. Record rollback time, owner, and reason.
