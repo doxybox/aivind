@@ -43,6 +43,13 @@
       "when": 1782737200000,
       "tag": "0005_billing_event_idempotency",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1783871149080,
+      "tag": "0006_old_praxagora",
+      "breakpoints": true
     }
   ]
 }

@@ -136,11 +136,11 @@ export default function Register() {
             />
             <span>
               I agree to TEKKNO&apos;s{" "}
-              <Link href="#" className="text-blue-600 underline underline-offset-2">
+              <Link href="/vilkar" className="text-blue-600 underline underline-offset-2">
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="#" className="text-blue-600 underline underline-offset-2">
+              <Link href="/personvern" className="text-blue-600 underline underline-offset-2">
                 Privacy Policy
               </Link>
               .

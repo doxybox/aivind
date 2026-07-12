@@ -150,3 +150,19 @@ export const newsletterPreference = pgTable(
     userIdIdx: uniqueIndex("newsletter_preference_user_id_idx").on(table.userId),
   }),
 );
+
+export const newsletterSubscriber = pgTable(
+  "newsletter_subscriber",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: text("email").notNull(),
+    active: boolean("active").notNull().default(true),
+    source: text("source").notNull().default("footer"),
+    consentAt: timestamp("consent_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    emailIdx: uniqueIndex("newsletter_subscriber_email_idx").on(table.email),
+  }),
+);

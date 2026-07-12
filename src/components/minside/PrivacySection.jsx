@@ -102,8 +102,8 @@ export default function PrivacySection({ onLogout }) {
           Vi lagrer kun nødvendige data for å tilby deg tjenesten. Dine personopplysninger brukes kun til kontoadministrasjon, abonnement og kommunikasjon du har valgt å motta. Vi selger aldri dine data.
         </p>
         <div className="flex gap-4 mt-4">
-          <a href="#" className="inline-flex items-center gap-1 text-[12px] font-semibold text-orange-500 hover:underline"><FileText className="w-3.5 h-3.5" /> Personvernerklæring</a>
-          <a href="#" className="inline-flex items-center gap-1 text-[12px] font-semibold text-orange-500 hover:underline"><FileText className="w-3.5 h-3.5" /> Vilkår og betingelser</a>
+          <a href="/personvern" className="inline-flex items-center gap-1 text-[12px] font-semibold text-orange-500 hover:underline"><FileText className="w-3.5 h-3.5" /> Personvernerklæring</a>
+          <a href="/vilkar" className="inline-flex items-center gap-1 text-[12px] font-semibold text-orange-500 hover:underline"><FileText className="w-3.5 h-3.5" /> Vilkår og betingelser</a>
         </div>
       </div>
     </div>
