@@ -306,7 +306,6 @@ function ArticleCard({ story, large = false, className = "" }) {
         <h2 className={`mt-4 font-bold text-white leading-[1.2] ${large ? "text-3xl md:text-5xl lg:text-[56px] font-black tracking-tight" : "text-xl md:text-2xl line-clamp-2"}`}>
           {story.title}
         </h2>
-        {story.excerpt && <p className="text-white/90 text-sm mt-3 line-clamp-2 leading-relaxed">{story.excerpt}</p>}
         <ArticleReactions article={story} count={story.reactions} className="mt-3" />
       </div>
     </>
@@ -336,7 +335,6 @@ function SmallArticle({ story }) {
       <div className="absolute inset-x-0 bottom-0 z-10 p-4 flex max-h-[78%] flex-col items-start">
         <Badge>{story.tag}</Badge>
         <h3 className="mt-3 text-[17px] md:text-[18px] font-bold text-white leading-[1.18] line-clamp-2">{story.title}</h3>
-        {story.excerpt && <p className="text-white/85 text-[12.5px] mt-2.5 line-clamp-2 leading-[1.55]">{story.excerpt}</p>}
         <ArticleReactions article={story} count={story.reactions} className="mt-3" />
       </div>
     </>

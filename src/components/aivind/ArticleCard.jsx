@@ -58,12 +58,6 @@ export default function ArticleCard({ article }) {
           {article.title}
         </h3>
         
-        {article.excerpt && (
-          <p className="mt-2 text-[13px] text-muted-foreground line-clamp-2 leading-relaxed hidden sm:flex">
-            <span className="line-clamp-2">{article.excerpt}</span>
-          </p>
-        )}
-        
         <div className="flex-1" />
 
         {/* Footer / Metadata */}

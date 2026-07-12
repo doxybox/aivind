@@ -11,7 +11,7 @@ import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
 
-const GridCard = ({ image, tag, type, title, subtitle, href = "#", className, titleClass = "text-xl md:text-2xl", tagClass = "text-[#ff6a00] bg-[#161a22]/80 backdrop-blur-sm border border-white/5", reactions = 0 }) => (
+const GridCard = ({ image, tag, type, title, href = "#", className, titleClass = "text-xl md:text-2xl", tagClass = "text-[#ff6a00] bg-[#161a22]/80 backdrop-blur-sm border border-white/5", reactions = 0 }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
     <div 
       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
@@ -29,12 +29,6 @@ const GridCard = ({ image, tag, type, title, subtitle, href = "#", className, ti
       <h3 className={`font-bold text-white leading-[1.2] ${titleClass}`}>
         {title}
       </h3>
-      {subtitle && (
-        <p className="text-white/90 text-sm mt-3 line-clamp-2 leading-relaxed">
-          {subtitle}
-        </p>
-      )}
-      
       <ArticleReactions article={{ tag, type }} count={reactions} className="mt-3" />
     </div>
   </Link>
@@ -202,7 +196,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
       image: article.image || article.imageUrl || fallback.image,
       tag: article.category || fallback.tag,
       title: article.title || fallback.title,
-      subtitle: article.excerpt || fallback.subtitle,
       href: article.href || fallback.href || "#",
       type: article.type || fallback.type,
       reactions: article.comments ?? fallback.reactions ?? 0,
@@ -212,7 +205,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
     image: "/images/placeholders/article-placeholder.svg",
     tag: "Tester",
     title: "Neste generasjon VR er her",
-    subtitle: "Skarpere, lettere og mer virkelighetsnaert enn noen gang.",
   });
   const topSideCards = [
     payloadCard(1, { image: "/images/placeholders/article-placeholder.svg", tag: "Gaming", title: "Elden-ring moter Skyrim i nytt episk action-RPG", reactions: 56 }),
@@ -227,7 +219,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
     image: "/images/placeholders/article-placeholder.svg",
     tag: "Video",
     title: "Streamingkrigen tilspisser seg",
-    subtitle: "Nye priser og storre tap.",
   });
   const bottomSideCards = [
     payloadCard(7, { image: "/images/placeholders/article-placeholder.svg", tag: "AI", title: "Ny AI-brikke kan endre datakraft", reactions: 18 }),
@@ -302,7 +293,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
             tag={topHero.tag}
             title={topHero.title}
             titleClass="text-3xl md:text-5xl lg:text-[56px] font-black tracking-tight"
-            subtitle={topHero.subtitle}
             href={topHero.href}
           />
           <div className="flex flex-col gap-4">
@@ -314,7 +304,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                 tag={card.tag}
                 type={card.type}
                 title={card.title}
-                subtitle={card.subtitle}
                 href={card.href}
                 titleClass="text-xl md:text-2xl"
                 reactions={card.reactions}
@@ -333,7 +322,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
               tag={card.tag}
               type={card.type}
               title={card.title}
-              subtitle={card.subtitle}
               href={card.href}
             />
           ))}
@@ -348,7 +336,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
             type={bottomFeature.type}
             title={bottomFeature.title}
             titleClass="text-2xl md:text-4xl lg:text-[40px] font-black tracking-tight"
-            subtitle={bottomFeature.subtitle}
             href={bottomFeature.href}
           />
           <div className="flex flex-col gap-4">
@@ -360,7 +347,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                 tag={card.tag}
                 type={card.type}
                 title={card.title}
-                subtitle={card.subtitle}
                 href={card.href}
                 titleClass="text-lg md:text-xl"
                 reactions={card.reactions}
@@ -393,7 +379,6 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                   tag={article.category}
                   type={article.type}
                   title={article.title}
-                  subtitle={article.excerpt}
                   href={article.href}
                   reactions={article.comments || 0}
                 />

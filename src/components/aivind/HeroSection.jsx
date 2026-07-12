@@ -32,11 +32,6 @@ export default function HeroSection({ heroImage, articles = [] }) {
                     Raskere, smartere og mer<br />
                     menneskelig
                   </h1>
-                  <p className="text-[15px] sm:text-[17px] text-gray-300 leading-relaxed max-w-lg mb-6 font-medium">
-                    Den nye modellen er tilgjengelig for alle – og den<br className="hidden sm:block" />
-                    forstår både tekst, bilde og tale i sanntid.
-                  </p>
-                  
                   {/* Author and metadata */}
                   <div className="flex items-center gap-3 text-[13px] text-gray-400 font-medium flex-wrap">
                     <div className="flex items-center gap-2">
