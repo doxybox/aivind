@@ -29,6 +29,7 @@ export function getTopArticleReactions(counts = {}, limit = 3) {
 
   return ARTICLE_REACTIONS
     .map((reaction, order) => ({ ...reaction, count: normalized[reaction.key], order }))
+    .filter((reaction) => reaction.count > 0)
     .sort((left, right) => right.count - left.count || left.order - right.order)
     .slice(0, limit);
 }

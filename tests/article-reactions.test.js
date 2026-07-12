@@ -32,10 +32,7 @@ test("article cards show the three most-used reactions without a trailing total"
     { key: "wow", count: 4 },
   ]);
 
-  assert.deepEqual(
-    getTopArticleReactions({}).map(({ key }) => key),
-    ["fire", "love", "wow"],
-  );
+  assert.deepEqual(getTopArticleReactions({}), []);
 });
 
 test("shared article reactions exclude video content", () => {
