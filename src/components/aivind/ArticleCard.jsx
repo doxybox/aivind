@@ -27,11 +27,7 @@ export default function ArticleCard({ article }) {
         
         {/* Top Badges */}
         <div className="absolute top-2.5 left-2.5 flex gap-1.5 flex-wrap max-w-[90%]">
-          {!isSponsored ? (
-            <span className="inline-block px-2.5 py-1 bg-orange-500 text-white text-[10px] font-bold uppercase tracking-wider rounded shadow-sm">
-              {isTest ? 'TESTER' : article.category}
-            </span>
-          ) : (
+          {isSponsored && (
             <span className="inline-block px-2.5 py-1 bg-orange-500 text-white text-[10px] font-bold uppercase tracking-wider rounded shadow-sm">
               Sponset
             </span>

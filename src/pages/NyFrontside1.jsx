@@ -10,9 +10,9 @@ import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
-import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
+import PremiumArticleBadge, { isPremiumArticle } from "@/components/aivind/PremiumArticleBadge";
 
-const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl", tagClass = "text-[#ff6a00] bg-[#161a22]/80 backdrop-blur-sm border border-white/5", reactions = 0 }) => (
+const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl", reactions = 0 }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
     <div 
       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
@@ -22,14 +22,11 @@ const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href =
     <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-transparent to-transparent opacity-80" />
     
     <div className="absolute inset-x-0 bottom-0 p-5 flex flex-col items-start z-10">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        {tag && (
-          <span className={`text-[10px] font-bold px-2.5 py-1.5 uppercase rounded tracking-wider ${tagClass}`}>
-            {tag}
-          </span>
-        )}
-        <PremiumArticleBadge article={{ type, accessLevel, paywallEnabled }} />
-      </div>
+      {isPremiumArticle({ type, accessLevel, paywallEnabled }) && (
+        <div className="mb-3">
+          <PremiumArticleBadge article={{ type, accessLevel, paywallEnabled }} />
+        </div>
+      )}
       <h3 className={`font-bold text-white leading-[1.2] ${titleClass}`}>
         {title}
       </h3>

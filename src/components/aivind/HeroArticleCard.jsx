@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
 import ArticleReactions from "./ArticleReactions";
-import PremiumArticleBadge from "./PremiumArticleBadge";
+import PremiumArticleBadge, { isPremiumArticle } from "./PremiumArticleBadge";
 
 export default function HeroArticleCard({ article }) {
   const isVideo = article.type === "video";
@@ -26,12 +26,9 @@ export default function HeroArticleCard({ article }) {
       {/* Text content */}
       <div className="relative z-10 flex flex-col justify-between p-4 sm:p-5 w-[85%]">
         <div>
-          <div className="flex gap-1.5 flex-wrap mb-2.5">
-            {!isSponsored ? (
-              <span className="inline-block px-2.5 py-0.5 bg-orange-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-sm shadow-sm">
-                {article.type === "test" ? 'TESTER' : article.category}
-              </span>
-            ) : (
+          {(isSponsored || isPremiumArticle(article) || isVideo) && (
+            <div className="flex gap-1.5 flex-wrap mb-2.5">
+            {isSponsored && (
               <span className="inline-block px-2.5 py-0.5 bg-orange-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-sm shadow-sm">
                 Sponset
               </span>
@@ -43,7 +40,8 @@ export default function HeroArticleCard({ article }) {
                 {article.duration || "Video"}
               </span>
             )}
-          </div>
+            </div>
+          )}
           <h3 className="text-[14px] sm:text-[15px] font-bold text-foreground leading-snug group-hover:text-orange-500 transition-colors line-clamp-2 tracking-[-0.01em]">
             {article.title}
           </h3>
