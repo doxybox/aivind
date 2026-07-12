@@ -104,43 +104,31 @@ const aiReels = [
   {
     id: "ai-reel-1",
     title: "ChatGPT-appen får stemme og bilder",
-    views: "1,7k",
-    duration: "0:28",
     image: "/images/placeholders/article-placeholder.svg",
   },
   {
     id: "ai-reel-2",
     title: "Slik avslører du AI-genererte bilder",
-    views: "2,1k",
-    duration: "0:31",
     image: "/images/placeholders/article-placeholder.svg",
   },
   {
     id: "ai-reel-3",
     title: "Midjourney v6: tre grep som gir bedre bilder",
-    views: "987",
-    duration: "0:25",
     image: "/images/placeholders/article-placeholder.svg",
   },
   {
     id: "ai-reel-4",
     title: "AI på jobb: dette kan du automatisere først",
-    views: "1,5k",
-    duration: "0:34",
     image: "/images/placeholders/article-placeholder.svg",
   },
   {
     id: "ai-reel-5",
     title: "Ny norsk språkmodell forklart på ett minutt",
-    views: "1,2k",
-    duration: "0:29",
     image: "/images/placeholders/article-placeholder.svg",
   },
   {
     id: "ai-reel-6",
     title: "Fem AI-verktøy som faktisk sparer tid",
-    views: "3,4k",
-    duration: "0:45",
     image: "/images/placeholders/article-placeholder.svg",
   },
 ];

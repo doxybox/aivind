@@ -57,6 +57,13 @@
       "when": 1783882063311,
       "tag": "0007_little_madripoor",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1783889717052,
+      "tag": "0008_lying_colleen_wing",
+      "breakpoints": true
     }
   ]
 }

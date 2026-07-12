@@ -148,6 +148,21 @@ export const articleReaction = pgTable(
   }),
 );
 
+export const reelView = pgTable(
+  "reel_view",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    reelSlug: text("reel_slug").notNull(),
+    actorKey: text("actor_key").notNull(),
+    firstViewedAt: timestamp("first_viewed_at", { withTimezone: true }).notNull().defaultNow(),
+    lastViewedAt: timestamp("last_viewed_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    reelSlugIdx: index("reel_view_reel_slug_idx").on(table.reelSlug),
+    reelActorIdx: index("reel_view_reel_actor_idx").on(table.reelSlug, table.actorKey),
+  }),
+);
+
 export const newsletterPreference = pgTable(
   "newsletter_preference",
   {

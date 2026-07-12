@@ -55,6 +55,12 @@ Current video guardrails:
 - Direct upload URL rate limit: 8 per user and 20 per IP per 10 minutes
 - `createReel=true` creates a draft, inactive Payload reel
 
+## Reel Metadata And Views
+
+Published, active Payload reels use the linked `media-assets.duration` value populated from Cloudflare Stream metadata. Unknown durations are hidden rather than replaced with demo values.
+
+Public reel views are stored in the app database table `reel_view` and counted when a playable reel is opened. `GET /api/reels/views?slugs=<slug>` returns counts, while `POST /api/reels/views` records a validated published reel view. The endpoint derives the viewer server-side, rejects client-supplied identity fields and is rate limited. Run `npm run db:migrate` before deploying this API.
+
 ## Recent Media List
 
 `GET /api/staff/media-assets` lists recent Payload media assets for staff users only.

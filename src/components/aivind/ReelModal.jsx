@@ -99,8 +99,8 @@ export default function ReelModal({ reel, onClose }) {
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black via-black/75 to-transparent px-5 pb-5 pt-20 text-white">
           <h3 className="text-[17px] font-black leading-tight sm:text-[19px]">{reel.title}</h3>
-          {reel.views && reel.views !== "0" && (
-            <p className="mt-2 text-xs font-bold text-white/75">{reel.views} visninger</p>
+          {Number.isInteger(reel.views) && (
+            <p className="mt-2 text-xs font-bold text-white/75">{new Intl.NumberFormat("nb-NO").format(reel.views)} visninger</p>
           )}
         </div>
       </div>

@@ -203,6 +203,8 @@ test("Payload reels expose a playable Stream source and use the video thumbnail"
   assert.equal(mappedReel.image, "https://videodelivery.example/thumbnail.jpg");
   assert.equal(mappedReel.videoUrl, "https://videodelivery.example/manifest/video.m3u8");
   assert.equal(mappedReel.cloudflareStreamUid, "stream-video-123");
+  assert.equal(mappedReel.duration, "0:31");
+  assert.equal(mappedReel.views, null);
   assert.equal(getCloudflareReelEmbedUrl(mappedReel), "https://iframe.videodelivery.net/stream-video-123?autoplay=true");
 });
 

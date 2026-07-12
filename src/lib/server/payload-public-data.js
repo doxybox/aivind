@@ -1,5 +1,6 @@
 import { getPayloadClient } from "./payload-client.js";
 import { getActiveFrontpageSlots as getActiveFrontpageSlotDocs } from "./payload-admin-data.js";
+import { formatReelDuration } from "../reel-views.js";
 
 const DEFAULT_IMAGE = "/images/placeholders/article-placeholder.svg";
 const DEFAULT_AUTHOR = "TEKKNO";
@@ -192,8 +193,8 @@ export function mapPayloadReelToLegacyReel(reel = {}) {
     title: reel.title || "Uten tittel",
     slug: reel.slug || "",
     description: reel.description || "",
-    duration: mediaAsset.duration ? `${Math.round(mediaAsset.duration)}s` : "0:30",
-    views: "0",
+    duration: formatReelDuration(mediaAsset.duration),
+    views: null,
     image: mediaAsset.thumbnailUrl || media.imageUrl,
     imageAlt: media.imageAlt || reel.title || "",
     videoUrl: mediaAsset.deliveryUrl || "",
