@@ -12,7 +12,7 @@ export const billingPlans = [
     entitlementKey: null,
     vipps: {
       productId: null,
-      agreementProductName: "AIVIND Gratis",
+      agreementProductName: "TEKKNO Gratis",
     },
     features: [
       "Les åpne artikler",
@@ -27,7 +27,7 @@ export const billingPlans = [
   },
   {
     planKey: "premium_monthly",
-    displayName: "AIVIND Premium månedlig",
+    displayName: "TEKKNO Premium månedlig",
     slug: "premium_monthly",
     legacySlug: "premium",
     description: "For ekspertene",
@@ -39,7 +39,7 @@ export const billingPlans = [
     entitlementKey: "premium",
     vipps: {
       productId: "aivind-premium-monthly",
-      agreementProductName: "AIVIND Premium månedlig",
+      agreementProductName: "TEKKNO Premium månedlig",
     },
     features: [
       "Alle plussaker",
@@ -54,7 +54,7 @@ export const billingPlans = [
   },
   {
     planKey: "premium_yearly",
-    displayName: "AIVIND Premium årlig",
+    displayName: "TEKKNO Premium årlig",
     slug: "premium_yearly",
     legacySlug: "premium",
     description: "For ekspertene som vil betale årlig",
@@ -66,7 +66,7 @@ export const billingPlans = [
     entitlementKey: "premium",
     vipps: {
       productId: "aivind-premium-yearly",
-      agreementProductName: "AIVIND Premium årlig",
+      agreementProductName: "TEKKNO Premium årlig",
     },
     features: [
       "Alt i Premium månedlig",

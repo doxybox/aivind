@@ -25,7 +25,7 @@ export const subscriptionPlans = [
   },
   {
     id: "pluss",
-    name: "AIVIND Pluss",
+    name: "TEKKNO Pluss",
     slug: "pluss",
     description: "For den bevisste leseren",
     monthlyPrice: 199,
@@ -47,7 +47,7 @@ export const subscriptionPlans = [
     id: "premium",
     planKey: "premium_monthly",
     yearlyPlanKey: "premium_yearly",
-    name: "AIVIND Premium",
+    name: "TEKKNO Premium",
     slug: "premium",
     description: "For ekspertene",
     monthlyPrice: premiumMonthly.price,
@@ -69,7 +69,7 @@ export const subscriptionPlans = [
   },
   {
     id: "familie",
-    name: "AIVIND Familie",
+    name: "TEKKNO Familie",
     slug: "familie",
     description: "For hele husstanden",
     monthlyPrice: 199,
@@ -88,7 +88,7 @@ export const subscriptionPlans = [
   },
   {
     id: "bedrift",
-    name: "AIVIND Bedrift",
+    name: "TEKKNO Bedrift",
     slug: "bedrift",
     description: "For team og bedrifter",
     monthlyPrice: 499,

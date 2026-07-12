@@ -41,10 +41,10 @@ export default function StatsRow() {
    }, []);
 
   const planLabel = loadFailed ? "Kunne ikke hente abonnement"
-    : sub?.plan_type === "pluss" ? "AIVIND Pluss"
-    : sub?.plan_type === "premium" ? "AIVIND Premium"
-    : sub?.plan_type === "familie" ? "AIVIND Familie"
-    : sub?.plan_type === "bedrift" ? "AIVIND Bedrift"
+    : sub?.plan_type === "pluss" ? "TEKKNO Pluss"
+    : sub?.plan_type === "premium" ? "TEKKNO Premium"
+    : sub?.plan_type === "familie" ? "TEKKNO Familie"
+    : sub?.plan_type === "bedrift" ? "TEKKNO Bedrift"
     : "Gratis";
   const isActive = sub?.status === "active";
   const nextPayment = sub?.current_period_end ? new Date(sub.current_period_end).toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric" }) : "—";

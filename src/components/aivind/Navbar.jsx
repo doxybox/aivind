@@ -30,7 +30,7 @@ export default function Navbar({ onSearchClick }) {
             <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-sm shadow-orange-500/20 group-hover:scale-105 transition-transform">
               <span className="text-white font-black text-sm leading-none">A</span>
             </div>
-            <span className="text-foreground font-extrabold text-[19px] tracking-[-0.04em] group-hover:text-orange-500 transition-colors">AIVIND</span>
+            <span className="text-foreground font-extrabold text-[19px] tracking-[-0.04em] group-hover:text-orange-500 transition-colors">TEKKNO</span>
           </Link>
 
           {/* Desktop nav links */}

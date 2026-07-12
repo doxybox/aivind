@@ -59,7 +59,7 @@ export default function AbonnementStatusPage() {
   return (
     <main className="min-h-screen bg-[#11161d] px-6 py-10 text-white">
       <Head>
-        <title>Betalingsstatus | AIVIND</title>
+        <title>Betalingsstatus | TEKKNO</title>
         <meta name="description" content="Sjekker betalingsstatus for abonnement." />
       </Head>
 

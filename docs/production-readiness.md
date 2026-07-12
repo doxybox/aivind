@@ -1,6 +1,6 @@
 # Production Readiness
 
-This document tracks low-risk production readiness for the current AIVIND news platform architecture.
+This document tracks low-risk production readiness for the current TEKKNO news platform architecture.
 
 For the cutover-day checklist, env matrix, backup/migration runbook and smoke-test template, see `docs/production-cutover-checklist.md`.
 

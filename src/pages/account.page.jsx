@@ -35,7 +35,7 @@ export default function AccountPage({ user, roles, entitlements, hasActiveSubscr
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-16 text-zinc-950">
       <div className="mx-auto max-w-3xl rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
-        <p className="text-sm font-black uppercase tracking-[0.24em] text-[#ff6a00]">AIVIND konto</p>
+        <p className="text-sm font-black uppercase tracking-[0.24em] text-[#ff6a00]">TEKKNO konto</p>
         <h1 className="mt-4 text-3xl font-black">{user.name || user.email}</h1>
         <p className="mt-2 text-zinc-600">{user.email}</p>
 

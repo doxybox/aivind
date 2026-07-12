@@ -2,7 +2,7 @@
 
 ## Overview
 
-AIVIND uses Better Auth as the only authentication system. Supabase is used only as PostgreSQL database infrastructure. Supabase Auth is intentionally not used, and the app must not rely on `auth.uid()`, Supabase Auth JWTs, or Supabase session state.
+TEKKNO uses Better Auth as the only authentication system. Supabase is used only as PostgreSQL database infrastructure. Supabase Auth is intentionally not used, and the app must not rely on `auth.uid()`, Supabase Auth JWTs, or Supabase session state.
 
 The phase 1 implementation keeps the existing Next.js Pages Router and JavaScript/JSX frontend. Base44 is treated as a temporary prototype/mock layer while auth and database concerns move to Better Auth, Drizzle, and Supabase Postgres.
 

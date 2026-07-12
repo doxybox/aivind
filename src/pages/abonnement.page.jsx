@@ -47,8 +47,8 @@ export default function AbonnementPage({ plans, checkoutStatus }) {
   return (
     <main className="min-h-screen bg-[#11161d] px-6 py-10 text-white">
       <Head>
-        <title>Abonnement | AIVIND</title>
-        <meta name="description" content="Velg abonnement for AIVIND." />
+        <title>Abonnement | TEKKNO</title>
+        <meta name="description" content="Velg abonnement for TEKKNO." />
       </Head>
 
       <div className="mx-auto max-w-5xl">

@@ -70,7 +70,7 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url }) => {
       void sendAuthEmail({
         to: user.email,
-        subject: "Tilbakestill passordet ditt hos AIVIND",
+        subject: "Tilbakestill passordet ditt hos TEKKNO",
         text: `Trykk på lenken for å sette nytt passord: ${url}`,
         html: `<p>Trykk på lenken for å sette nytt passord:</p><p><a href="${url}">${url}</a></p>`,
       });
@@ -83,7 +83,7 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url }) => {
       void sendAuthEmail({
         to: user.email,
-        subject: "Bekreft e-posten din hos AIVIND",
+        subject: "Bekreft e-posten din hos TEKKNO",
         text: `Trykk på lenken for å bekrefte e-posten din: ${url}`,
         html: `<p>Trykk på lenken for å bekrefte e-posten din:</p><p><a href="${url}">${url}</a></p>`,
       });

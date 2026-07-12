@@ -26,7 +26,7 @@ export default function Footer() {
               <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center shadow-sm shadow-orange-500/20">
                 <span className="text-white font-black text-[15px] leading-none">A</span>
               </div>
-              <span className="text-foreground font-extrabold text-[20px] tracking-[-0.04em]">AIVIND</span>
+              <span className="text-foreground font-extrabold text-[20px] tracking-[-0.04em]">TEKKNO</span>
             </div>
             <p className="text-[13px] text-muted-foreground leading-relaxed mb-5 max-w-[95%]">
               Norges ledende nyhetskilde for teknologi,<br/>
@@ -66,9 +66,9 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Center Links Container (Om AIVIND) */}
+          {/* Center Links Container (Om TEKKNO) */}
           <div className="lg:col-span-4 lg:border-r border-border/40 lg:px-16 flex flex-col">
-            <h3 className="text-[10px] font-bold text-orange-500 uppercase tracking-wider mb-4">Om AIVIND</h3>
+            <h3 className="text-[10px] font-bold text-orange-500 uppercase tracking-wider mb-4">Om TEKKNO</h3>
             <ul className="flex flex-col">
               {["Om oss", "Redaksjonen", "Annonsering", "Kontakt", "Personvern", "Vilkår"].map((item, i) => (
                 <li key={i} className="border-b border-border/30 last:border-0">
@@ -112,7 +112,7 @@ export default function Footer() {
                 <img src="/images/placeholders/avatar-placeholder.svg" alt="User" className="w-7 h-7 rounded-full border-2 border-background object-cover" />
               </div>
               <p className="text-[11px] text-muted-foreground leading-snug">
-                <span className="text-foreground font-medium">10 000+ lesere</span> får ukentlige<br/>oppdateringer fra AIVIND
+                <span className="text-foreground font-medium">10 000+ lesere</span> får ukentlige<br/>oppdateringer fra TEKKNO
               </p>
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function Footer() {
           {/* Left: Copyright */}
           <div className="flex-1 flex justify-center md:justify-start w-full md:w-auto mb-4 md:mb-0">
             <p className="text-[10px] font-mono text-muted-foreground tracking-widest uppercase mt-1 leading-none">
-              © {new Date().getFullYear()} AIVIND MEDIA AS. ALLE RETTIGHETER RESERVERT.
+              © {new Date().getFullYear()} TEKKNO MEDIA AS. ALLE RETTIGHETER RESERVERT.
             </p>
           </div>
           

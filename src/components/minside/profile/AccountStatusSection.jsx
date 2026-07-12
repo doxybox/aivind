@@ -18,10 +18,10 @@ export default function AccountStatusSection({ profile, user }) {
     return () => { ignore = true; };
   }, []);
 
-  const planLabel = sub?.plan_type === "pluss" ? "AIVIND Pluss"
-    : sub?.plan_type === "premium" ? "AIVIND Premium"
-    : sub?.plan_type === "familie" ? "AIVIND Familie"
-    : sub?.plan_type === "bedrift" ? "AIVIND Bedrift"
+  const planLabel = sub?.plan_type === "pluss" ? "TEKKNO Pluss"
+    : sub?.plan_type === "premium" ? "TEKKNO Premium"
+    : sub?.plan_type === "familie" ? "TEKKNO Familie"
+    : sub?.plan_type === "bedrift" ? "TEKKNO Bedrift"
     : "Gratis";
 
   const createdDate = (profile?.created_date || user?.created_date)

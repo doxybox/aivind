@@ -429,7 +429,7 @@ function AiHeader({ activeSlug, onSearchClick }) {
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-zinc-900 dark:text-white font-black text-2xl tracking-tighter uppercase">
-              AIVIND<span className="text-[#ff6a00]">.NO</span>
+              TEKKNO<span className="text-[#ff6a00]">.NO</span>
             </span>
           </Link>
 

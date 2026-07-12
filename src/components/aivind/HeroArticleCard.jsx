@@ -48,7 +48,7 @@ export default function HeroArticleCard({ article }) {
         
         <div className="mt-3 flex items-center justify-start text-[11px] font-medium text-muted-foreground gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-foreground/80">{article.author ? article.author.split(' ')[0] : "Aivind"}</span>
+            <span className="font-semibold text-foreground/80">{article.author ? article.author.split(' ')[0] : "Tekkno"}</span>
             <span className="w-1 h-1 rounded-full bg-border" />
             <span>{article.time || "Nylig"}</span>
           </div>

@@ -57,7 +57,7 @@ function ArticleHeader({ onSearchClick }) {
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-zinc-900 dark:text-white font-black text-2xl tracking-tighter uppercase">
-              AIVIND<span className="text-[#ff6a00]">.NO</span>
+              TEKKNO<span className="text-[#ff6a00]">.NO</span>
             </span>
           </Link>
           <nav className="hidden lg:flex items-center gap-6">
@@ -159,7 +159,7 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
           )}
 
           <div className="flex flex-wrap items-center gap-3 text-[13px] text-zinc-500 dark:text-zinc-400 mb-8">
-            <span className="font-semibold text-zinc-800 dark:text-zinc-200">{article.authorName || article.author || "AIVIND"}</span>
+            <span className="font-semibold text-zinc-800 dark:text-zinc-200">{article.authorName || article.author || "TEKKNO"}</span>
             {publishedLabel && <><span className="w-1 h-1 rounded-full bg-[#ff6a00]" /><span>{publishedLabel}</span></>}
             {article.readTime && <><span className="w-1 h-1 rounded-full bg-[#ff6a00]" /><span>{article.readTime}</span></>}
           </div>

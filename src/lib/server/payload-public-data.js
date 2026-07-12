@@ -2,7 +2,7 @@ import { getPayloadClient } from "./payload-client.js";
 import { getActiveFrontpageSlots as getActiveFrontpageSlotDocs } from "./payload-admin-data.js";
 
 const DEFAULT_IMAGE = "/images/placeholders/article-placeholder.svg";
-const DEFAULT_AUTHOR = "AIVIND";
+const DEFAULT_AUTHOR = "TEKKNO";
 
 function getRelationshipDoc(value) {
   return value && typeof value === "object" ? value : null;

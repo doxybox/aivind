@@ -163,7 +163,7 @@ export default function MinSide() {
 
       <main className="flex-1 min-w-0 relative z-10 lg:pl-[280px] flex flex-col min-h-screen">
         <div className="hidden lg:flex h-24 border-b border-white/10 items-center justify-between px-10 bg-black/20 backdrop-blur-md sticky top-0 z-30">
-          <h1 className="text-[18px] font-medium text-zinc-300">AIVIND kundeportal</h1>
+          <h1 className="text-[18px] font-medium text-zinc-300">TEKKNO kundeportal</h1>
 
           <div className="flex items-center gap-6">
             <button onClick={() => handleSectionSelect("tips")} className="flex items-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white px-5 py-2.5 rounded-full text-[14px] font-medium transition-all shadow-[0_4px_12px_rgba(0,0,0,0.1)]">

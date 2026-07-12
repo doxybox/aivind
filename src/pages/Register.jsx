@@ -101,7 +101,7 @@ export default function Register() {
               id="username"
               label={
                 <span className="inline-flex items-center gap-1">
-                  AIVIND Username <Info className="h-4 w-4" />
+                  TEKKNO Username <Info className="h-4 w-4" />
                 </span>
               }
               value={username}
@@ -135,7 +135,7 @@ export default function Register() {
               className="mt-1 h-[18px] w-[18px] shrink-0 rounded border border-black accent-black"
             />
             <span>
-              I agree to AIVIND&apos;s{" "}
+              I agree to TEKKNO&apos;s{" "}
               <Link href="#" className="text-blue-600 underline underline-offset-2">
                 Terms of Service
               </Link>{" "}

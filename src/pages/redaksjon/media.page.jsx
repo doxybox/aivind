@@ -396,7 +396,7 @@ export default function StaffMediaPage({ user, roles, mediaStatus }) {
               <TextInput label="Alt-tekst" value={imageForm.alt} onChange={(alt) => setImageForm((form) => ({ ...form, alt }))} placeholder="Kort beskrivelse av bildet" />
               <TextArea label="Bildetekst" value={imageForm.caption} onChange={(caption) => setImageForm((form) => ({ ...form, caption }))} placeholder="Valgfri bildetekst" />
               <div className="grid gap-4 md:grid-cols-2">
-                <TextInput label="Kreditering" value={imageForm.credit} onChange={(credit) => setImageForm((form) => ({ ...form, credit }))} placeholder="Foto: AIVIND" />
+                <TextInput label="Kreditering" value={imageForm.credit} onChange={(credit) => setImageForm((form) => ({ ...form, credit }))} placeholder="Foto: TEKKNO" />
                 <TextInput label="Filnavn" value={imageForm.originalFilename} onChange={(originalFilename) => setImageForm((form) => ({ ...form, originalFilename }))} placeholder="Bruker valgt filnavn som fallback" />
               </div>
               <input

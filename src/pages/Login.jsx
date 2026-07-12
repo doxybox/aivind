@@ -127,7 +127,7 @@ export default function Login() {
         </form>
 
         <AuthSwitch href="/register" linkText="Sign Up">
-          New to AIVIND?
+          New to TEKKNO?
         </AuthSwitch>
       </AuthCard>
     </AuthPage>

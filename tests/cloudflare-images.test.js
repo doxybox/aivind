@@ -21,7 +21,7 @@ test("Cloudflare Images upload input accepts safe metadata", () => {
     title: "Hero image",
     alt: "Robot ved datamaskin",
     caption: "Illustrasjon",
-    credit: "AIVIND",
+    credit: "TEKKNO",
     usageRights: "Redaksjonell bruk",
     originalFilename: "hero.jpg",
     fileMimeType: "image/jpeg",

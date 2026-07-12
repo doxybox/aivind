@@ -1,6 +1,6 @@
 # Production Cutover Checklist
 
-This is the operational checklist for moving AIVIND from the current production default to Payload-backed public rendering later. It does not make `CONTENT_SOURCE=payload` the production default.
+This is the operational checklist for moving TEKKNO from the current production default to Payload-backed public rendering later. It does not make `CONTENT_SOURCE=payload` the production default.
 
 Use together with:
 

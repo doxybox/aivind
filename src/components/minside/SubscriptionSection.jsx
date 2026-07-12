@@ -55,7 +55,7 @@ export default function SubscriptionSection({ paymentStatus, upgradeOpen, onClos
     if (plan.isContactRequired) {
       toast({
         title: "Kontakt oss",
-        description: "For bedriftsabonnement, kontakt salg@-aivind.no for skreddersydd tilbud.",
+        description: "For bedriftsabonnement, kontakt salg@tekkno.no for skreddersydd tilbud.",
         variant: "info",
       });
       setModalOpen(false);

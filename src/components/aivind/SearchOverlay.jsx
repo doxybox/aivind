@@ -95,7 +95,7 @@ export default function SearchOverlay({ open, onClose, articles = [] }) {
                       {article.title}
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {article.category} - {article.author || article.authorName || "AIVIND"} - {article.time || "Nylig"}
+                      {article.category} - {article.author || article.authorName || "TEKKNO"} - {article.time || "Nylig"}
                     </p>
                   </div>
                 </a>

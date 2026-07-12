@@ -21,7 +21,7 @@ function Logo({ size = "text-lg", iconSize = "w-7 h-7" }) {
       <div className={`${iconSize} bg-orange-500 rounded flex items-center justify-center`}>
         <span className="text-white font-black text-sm leading-none">A</span>
       </div>
-      <span className={`text-foreground font-extrabold ${size} tracking-[-0.04em]`}>AIVIND</span>
+      <span className={`text-foreground font-extrabold ${size} tracking-[-0.04em]`}>TEKKNO</span>
     </Link>
   );
 }
@@ -43,7 +43,7 @@ export default function DashboardSidebar({ activeSection, onSelect, onLogout }) 
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500/40 to-orange-600/20 border border-orange-500/20 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.2)] group-hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] transition-all backdrop-blur-md">
               <span className="text-white font-black text-lg leading-none">A</span>
             </div>
-            <span className="text-white font-black text-xl tracking-widest uppercase">Aivind</span>
+            <span className="text-white font-black text-xl tracking-widest uppercase">Tekkno</span>
           </Link>
         </div>
 
@@ -92,7 +92,7 @@ export default function DashboardSidebar({ activeSection, onSelect, onLogout }) 
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500/40 to-orange-600/20 border border-orange-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.3)]">
               <span className="text-white font-black text-sm leading-none">A</span>
             </div>
-            <span className="text-white font-bold text-lg tracking-wider uppercase">Aivind</span>
+            <span className="text-white font-bold text-lg tracking-wider uppercase">Tekkno</span>
           </Link>
           <button
             onClick={onLogout}
