@@ -47,6 +47,9 @@ async function isPublicReelSlug(slug) {
 function sendError(res, error) {
   const status = error instanceof RateLimitError ? 429 : error?.status || 500;
   if (error instanceof RateLimitError) res.setHeader("Retry-After", String(error.retryAfterSeconds));
+  if (status === 500) {
+    console.error("[reel-views] request failed", { message: error?.message, code: error?.code });
+  }
   return res.status(status).json({ error: status === 500 ? "Kunne ikke hente reel-visninger" : error.message });
 }
 

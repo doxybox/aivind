@@ -12,6 +12,7 @@
     "auth:generate-schema": "npx auth@latest generate --config ./src/lib/auth.js --output ./src/db/auth-schema.ts --yes",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:verify-rate-limit": "node scripts/verify-rate-limit-db.js",
     "auth:assign-role": "node scripts/assign-role.js",
     "auth:grant-test-entitlement": "node scripts/grant-test-entitlement.js",
     "payload": "payload",

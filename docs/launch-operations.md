@@ -45,6 +45,7 @@ Owner: assign one named technical maintainer and one backup owner before launch.
 3. Record backup timestamp, target migration and operator in the release ticket.
 4. Run `npm run db:migrate` from a controlled CI job or operator machine.
 5. Verify the Drizzle migration journal and that `rate_limit_bucket` exists.
+   Run `npm run db:verify-rate-limit` against the target environment; it creates and removes one random probe row.
 6. Run `npm run test:auth`, build checks, `/api/health`, login and account smoke tests.
 7. If migration or deploy fails, roll back application deployment first. Restore the database only when the reviewed migration cannot coexist with the previous app version.
 
