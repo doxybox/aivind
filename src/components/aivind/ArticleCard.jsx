@@ -10,7 +10,6 @@ export default function ArticleCard({ article }) {
   const isTest = article.type === "test";
   const isSponsored = article.type === "sponsored";
   const isVideo = article.type === "video";
-  const isGuide = article.type === "guide";
 
   const linkedArticle = withArticleHref(article);
   const href = linkedArticle.href || "#";

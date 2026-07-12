@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    enforceRateLimit(req, res, {
+    await enforceRateLimit(req, res, {
       scope: "market-data:read",
       ipLimit: 60,
       windowMs: 15 * 60 * 1000,

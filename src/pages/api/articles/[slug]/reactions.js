@@ -95,7 +95,7 @@ export default async function handler(req, res) {
     }
 
     const actorKey = await getActor(req, res, { create: true });
-    enforceRateLimit(req, res, {
+    await enforceRateLimit(req, res, {
       scope: "article-reactions",
       userId: actorKey,
       userLimit: 30,

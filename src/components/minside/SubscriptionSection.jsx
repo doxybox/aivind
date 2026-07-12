@@ -16,7 +16,7 @@ export default function SubscriptionSection({ paymentStatus, upgradeOpen, onClos
       try {
         const data = await getSubscription();
         setSub(data.subscription);
-      } catch (e) {
+      } catch {
       } finally {
         setLoading(false);
       }
@@ -51,7 +51,7 @@ export default function SubscriptionSection({ paymentStatus, upgradeOpen, onClos
   const isActive = sub?.status === "active" && !isFree;
   const billingInterval = sub?.billing_period || "monthly";
 
-  const handleCheckout = async (plan, interval) => {
+  const handleCheckout = async (plan, _interval) => {
     if (plan.isContactRequired) {
       toast({
         title: "Kontakt oss",

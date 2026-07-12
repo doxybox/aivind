@@ -18,6 +18,7 @@ export async function sendAuthEmail({ to, subject, text, html }) {
     },
     body: JSON.stringify({
       from: process.env.EMAIL_FROM,
+      ...(process.env.EMAIL_REPLY_TO ? { reply_to: process.env.EMAIL_REPLY_TO } : {}),
       to,
       subject,
       text,
@@ -28,4 +29,6 @@ export async function sendAuthEmail({ to, subject, text, html }) {
   if (!response.ok) {
     throw new Error(`Email provider failed with ${response.status}`);
   }
+
+  return response.json();
 }

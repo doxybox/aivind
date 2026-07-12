@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    enforceRateLimit(req, res, {
+    await enforceRateLimit(req, res, {
       scope: "tips:create",
       ipLimit: 6,
       windowMs: 10 * 60 * 1000,

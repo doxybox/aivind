@@ -24,6 +24,7 @@
     "payload:verify-public-data": "node --import tsx scripts/verify-payload-public-data.js",
     "payload:verify-public-rendering": "node --import tsx scripts/verify-payload-public-rendering.js",
     "payload:seed-demo-content": "node --import tsx scripts/seed-payload-demo-content.js",
+    "smoke:production": "node scripts/production-smoke.js",
     "test:auth": "node --test tests/*.test.js",
     "preview": "next start"
   },

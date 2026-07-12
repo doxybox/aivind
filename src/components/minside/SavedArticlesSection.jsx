@@ -13,7 +13,7 @@ export default function SavedArticlesSection() {
       const data = await getSavedArticles();
       setArticles(data.articles || []);
       setLoadFailed(false);
-    } catch (e) {
+    } catch {
       setLoadFailed(true);
     } finally {
       setLoading(false);
@@ -28,7 +28,7 @@ export default function SavedArticlesSection() {
     try {
       await deleteSavedArticle(id);
       setArticles(articles.filter((article) => (article.saved_id || article.id) !== id));
-    } catch (e) {
+    } catch {
       setLoadFailed(true);
     }
   };

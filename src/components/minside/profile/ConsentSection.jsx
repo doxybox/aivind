@@ -2,7 +2,7 @@ import React from "react";
 import { Switch } from "@/components/ui/switch";
 import { Lock, Mail, Tag } from "lucide-react";
 
-export default function ConsentSection({ form, update, profile }) {
+export default function ConsentSection({ form, update }) {
   const termsDate = form.terms_accepted_at
     ? new Date(form.terms_accepted_at).toLocaleDateString("nb-NO")
     : null;

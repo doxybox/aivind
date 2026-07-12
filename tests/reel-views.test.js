@@ -33,7 +33,9 @@ test("reel views are stored as rate-limited app data without trusting user id", 
   assert.match(schema, /export const reelView = pgTable/);
   assert.match(schema, /reel_view_reel_slug_idx/);
   assert.match(api, /getCurrentUser/);
-  assert.match(api, /tekkno_reel_viewer/);
+  assert.match(api, /createHmac/);
+  assert.match(api, /REEL_ANALYTICS_SECRET/);
+  assert.doesNotMatch(api, /Set-Cookie/);
   assert.match(api, /enforceRateLimit/);
   assert.match(api, /from\(reels\)/);
   assert.match(api, /eq\(reels\.status, "published"\)/);

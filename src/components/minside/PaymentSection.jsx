@@ -12,7 +12,7 @@ export default function PaymentSection() {
       try {
         const data = await getPaymentHistory();
         setPayments(data.payments || []);
-      } catch (e) {} finally { setLoading(false); }
+      } catch {} finally { setLoading(false); }
     })();
   }, []);
 

@@ -163,6 +163,19 @@ export const reelView = pgTable(
   }),
 );
 
+export const rateLimitBucket = pgTable(
+  "rate_limit_bucket",
+  {
+    key: text("key").primaryKey(),
+    count: integer("count").notNull().default(0),
+    resetAt: timestamp("reset_at", { withTimezone: true }).notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    resetAtIdx: index("rate_limit_bucket_reset_at_idx").on(table.resetAt),
+  }),
+);
+
 export const newsletterPreference = pgTable(
   "newsletter_preference",
   {

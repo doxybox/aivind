@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    enforceRateLimit(req, res, {
+    await enforceRateLimit(req, res, {
       scope: "newsletter:subscribe",
       ipLimit: 8,
       windowMs: 15 * 60 * 1000,

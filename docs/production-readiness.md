@@ -24,6 +24,9 @@ For the cutover-day checklist, env matrix, backup/migration runbook and smoke-te
 - Premium body content is not serialized to unauthorized users.
 - `CONTENT_SOURCE=legacy` rollback build has been verified.
 - Security headers, API method checks, auth checks, and safe error responses are in place for the hardened routes reviewed so far.
+- API rate limiting uses shared Postgres state after migration `0009_chief_dark_beast.sql`; it is no longer process-local.
+- Database readiness is exposed through the secret-free `/api/health` endpoint.
+- Reel analytics is pseudonymous, has no dedicated viewer cookie, and is covered by a daily retention job.
 
 ## Parked
 
@@ -45,6 +48,8 @@ For the cutover-day checklist, env matrix, backup/migration runbook and smoke-te
 - Billing must either remain visibly parked or pass signed-off provider runtime QA.
 - Cloudflare media must either remain visibly parked or pass signed-off customer quota/runtime QA.
 - Monitoring/logging ownership must be clear for auth, payments, CMS, database, and public rendering errors.
+- Credentials previously exposed through chat, screenshots, terminals or logs must be revoked and replaced before launch.
+- Production email requires a verified sender plus end-to-end verification/reset testing.
 
 ## Required Env
 
@@ -57,6 +62,7 @@ Production/staging env should include these groups as applicable:
 - Payload: `PAYLOAD_SECRET`, `PAYLOAD_DATABASE_URL` if different from app DB, `PAYLOAD_PUBLIC_SERVER_URL`.
 - Supabase Postgres metadata/client compatibility: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; service keys only where server-side code explicitly requires them.
 - Email/social only if enabled: `RESEND_API_KEY`, `EMAIL_FROM`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`.
+- Operations/analytics: `REEL_ANALYTICS_SECRET`, `CRON_SECRET`, optional `REEL_VIEW_RETENTION_DAYS` and `EMAIL_REPLY_TO`.
 - Billing only if active: `BILLING_PROVIDER`, `BILLING_PUBLIC_ORIGIN`, provider-specific env such as Vipps credentials.
 - Cloudflare only if active: `CLOUDFLARE_MEDIA_ENABLED=true`, account id, image/stream tokens, image account hash, webhook secret.
 

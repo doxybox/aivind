@@ -68,7 +68,7 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     revokeSessionsOnPasswordReset: true,
     sendResetPassword: async ({ user, url }) => {
-      void sendAuthEmail({
+      await sendAuthEmail({
         to: user.email,
         subject: "Tilbakestill passordet ditt hos TEKKNO",
         text: `Trykk på lenken for å sette nytt passord: ${url}`,
@@ -81,7 +81,7 @@ export const auth = betterAuth({
     sendOnSignIn: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
-      void sendAuthEmail({
+      await sendAuthEmail({
         to: user.email,
         subject: "Bekreft e-posten din hos TEKKNO",
         text: `Trykk på lenken for å bekrefte e-posten din: ${url}`,

@@ -1,42 +1,25 @@
-import { randomUUID } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { and, count, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/client";
 import { reelView } from "@/db/schema";
 import { validateReelSlugs, validateReelViewInput } from "@/lib/reel-views";
 import { getCurrentUser } from "@/lib/server/auth-helpers";
-import { enforceRateLimit, RateLimitError } from "@/lib/server/rate-limit";
+import { enforceRateLimit, getClientIp, RateLimitError } from "@/lib/server/rate-limit";
 import { reels } from "@/payload-generated-schema";
 
-const ACTOR_COOKIE = "tekkno_reel_viewer";
-const ACTOR_COOKIE_MAX_AGE = 365 * 24 * 60 * 60;
-
-function getCookie(req, name) {
-  const cookieHeader = String(req.headers.cookie || "");
-  const pair = cookieHeader.split(";").map((part) => part.trim()).find((part) => part.startsWith(`${name}=`));
-  return pair ? decodeURIComponent(pair.slice(name.length + 1)) : "";
-}
-
-function validAnonymousActor(value) {
-  return /^[a-f0-9-]{36}$/.test(value) ? value : "";
-}
-
-function setActorCookie(res, actorId) {
-  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
-  res.setHeader(
-    "Set-Cookie",
-    `${ACTOR_COOKIE}=${encodeURIComponent(actorId)}; Path=/; Max-Age=${ACTOR_COOKIE_MAX_AGE}; HttpOnly; SameSite=Lax${secure}`,
-  );
-}
-
-async function getActor(req, res) {
+async function getActor(req) {
   const user = await getCurrentUser(req).catch(() => null);
   if (user?.id) return `user:${user.id}`;
 
-  const existing = validAnonymousActor(getCookie(req, ACTOR_COOKIE));
-  if (existing) return `anonymous:${existing}`;
+  const secret = process.env.REEL_ANALYTICS_SECRET || process.env.BETTER_AUTH_SECRET;
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new Error("Missing REEL_ANALYTICS_SECRET");
+  }
 
-  const actorId = randomUUID();
-  setActorCookie(res, actorId);
+  const fingerprint = `${getClientIp(req)}\n${String(req.headers["user-agent"] || "unknown")}`;
+  const actorId = createHmac("sha256", secret || "development-reel-analytics")
+    .update(fingerprint)
+    .digest("hex");
   return `anonymous:${actorId}`;
 }
 
@@ -81,8 +64,8 @@ export default async function handler(req, res) {
     }
 
     const { slug } = validateReelViewInput(req.body);
-    const actorKey = await getActor(req, res);
-    enforceRateLimit(req, res, {
+    const actorKey = await getActor(req);
+    await enforceRateLimit(req, res, {
       scope: "reel-views",
       userId: actorKey,
       userLimit: 30,

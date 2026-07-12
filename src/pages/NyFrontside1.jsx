@@ -31,19 +31,6 @@ const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href =
   </Link>
 );
 
-const MestLestItem = ({ index, title, views }) => (
-  <div className="flex items-start gap-4 py-3 group cursor-pointer">
-    <span className="text-[#ff6a00] font-bold text-lg">{index}</span>
-    <h4 className="text-zinc-800 dark:text-zinc-200 text-sm font-medium leading-snug flex-1 group-hover:text-black dark:group-hover:text-white transition-colors">
-      {title}
-    </h4>
-    <div className="flex items-center gap-1 text-xs text-red-500 font-medium whitespace-nowrap">
-      <TrendingUp className="w-3 h-3" />
-      {views}
-    </div>
-  </div>
-);
-
 const StockLogo = ({ stock }) => {
   const [failed, setFailed] = useState(false);
   const fallbackLabel = (stock.id || stock.name || "?").slice(0, 2).toUpperCase();

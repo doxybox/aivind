@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
   try {
     const { session } = await requireAnyRole(req, ["journalist", "editor", "admin"]);
-    enforceRateLimit(req, res, {
+    await enforceRateLimit(req, res, {
       scope: "cloudflare-images:image",
       userId: session.user.id,
       userLimit: 120,

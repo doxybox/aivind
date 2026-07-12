@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     const { session } = await requireAnyRole(req, ["journalist", "editor", "admin"]);
     phase = "validate";
     const input = validateStreamDirectUploadInput(req.body || {});
-    enforceRateLimit(req, res, {
+    await enforceRateLimit(req, res, {
       scope: "cloudflare-stream:direct-upload",
       userId: session.user.id,
       userLimit: 8,

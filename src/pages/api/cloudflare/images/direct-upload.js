@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     const { session } = await requireAnyRole(req, ["journalist", "editor", "admin"]);
     phase = "validate";
     const input = validateImageDirectUploadInput(req.body || {});
-    enforceRateLimit(req, res, {
+    await enforceRateLimit(req, res, {
       scope: "cloudflare-images:direct-upload",
       userId: session.user.id,
       userLimit: 12,

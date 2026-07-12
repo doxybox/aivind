@@ -64,6 +64,13 @@
       "when": 1783889717052,
       "tag": "0008_lying_colleen_wing",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1783891533754,
+      "tag": "0009_chief_dark_beast",
+      "breakpoints": true
     }
   ]
 }

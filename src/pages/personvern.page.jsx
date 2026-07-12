@@ -14,6 +14,10 @@ export default function PrivacyPage() {
         <p>Vi kan behandle kontoopplysninger som navn og e-post, innstillinger du lagrer, lagrede artikler, abonnementsstatus og tekniske opplysninger som er nødvendige for sikker drift.</p>
         <p>Når du melder deg på nyhetsbrevet, lagrer vi e-postadressen, tidspunktet for samtykket og hvor påmeldingen kom fra.</p>
       </InfoSection>
+      <InfoSection title="Reaksjoner og reel-visninger">
+        <p>Artikkelreaksjoner lagres med en pseudonym identifikator slik at samme nettleser kan huske reaksjonen. For reel-visninger lager serveren en enveishash av begrensede tekniske signaler, eller bruker konto-ID når du er innlogget. Rå IP-adresse lagres ikke i reel-tabellen, og reel-målingen setter ingen egen sporingscookie.</p>
+        <p>Disse opplysningene brukes til aggregert statistikk, misbruksvern og forbedring av innhold. Reel-visninger slettes etter den dokumenterte lagringsperioden gjennom det planlagte vedlikeholdsjobbet.</p>
+      </InfoSection>
       <InfoSection title="Formål og behandlingsgrunnlag">
         <p>Opplysninger brukes for å levere konto- og innholdstjenester, ivareta sikkerhet, svare på henvendelser og sende kommunikasjon du uttrykkelig har bedt om. Behandlingen bygger på avtale, samtykke, rettslig plikt eller vår berettigede interesse i trygg og stabil drift.</p>
       </InfoSection>

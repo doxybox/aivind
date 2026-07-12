@@ -15,17 +15,6 @@ const sections = [
   { id: "hjelp", label: "Kundeservice", icon: Headphones },
 ];
 
-function Logo({ size = "text-lg", iconSize = "w-7 h-7" }) {
-  return (
-    <Link href="/" className="flex items-center gap-2">
-      <div className={`${iconSize} bg-orange-500 rounded flex items-center justify-center`}>
-        <span className="text-white font-black text-sm leading-none">A</span>
-      </div>
-      <span className={`text-foreground font-extrabold ${size} tracking-[-0.04em]`}>TEKKNO</span>
-    </Link>
-  );
-}
-
 export default function DashboardSidebar({ activeSection, onSelect, onLogout }) {
   return (
     <>

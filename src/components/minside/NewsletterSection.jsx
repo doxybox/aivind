@@ -33,7 +33,7 @@ export default function NewsletterSection() {
         const preferences = await getNewsletterPreferences();
         setPrefs(preferences || DEFAULTS);
         setLoadFailed(false);
-      } catch (e) {
+      } catch {
         setPrefs(DEFAULTS);
         setLoadFailed(true);
       } finally {
@@ -52,7 +52,7 @@ export default function NewsletterSection() {
       setPrefs(updated);
       setLoadFailed(false);
       toast({ title: "Oppdatert", description: "Dine nyhetsbrevinnstillinger er lagret.", variant: "success" });
-    } catch (err) {
+    } catch {
       setPrefs(oldPrefs);
       toast({ title: "Feil", description: "Kunne ikke lagre innstillingen.", variant: "destructive" });
     }
