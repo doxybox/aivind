@@ -153,7 +153,7 @@ test("Payload mappers return legacy-safe frontend shapes", () => {
 
   assert.equal(mappedImage.imageUrl, "https://images.example/payload.jpg");
   assert.equal(mappedImage.imageAlt, "Payload image");
-  assert.match(fallbackImage.imageUrl, /images\.unsplash\.com/);
+  assert.equal(fallbackImage.imageUrl, "/images/placeholders/article-placeholder.svg");
 
   const mappedCategory = mapPayloadCategoryToLegacyCategory({
     id: 1,
@@ -416,6 +416,29 @@ test("frontend components and pages do not import the Base44 SDK client directly
   });
 
   assert.deepEqual(offenders.map((file) => path.relative(rootDir, file)), []);
+});
+
+test("active frontend and content fallbacks use owned image assets", () => {
+  const files = [
+    ...listFilesRecursive(path.join(rootDir, "src")),
+    ...listFilesRecursive(path.join(rootDir, "scripts")),
+  ].filter((file) => /\.(js|jsx|ts|tsx)$/.test(file));
+  const unstableHosts = /logo\.clearbit\.com|images\.unsplash\.com|media\.base44\.com|i\.pravatar\.cc/i;
+  const offenders = files.filter((file) => unstableHosts.test(readFileSync(file, "utf8")));
+
+  assert.deepEqual(offenders.map((file) => path.relative(rootDir, file)), []);
+  assert.equal(
+    existsSync(path.join(rootDir, "public/images/placeholders/article-placeholder.svg")),
+    true,
+  );
+  assert.equal(
+    existsSync(path.join(rootDir, "public/images/placeholders/avatar-placeholder.svg")),
+    true,
+  );
+  assert.equal(
+    existsSync(path.join(rootDir, "public/images/placeholders/account-background.svg")),
+    true,
+  );
 });
 
 test("Base44 compatibility shims are deprecated and hardened", () => {

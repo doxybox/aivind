@@ -155,7 +155,7 @@ export default function MinSide() {
     <div className="dark min-h-screen flex relative font-sans text-white w-full overflow-hidden">
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-60 fixed"
-        style={{ backgroundImage: 'url("https://media.base44.com/images/public/6a3a8c8ccc4b0ee9be9c4039/999594552_generated_image.png")' }}
+        style={{ backgroundImage: 'url("/images/placeholders/account-background.svg")' }}
       />
       <div className="absolute inset-0 z-0 bg-black/80 backdrop-blur-[60px] fixed" />
 

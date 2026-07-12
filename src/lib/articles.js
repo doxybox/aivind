@@ -1,22 +1,22 @@
-export const HERO_IMAGE = "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1400";
+export const HERO_IMAGE = "/images/placeholders/article-placeholder.svg";
 
 const imgs = {
-  ai1: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800",
-  ai2: "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&q=80&w=800",
-  gaming1: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&q=80&w=800",
-  gaming2: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800",
-  gaming3: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&q=80&w=800",
-  ev1: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800",
-  ev2: "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800",
-  ev3: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=800",
-  gadget1: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=800",
-  gadget2: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&q=80&w=800",
-  vr1: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?auto=format&fit=crop&q=80&w=800",
-  setup: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&q=80&w=800",
-  code: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=800",
-  space: "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?auto=format&fit=crop&q=80&w=800",
-  handheld: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&q=80&w=800",
-  car_interior: "https://images.unsplash.com/photo-1611016186353-9af58c69a533?auto=format&fit=crop&q=80&w=800"
+  ai1: "/images/placeholders/article-placeholder.svg",
+  ai2: "/images/placeholders/article-placeholder.svg",
+  gaming1: "/images/placeholders/article-placeholder.svg",
+  gaming2: "/images/placeholders/article-placeholder.svg",
+  gaming3: "/images/placeholders/article-placeholder.svg",
+  ev1: "/images/placeholders/article-placeholder.svg",
+  ev2: "/images/placeholders/article-placeholder.svg",
+  ev3: "/images/placeholders/article-placeholder.svg",
+  gadget1: "/images/placeholders/article-placeholder.svg",
+  gadget2: "/images/placeholders/article-placeholder.svg",
+  vr1: "/images/placeholders/article-placeholder.svg",
+  setup: "/images/placeholders/article-placeholder.svg",
+  code: "/images/placeholders/article-placeholder.svg",
+  space: "/images/placeholders/article-placeholder.svg",
+  handheld: "/images/placeholders/article-placeholder.svg",
+  car_interior: "/images/placeholders/article-placeholder.svg"
 };
 
 export const featuredArticles = [

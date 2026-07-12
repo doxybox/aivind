@@ -57,7 +57,7 @@ Current hardening on the shims:
 
 - `src/api/base44Client.js` remains isolated as a legacy SDK wrapper/fallback.
 - `@base44/sdk` remains in `package.json` for now because the cleanup is staged.
-- Some existing static background image URLs still point to `media.base44.com`.
+- Active account backgrounds no longer use `media.base44.com`; local owned placeholders replaced them on 2026-07-12.
 - `src/lib/app-params.js` still clears old Base44 local-storage keys.
 
 No active frontend component/page imports `@/api/base44Client` directly.

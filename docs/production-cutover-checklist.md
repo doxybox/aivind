@@ -279,18 +279,17 @@ Do not remove these during cutover:
 - `src/api/base44Client.js`
 - `/api/apps/[appId]/*` compatibility shims
 - disabled Base44 rewrite config
-- old static `media.base44.com` images
+- historical `media.base44.com` references in architecture and cleanup documentation
 - Ghost references in old migrations/history docs
 
 Post-launch cleanup order:
 
 1. Monitor production logs for `/api/apps/*` callers.
-2. Replace remaining `media.base44.com` images with owned assets.
-3. Confirm no active imports of `src/api/base44Client.js`.
-4. Remove compatibility shims after logs prove no callers remain.
-5. Remove `@base44/sdk`.
-6. Archive or update old Base44/Ghost docs.
-7. Run `npm run test:auth`, `npm run typecheck`, `npm run lint`, `npm run build`, `npm run payload-admin:build`.
+2. Confirm no active imports of `src/api/base44Client.js`.
+3. Remove compatibility shims after logs prove no callers remain.
+4. Remove `@base44/sdk`.
+5. Archive or update old Base44/Ghost docs.
+6. Run `npm run test:auth`, `npm run typecheck`, `npm run lint`, `npm run build`, `npm run payload-admin:build`.
 
 ## Required Checks Before Cutover Sign-Off
 

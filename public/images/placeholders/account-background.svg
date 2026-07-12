@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" role="img" aria-labelledby="title description">
+  <title id="title">Tekkno kontobakgrunn</title>
+  <desc id="description">Lokal diskret bakgrunn for kontosidene.</desc>
+  <defs>
+    <pattern id="lines" width="96" height="96" patternUnits="userSpaceOnUse">
+      <path d="M0 96 96 0M48 144 144 48M-48 48 48-48" stroke="#252b33" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="1080" fill="#0c1015"/>
+  <rect width="1920" height="1080" fill="url(#lines)" opacity="0.55"/>
+  <path d="M1450 0 980 1080" stroke="#ff6a00" stroke-width="12" opacity="0.24"/>
+  <path d="M1580 0 1110 1080" stroke="#ff6a00" stroke-width="3" opacity="0.18"/>
+</svg>

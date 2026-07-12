@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title description">
+  <title id="title">Profilbilde</title>
+  <desc id="description">Noytralt lokalt profilbilde.</desc>
+  <rect width="256" height="256" fill="#171b21"/>
+  <circle cx="128" cy="92" r="48" fill="#68717d"/>
+  <path d="M42 238c8-55 38-86 86-86s78 31 86 86" fill="#68717d"/>
+  <circle cx="128" cy="128" r="120" fill="none" stroke="#ff6a00" stroke-width="8"/>
+</svg>

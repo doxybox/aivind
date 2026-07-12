@@ -170,29 +170,29 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
     };
   };
   const topHero = payloadCard(0, {
-    image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?q=80&w=2070",
+    image: "/images/placeholders/article-placeholder.svg",
     tag: "Tester",
     title: "Neste generasjon VR er her",
     subtitle: "Skarpere, lettere og mer virkelighetsnaert enn noen gang.",
   });
   const topSideCards = [
-    payloadCard(1, { image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070", tag: "Gaming", title: "Elden-ring moter Skyrim i nytt episk action-RPG", reactions: 56 }),
-    payloadCard(2, { image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2025", tag: "Video", title: "Regissoren hinter om Matrix 5", reactions: 31 }),
+    payloadCard(1, { image: "/images/placeholders/article-placeholder.svg", tag: "Gaming", title: "Elden-ring moter Skyrim i nytt episk action-RPG", reactions: 56 }),
+    payloadCard(2, { image: "/images/placeholders/article-placeholder.svg", tag: "Video", title: "Regissoren hinter om Matrix 5", reactions: 31 }),
   ];
   const middleCards = [
-    payloadCard(3, { image: "https://images.unsplash.com/photo-1598327105666-5b89351cb31b?q=80&w=2000", tag: "Gadgets", title: "Nye flagship-telefoner" }),
-    payloadCard(4, { image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2071", tag: "Elbil", title: "Ny elbil med 700 km rekkevidde" }),
-    payloadCard(5, { image: "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=2070", tag: "Guider", title: "Smarte hjem som faktisk fungerer" }),
+    payloadCard(3, { image: "/images/placeholders/article-placeholder.svg", tag: "Gadgets", title: "Nye flagship-telefoner" }),
+    payloadCard(4, { image: "/images/placeholders/article-placeholder.svg", tag: "Elbil", title: "Ny elbil med 700 km rekkevidde" }),
+    payloadCard(5, { image: "/images/placeholders/article-placeholder.svg", tag: "Guider", title: "Smarte hjem som faktisk fungerer" }),
   ];
   const bottomFeature = payloadCard(6, {
-    image: "https://images.unsplash.com/photo-1616530940355-351fabd9524b?q=80&w=2070",
+    image: "/images/placeholders/article-placeholder.svg",
     tag: "Video",
     title: "Streamingkrigen tilspisser seg",
     subtitle: "Nye priser og storre tap.",
   });
   const bottomSideCards = [
-    payloadCard(7, { image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000", tag: "AI", title: "Ny AI-brikke kan endre datakraft", reactions: 18 }),
-    payloadCard(8, { image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=2072", tag: "Tester", title: "Test: De beste treningsklokkene", reactions: 24 }),
+    payloadCard(7, { image: "/images/placeholders/article-placeholder.svg", tag: "AI", title: "Ny AI-brikke kan endre datakraft", reactions: 18 }),
+    payloadCard(8, { image: "/images/placeholders/article-placeholder.svg", tag: "Tester", title: "Test: De beste treningsklokkene", reactions: 24 }),
   ];
 
   return (
@@ -381,25 +381,25 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Gaming"
             title="Slik bygger du den ultimate gaming-PCen"
           />
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Guider"
             title="Passord er snart historie – slik fungerer passkeys"
           />
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=2074"
+            image="/images/placeholders/article-placeholder.svg"
             tag="AI"
             title="TikToks nye algoritme endrer alt for innholdsskapere"
           />
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Gadgets"
             title="Derfor kjøper alle gamle digitalkameraer igjen"
           />
@@ -409,19 +409,19 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <GridCard 
             className="min-h-[280px]"
-            image="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Guider"
             title="De mest etterspurte programmeringsspråkene i år"
           />
           <GridCard 
             className="min-h-[280px]"
-            image="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Tester"
             title="Vi har testet de nye støyreduserende hodetelefonene"
           />
           <GridCard 
             className="min-h-[280px]"
-            image="https://images.unsplash.com/photo-1478432780021-b8d273730d8c?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Gadgets"
             title="Alt vi vet om den neste store Windows-oppdateringen"
           />
@@ -431,25 +431,25 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1614624532983-4ce03382d63d?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="AI"
             title="Slik bruker du AI for å effektivisere hverdagen"
           />
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Gaming"
             title="Nye spillutgivelser du ikke kan gå glipp av"
           />
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1512756290469-ec264b7fbf87?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Guider"
             title="Webutvikling i 2024: Hva er nytt?"
           />
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015"
+            image="/images/placeholders/article-placeholder.svg"
             tag="AI"
             title="Big Data: Hvordan selskaper bruker informasjonen din"
           />
@@ -459,19 +459,19 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <GridCard 
             className="min-h-[280px]"
-            image="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Guider"
             title="VPN-tjenester: Trenger du det egentlig i 2024?"
           />
           <GridCard 
             className="min-h-[280px]"
-            image="https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Gadgets"
             title="Apple Vision Pro vs Meta Quest 3"
           />
           <GridCard 
             className="min-h-[280px]"
-            image="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="AI"
             title="Når tar robotene over husarbeidet?"
           />
@@ -497,25 +497,25 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Guider"
             title="Fremtiden for lagring: Hva betyr det for deg?"
           />
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="AI"
             title="Slik fungerer kvantedatamaskiner"
           />
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=2000"
+            image="/images/placeholders/article-placeholder.svg"
             tag="AI"
             title="Trenger vi webdesignere når vi har AI?"
           />
           <GridCard 
             className="min-h-[240px]"
-            image="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?q=80&w=2000"
+            image="/images/placeholders/article-placeholder.svg"
             tag="AI"
             title="Dette er fremtidens jobbmarked"
           />
@@ -525,19 +525,19 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <GridCard 
             className="min-h-[280px]"
-            image="https://images.unsplash.com/photo-1531297172868-245842dd5027?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="AI"
             title="Hvordan startups overlever i 2024"
           />
           <GridCard 
             className="min-h-[280px]"
-            image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="AI"
             title="Dette må du vite om data science"
           />
           <GridCard 
             className="min-h-[280px]"
-            image="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070"
+            image="/images/placeholders/article-placeholder.svg"
             tag="Gadgets"
             title="De beste dingsene for et smartere hjem"
           />

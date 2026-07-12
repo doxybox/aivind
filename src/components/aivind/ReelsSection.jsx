@@ -3,12 +3,12 @@ import { Play } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const defaultReels = [
-  { id: 1, title: "DJI Osmo Pocket 3 - verdt oppgraderingen?", views: "1,2k", duration: "0:32", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=700&q=85" },
-  { id: 2, title: "Zeekr X testet i Norge - liten, rask og premium", views: "987", duration: "0:29", image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=700&q=85" },
-  { id: 3, title: "AirPods Pro 2 - tips du kanskje ikke visste", views: "2,1k", duration: "0:25", image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=700&q=85" },
-  { id: 4, title: "ASUS ROG Zephyrus G14 - kraftpakke i 14 tommer", views: "1,5k", duration: "0:31", image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=700&q=85" },
-  { id: 5, title: "ChatGPT-appen far stemme og bilder", views: "1,7k", duration: "0:28", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=700&q=85" },
-  { id: 6, title: "Tesla Model 3 Highland - alt du ma vite", views: "3,4k", duration: "0:45", image: "https://images.unsplash.com/photo-1611016186353-9af58c69a533?w=700&q=85" },
+  { id: 1, title: "DJI Osmo Pocket 3 - verdt oppgraderingen?", views: "1,2k", duration: "0:32", image: "/images/placeholders/article-placeholder.svg" },
+  { id: 2, title: "Zeekr X testet i Norge - liten, rask og premium", views: "987", duration: "0:29", image: "/images/placeholders/article-placeholder.svg" },
+  { id: 3, title: "AirPods Pro 2 - tips du kanskje ikke visste", views: "2,1k", duration: "0:25", image: "/images/placeholders/article-placeholder.svg" },
+  { id: 4, title: "ASUS ROG Zephyrus G14 - kraftpakke i 14 tommer", views: "1,5k", duration: "0:31", image: "/images/placeholders/article-placeholder.svg" },
+  { id: 5, title: "ChatGPT-appen far stemme og bilder", views: "1,7k", duration: "0:28", image: "/images/placeholders/article-placeholder.svg" },
+  { id: 6, title: "Tesla Model 3 Highland - alt du ma vite", views: "3,4k", duration: "0:45", image: "/images/placeholders/article-placeholder.svg" },
 ];
 
 export default function ReelsSection({ items = defaultReels }) {

@@ -115,6 +115,66 @@ Acceptance criteria:
 - Frontpage slot controls the top/hero placement.
 - Missing image/author/category does not crash the frontend.
 
+## Editorial QA Run Sheet
+
+Use this checklist with real editorial records. Seeded `[DEMO]` records do not count toward production approval.
+
+Payload Admin setup:
+
+- [ ] Create the real AI category and confirm its public route is `/ai`.
+- [ ] Create the real Gaming category and confirm its public route is `/gaming`.
+- [ ] Create at least one additional category.
+- [ ] Create real named authors with appropriate biography and profile data.
+- [ ] Upload or select owned media when the media provider is enabled; otherwise verify the local fallback image.
+- [ ] Create and publish one public article.
+- [ ] Create and publish one members article.
+- [ ] Create and publish one premium article.
+- [ ] Create one draft article.
+- [ ] Create one future/scheduled article if scheduling is supported in the staging workflow.
+- [ ] Create or update active frontpage slots, including the hero placement.
+- [ ] Verify SEO title, description, canonical slug and social image for each approval article.
+
+Public staging:
+
+- [ ] `/` displays the intended hero and frontpage slots.
+- [ ] `/nyfrontside1` renders without layout or image failures.
+- [ ] `/ai` contains only the expected AI articles.
+- [ ] `/gaming` contains only the expected Gaming articles.
+- [ ] `/artikler/<public-slug>` displays the full public body.
+- [ ] `/artikler/<members-slug>` hides the body while logged out and opens after login.
+- [ ] `/artikler/<premium-slug>` hides the body without entitlement and opens for an entitled or staff user.
+- [ ] Draft, future and unknown article slugs return 404.
+- [ ] Members and premium bodies are absent from logged-out HTML/source.
+- [ ] Frontpage slot changes appear in the expected existing layout.
+- [ ] All images load from owned media or local fallback paths.
+- [ ] Browser console has no resource, hydration or application errors.
+
+Account and auth:
+
+- [ ] Register a staging reader account.
+- [ ] Log in, log out and return to the expected route.
+- [ ] `/min-side` is blocked while logged out and shows the user's real data while logged in.
+- [ ] Saving and removing an article persists correctly.
+- [ ] Newsletter preferences load and persist correctly.
+- [ ] Password reset works only when the staging email provider is configured.
+- [ ] Email verification works only when the staging email provider is configured.
+
+Staff and admin:
+
+- [ ] Payload Admin login succeeds for a named admin/editor account.
+- [ ] The editor can create, edit and publish an article.
+- [ ] The editor can update a frontpage slot.
+- [ ] A staff user can open `/redaksjon/media` when media is enabled.
+- [ ] A regular user receives 403 or an equivalent blocked state for `/redaksjon/media`.
+- [ ] A logged-out user is redirected or receives 401 for `/redaksjon/media`.
+
+Image policy for staging:
+
+- Local placeholders under `/images/placeholders/` are the safe fallback when an article has no owned media.
+- Production-critical UI must not depend on Clearbit, Unsplash, Pravatar or Base44-hosted images.
+- Existing native `<img>` lint recommendations are accepted for staging. Migrating selected hero and article surfaces to `next/image` is a separate visual-performance task.
+- Review every remote domain before adding it to a future `next/image` configuration.
+
 ## Staging Browser QA Routes
 
 Test:
@@ -165,6 +225,13 @@ After changing it:
 6. Confirm Payload Admin can remain online; rollback only affects public content source.
 
 Do not delete Payload content during rollback.
+
+Rollback verification:
+
+- [ ] Set staging `CONTENT_SOURCE=legacy` without changing production.
+- [ ] Redeploy the public staging project.
+- [ ] Verify `/`, `/nyfrontside1`, `/ai`, one legacy article, `/login` and `/min-side`.
+- [ ] Set staging back to `CONTENT_SOURCE=payload` and redeploy after the rollback exercise.
 
 ## Before Production Default
 

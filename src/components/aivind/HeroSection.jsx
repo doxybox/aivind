@@ -39,7 +39,7 @@ export default function HeroSection({ heroImage, articles = [] }) {
                   {/* Author and metadata */}
                   <div className="flex items-center gap-3 text-[13px] text-gray-400 font-medium flex-wrap">
                     <div className="flex items-center gap-2">
-                      <img src="https://i.pravatar.cc/150?u=martin" alt="Martin Berg" className="w-6 h-6 rounded-full object-cover" />
+                      <img src="/images/placeholders/avatar-placeholder.svg" alt="Martin Berg" className="w-6 h-6 rounded-full object-cover" />
                       <span className="text-gray-200">Martin Berg</span>
                     </div>
                     <span className="text-gray-600">•</span>

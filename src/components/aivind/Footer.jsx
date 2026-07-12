@@ -107,9 +107,9 @@ export default function Footer() {
             {/* Social Proof */}
             <div className="flex items-center gap-3 mt-auto">
               <div className="flex -space-x-2">
-                <img src="https://i.pravatar.cc/100?img=33" alt="User" className="w-7 h-7 rounded-full border-2 border-background object-cover" />
-                <img src="https://i.pravatar.cc/100?img=11" alt="User" className="w-7 h-7 rounded-full border-2 border-background object-cover" />
-                <img src="https://i.pravatar.cc/100?img=12" alt="User" className="w-7 h-7 rounded-full border-2 border-background object-cover" />
+                <img src="/images/placeholders/avatar-placeholder.svg" alt="User" className="w-7 h-7 rounded-full border-2 border-background object-cover" />
+                <img src="/images/placeholders/avatar-placeholder.svg" alt="User" className="w-7 h-7 rounded-full border-2 border-background object-cover" />
+                <img src="/images/placeholders/avatar-placeholder.svg" alt="User" className="w-7 h-7 rounded-full border-2 border-background object-cover" />
               </div>
               <p className="text-[11px] text-muted-foreground leading-snug">
                 <span className="text-foreground font-medium">10 000+ lesere</span> får ukentlige<br/>oppdateringer fra AIVIND

@@ -94,16 +94,15 @@ Known legacy remnants:
 - `src/api/base44Client.js` remains as an isolated legacy wrapper/fallback and should not be imported by active flows.
 - `/api/apps/[appId]/*` compatibility shims remain to avoid old runtime calls becoming noisy 404s. They must not grant auth, subscription, entitlement, payment, or private data access.
 - `next.config.js` still contains a Base44 rewrite path, disabled unless `ALLOW_BASE44_API_REWRITE=true` and not production.
-- Some old static images still point to `media.base44.com`. Treat as static asset debt, not backend dependency.
+- Active static image fallbacks are local owned assets. Historical docs may still mention `media.base44.com`, but public UI no longer loads it.
 - Ghost references remain in old migrations/docs and compatibility history. Active Payload collections are `articles`, `categories`, `authors`, `media-assets`, `frontpage-slots`, `reels`, `tip-submissions`, and `ad-campaigns`.
 
 Recommended cleanup order after production-critical QA:
 
-1. Replace remaining `media.base44.com` static images.
-2. Confirm no active imports of `src/api/base44Client.js`.
-3. Remove `/api/apps/*` shims after runtime logs prove no callers remain.
-4. Remove `@base44/sdk`.
-5. Archive or rewrite old Base44/Ghost docs once architecture is stable.
+1. Confirm no active imports of `src/api/base44Client.js`.
+2. Remove `/api/apps/*` shims after runtime logs prove no callers remain.
+3. Remove `@base44/sdk`.
+4. Archive or rewrite old Base44/Ghost docs once architecture is stable.
 
 ## UI Truthfulness
 
