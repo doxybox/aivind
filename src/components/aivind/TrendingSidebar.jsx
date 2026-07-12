@@ -1,6 +1,7 @@
 import React from "react";
-import { TrendingUp, ChevronRight, MessageSquare, Clock } from "lucide-react";
+import { TrendingUp, ChevronRight, Clock } from "lucide-react";
 import { trendingArticles } from "@/lib/articles";
+import ArticleReactions from "./ArticleReactions";
 
 export default function TrendingSidebar() {
   return (
@@ -37,12 +38,7 @@ export default function TrendingSidebar() {
                       {item.readTime}
                     </span>
                    )}
-                   {item.comments !== undefined && (
-                    <span className="flex items-center gap-1">
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      {item.comments}
-                    </span>
-                   )}
+                   <ArticleReactions article={item} className="mt-0" />
                 </div>
               </div>
             </div>

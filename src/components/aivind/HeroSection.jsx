@@ -1,6 +1,7 @@
 import React from "react";
-import { MessageSquare, Clock } from "lucide-react";
+import { Clock } from "lucide-react";
 import HeroArticleCard from "./HeroArticleCard";
+import ArticleReactions from "./ArticleReactions";
 
 export default function HeroSection({ heroImage, articles = [] }) {
   return (
@@ -49,12 +50,8 @@ export default function HeroSection({ heroImage, articles = [] }) {
                       <Clock className="w-4 h-4" />
                       <span>4 min lesetid</span>
                     </div>
-                    <span className="text-gray-600">•</span>
-                    <div className="flex items-center gap-1.5 hover:text-orange-500 transition-colors">
-                      <MessageSquare className="w-4 h-4" />
-                      <span>142 kommentarer</span>
-                    </div>
                   </div>
+                  <ArticleReactions count={142} className="mt-3" />
                 </div>
               </div>
             </div>

@@ -10,8 +10,9 @@ import { fallbackMarketData } from "@/lib/market-data-fallback";
 import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
+import ArticleReactions from "@/components/aivind/ArticleReactions";
 
-const GridCard = ({ image, tag, title, subtitle, href = "#", className, titleClass = "text-xl md:text-2xl", tagClass = "text-[#ff6a00] bg-[#161a22]/80 backdrop-blur-sm border border-white/5", hasEmojis = false, reactions = 0 }) => (
+const GridCard = ({ image, tag, type, title, subtitle, href = "#", className, titleClass = "text-xl md:text-2xl", tagClass = "text-[#ff6a00] bg-[#161a22]/80 backdrop-blur-sm border border-white/5", reactions = 0 }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
     <div 
       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
@@ -35,14 +36,7 @@ const GridCard = ({ image, tag, title, subtitle, href = "#", className, titleCla
         </p>
       )}
       
-      {hasEmojis && (
-        <div className="flex items-center gap-1.5 mt-3 text-xs text-zinc-400 font-medium">
-          <span className="text-sm">😲</span>
-          <span className="text-sm -ml-1.5">😂</span>
-          <span className="text-sm -ml-1.5">😍</span>
-          <span className="ml-1 text-[#ff6a00]">{reactions}</span>
-        </div>
-      )}
+      <ArticleReactions article={{ tag, type }} count={reactions} className="mt-3" />
     </div>
   </Link>
 );
@@ -166,6 +160,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
       title: article.title || fallback.title,
       subtitle: article.excerpt || fallback.subtitle,
       href: article.href || fallback.href || "#",
+      type: article.type || fallback.type,
       reactions: article.comments ?? fallback.reactions ?? 0,
     };
   };
@@ -177,7 +172,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
   });
   const topSideCards = [
     payloadCard(1, { image: "/images/placeholders/article-placeholder.svg", tag: "Gaming", title: "Elden-ring moter Skyrim i nytt episk action-RPG", reactions: 56 }),
-    payloadCard(2, { image: "/images/placeholders/article-placeholder.svg", tag: "Video", title: "Regissoren hinter om Matrix 5", reactions: 31 }),
+    payloadCard(2, { image: "/images/placeholders/article-placeholder.svg", tag: "Video", type: "video", title: "Regissoren hinter om Matrix 5", reactions: 31 }),
   ];
   const middleCards = [
     payloadCard(3, { image: "/images/placeholders/article-placeholder.svg", tag: "Gadgets", title: "Nye flagship-telefoner" }),
@@ -273,11 +268,11 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                 className="flex-1 min-h-[240px]"
                 image={card.image}
                 tag={card.tag}
+                type={card.type}
                 title={card.title}
                 subtitle={card.subtitle}
                 href={card.href}
                 titleClass="text-xl md:text-2xl"
-                hasEmojis={true}
                 reactions={card.reactions}
               />
             ))}
@@ -292,6 +287,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
               className="min-h-[280px]"
               image={card.image}
               tag={card.tag}
+              type={card.type}
               title={card.title}
               subtitle={card.subtitle}
               href={card.href}
@@ -305,6 +301,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
             className="lg:col-span-2 min-h-[380px]"
             image={bottomFeature.image}
             tag={bottomFeature.tag}
+            type={bottomFeature.type}
             title={bottomFeature.title}
             titleClass="text-2xl md:text-4xl lg:text-[40px] font-black tracking-tight"
             subtitle={bottomFeature.subtitle}
@@ -317,11 +314,11 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                 className="flex-1 min-h-[180px]"
                 image={card.image}
                 tag={card.tag}
+                type={card.type}
                 title={card.title}
                 subtitle={card.subtitle}
                 href={card.href}
                 titleClass="text-lg md:text-xl"
-                hasEmojis={true}
                 reactions={card.reactions}
               />
             ))}
@@ -350,10 +347,10 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
                   className="min-h-[240px]"
                   image={article.image}
                   tag={article.category}
+                  type={article.type}
                   title={article.title}
                   subtitle={article.excerpt}
                   href={article.href}
-                  hasEmojis
                   reactions={article.comments || 0}
                 />
               ))}

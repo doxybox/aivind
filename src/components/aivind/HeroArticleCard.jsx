@@ -1,7 +1,8 @@
 import React from "react";
 import Link from "next/link";
-import { MessageSquare, PlayCircle } from "lucide-react";
+import { PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
+import ArticleReactions from "./ArticleReactions";
 
 export default function HeroArticleCard({ article }) {
   const isVideo = article.type === "video";
@@ -52,12 +53,7 @@ export default function HeroArticleCard({ article }) {
             <span className="w-1 h-1 rounded-full bg-border" />
             <span>{article.time || "Nylig"}</span>
           </div>
-          {article.comments !== undefined && !isSponsored && (
-             <div className="flex items-center gap-1.5 hover:text-orange-500 transition-colors">
-               <MessageSquare className="w-3.5 h-3.5" />
-               <span>{article.comments}</span>
-             </div>
-          )}
+          {!isSponsored && <ArticleReactions article={article} className="mt-0" />}
         </div>
       </div>
     </Link>

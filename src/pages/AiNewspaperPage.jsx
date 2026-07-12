@@ -7,6 +7,7 @@ import SearchOverlay from "@/components/aivind/SearchOverlay";
 import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
+import ArticleReactions from "@/components/aivind/ArticleReactions";
 import { allArticles } from "@/lib/articles";
 
 const defaultCategoryConfig = {
@@ -273,19 +274,6 @@ function Badge({ children }) {
   );
 }
 
-function ReactionRow({ count }) {
-  if (!count) return null;
-
-  return (
-    <div className="flex items-center gap-1.5 mt-3 text-xs text-zinc-400 font-medium">
-      <span className="text-sm">😲</span>
-      <span className="-ml-1.5 text-sm">😂</span>
-      <span className="-ml-1.5 text-sm">😍</span>
-      <span className="ml-1 text-[#ff6a00]">{count}</span>
-    </div>
-  );
-}
-
 function normalizeAiStory(story = {}, fallbackTag = "AI") {
   return {
     ...story,
@@ -319,7 +307,7 @@ function ArticleCard({ story, large = false, className = "" }) {
           {story.title}
         </h2>
         {story.excerpt && <p className="text-white/90 text-sm mt-3 line-clamp-2 leading-relaxed">{story.excerpt}</p>}
-        <ReactionRow count={story.reactions} />
+        <ArticleReactions article={story} count={story.reactions} className="mt-3" />
       </div>
     </>
   );
@@ -349,7 +337,7 @@ function SmallArticle({ story }) {
         <Badge>{story.tag}</Badge>
         <h3 className="mt-3 text-[17px] md:text-[18px] font-bold text-white leading-[1.18] line-clamp-2">{story.title}</h3>
         {story.excerpt && <p className="text-white/85 text-[12.5px] mt-2.5 line-clamp-2 leading-[1.55]">{story.excerpt}</p>}
-        <ReactionRow count={story.reactions} />
+        <ArticleReactions article={story} count={story.reactions} className="mt-3" />
       </div>
     </>
   );

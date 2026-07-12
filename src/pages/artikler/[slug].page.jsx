@@ -6,6 +6,7 @@ import { Lock, Menu, Moon, Search, X } from "lucide-react";
 import { GiFlashGrenade } from "react-icons/gi";
 import { useTheme } from "@/hooks/useTheme";
 import Footer from "@/components/aivind/Footer";
+import ArticleReactions from "@/components/aivind/ArticleReactions";
 import SearchOverlay from "@/components/aivind/SearchOverlay";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import { getLegacyArticleBySlug, getLegacyArticles } from "@/lib/legacy-article-data";
@@ -163,6 +164,8 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
             {publishedLabel && <><span className="w-1 h-1 rounded-full bg-[#ff6a00]" /><span>{publishedLabel}</span></>}
             {article.readTime && <><span className="w-1 h-1 rounded-full bg-[#ff6a00]" /><span>{article.readTime}</span></>}
           </div>
+
+          <ArticleReactions article={article} className="-mt-5 mb-8" />
 
           {article.heroImage && (
             <figure className="mb-8 rounded-xl overflow-hidden border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-[#1e232e]">

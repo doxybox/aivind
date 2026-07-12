@@ -1,7 +1,8 @@
 import React from "react";
 import Link from "next/link";
-import { MessageSquare, Clock, ExternalLink, PlayCircle } from "lucide-react";
+import { Clock, ExternalLink, PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
+import ArticleReactions from "./ArticleReactions";
 
 export default function ArticleCard({ article }) {
   if (!article) return null;
@@ -88,14 +89,9 @@ export default function ArticleCard({ article }) {
                     {article.readTime}
                   </span>
                 )}
-                {!isSponsored && (
-                  <span className="flex items-center gap-0.5 sm:gap-1 hover:text-orange-500 transition-colors whitespace-nowrap">
-                    <MessageSquare className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                    {article.comments || Math.floor(Math.random() * 40) + 5}
-                  </span>
-                )}
             </div>
           </div>
+          <ArticleReactions article={article} />
         </div>
       </div>
     </Link>
