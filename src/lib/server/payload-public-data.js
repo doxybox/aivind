@@ -184,18 +184,20 @@ export function mapPayloadArticleToPageData(article = {}, { canReadFullBody = fa
   };
 }
 
-function mapPayloadReelToLegacyReel(reel = {}) {
-  const media = mapPayloadMediaToImage(reel.mediaAsset);
+export function mapPayloadReelToLegacyReel(reel = {}) {
+  const mediaAsset = getRelationshipDoc(reel.mediaAsset) || {};
+  const media = mapPayloadMediaToImage(mediaAsset);
   return {
     id: reel.id || reel.slug || "",
     title: reel.title || "Uten tittel",
     slug: reel.slug || "",
     description: reel.description || "",
-    duration: reel.mediaAsset?.duration ? `${Math.round(reel.mediaAsset.duration)}s` : "0:30",
+    duration: mediaAsset.duration ? `${Math.round(mediaAsset.duration)}s` : "0:30",
     views: "0",
-    image: media.imageUrl,
+    image: mediaAsset.thumbnailUrl || media.imageUrl,
     imageAlt: media.imageAlt || reel.title || "",
-    cloudflareStreamUid: reel.cloudflareStreamUid || reel.mediaAsset?.cloudflareStreamUid || "",
+    videoUrl: mediaAsset.deliveryUrl || "",
+    cloudflareStreamUid: reel.cloudflareStreamUid || mediaAsset.cloudflareStreamUid || "",
   };
 }
 

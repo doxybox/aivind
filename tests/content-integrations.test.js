@@ -10,7 +10,9 @@ import {
   mapPayloadCategoryToLegacyCategory,
   mapPayloadFrontpageSlotToLegacyItem,
   mapPayloadMediaToImage,
+  mapPayloadReelToLegacyReel,
 } from "../src/lib/server/payload-public-data.js";
+import { getCloudflareReelEmbedUrl, getDirectReelVideoUrl } from "../src/lib/reel-playback.js";
 import { cleanInternalRedirectPath } from "../src/lib/safe-redirect.js";
 import { collections } from "../src/payload/collections/index.js";
 
@@ -184,6 +186,34 @@ test("Payload mappers return legacy-safe frontend shapes", () => {
   assert.equal(mappedArticle.category, "AI");
   assert.equal(mappedArticle.author, "Redaksjonen");
   assert.equal(mappedArticle.image, "https://images.example/hero.jpg");
+});
+
+test("Payload reels expose a playable Stream source and use the video thumbnail", () => {
+  const mappedReel = mapPayloadReelToLegacyReel({
+    id: 9,
+    title: "Reel fra Payload",
+    cloudflareStreamUid: "stream-video-123",
+    mediaAsset: {
+      deliveryUrl: "https://videodelivery.example/manifest/video.m3u8",
+      thumbnailUrl: "https://videodelivery.example/thumbnail.jpg",
+      duration: 31,
+    },
+  });
+
+  assert.equal(mappedReel.image, "https://videodelivery.example/thumbnail.jpg");
+  assert.equal(mappedReel.videoUrl, "https://videodelivery.example/manifest/video.m3u8");
+  assert.equal(mappedReel.cloudflareStreamUid, "stream-video-123");
+  assert.equal(getCloudflareReelEmbedUrl(mappedReel), "https://iframe.videodelivery.net/stream-video-123?autoplay=true");
+});
+
+test("reel playback accepts direct video files but rejects unsafe and HLS fallback URLs", () => {
+  assert.equal(getCloudflareReelEmbedUrl(null), "");
+  assert.equal(getDirectReelVideoUrl(null), "");
+  assert.equal(getDirectReelVideoUrl({ videoUrl: "/video/reel.webm" }), "/video/reel.webm");
+  assert.equal(getDirectReelVideoUrl({ videoUrl: "https://cdn.example/reel.mp4?token=public" }), "https://cdn.example/reel.mp4?token=public");
+  assert.equal(getDirectReelVideoUrl({ videoUrl: "https://cdn.example/manifest.m3u8" }), "");
+  assert.equal(getDirectReelVideoUrl({ videoUrl: "javascript:alert(1).mp4" }), "");
+  assert.equal(getCloudflareReelEmbedUrl({ cloudflareStreamUid: "../unsafe" }), "");
 });
 
 test("Payload article page mapper hides restricted body without server entitlement", () => {
