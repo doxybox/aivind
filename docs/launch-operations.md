@@ -11,6 +11,8 @@ This runbook covers the operational work that remains before TEKKNO can be treat
 - Rate limiting is shared through Postgres after migration `0009_chief_dark_beast.sql`.
 - Reel analytics uses a server-side HMAC pseudonym and does not set a dedicated viewer cookie.
 - `/api/health` checks database readiness without returning secrets.
+- The public staging Vercel project uses `CONTENT_SOURCE=payload`; rollback remains `CONTENT_SOURCE=legacy`.
+- Payload uses `PAYLOAD_DATABASE_URL` ahead of the general app connection and has an independently configurable pool through `PAYLOAD_DATABASE_POOL_MAX`.
 
 ## P0 Manual Actions
 
@@ -20,7 +22,10 @@ These actions cannot be completed safely from source code alone:
 2. Enable Resend only after `tekkno.no` is verified and a production sender is approved. Set `RESEND_API_KEY`, `EMAIL_FROM` and optionally `EMAIL_REPLY_TO`, then test verification and password reset end to end.
 3. Assign named owners for Supabase backup/restore, migrations, Vercel incidents, Payload Admin access and security response.
 4. Create real editorial content and complete editorial staging QA. Demo content cannot approve production.
+   Run `npm run payload:audit-editorial-content -- --strict` against the target environment to verify the database minimum without printing article content.
 5. Decide explicitly whether Vipps and Cloudflare are parked or active at launch. An active decision requires provider-specific runtime QA.
+
+Current editorial inventory on 13 July 2026: four published demo articles (two public, one members, one paid), two categories, one author, one active frontpage slot and one draft. A future-scheduled test article and all non-demo launch content are still missing.
 
 ## Required Production Secrets
 

@@ -40,7 +40,7 @@ For the cutover-day checklist, env matrix, backup/migration runbook and smoke-te
 
 ## Production Blockers
 
-- Real editorial content is still required in Payload. Demo seed content must not count for production approval.
+- Real editorial content is still required in Payload. The current Payload records are demo seed content and must not count for production approval; a future-published workflow record is also missing.
 - A stable Payload Admin URL/origin must be available for the editorial team.
 - Editorial workflow QA must pass with real content: create, edit, draft, publish, future-publish, category, author, and frontpage-slot changes.
 - Production env values must be reviewed without exposing secrets.
@@ -60,6 +60,7 @@ Production/staging env should include these groups as applicable:
 - Auth secret: `BETTER_AUTH_SECRET`.
 - Database: `DATABASE_URI` or `DATABASE_URL`, optional `DATABASE_POOL_MAX`.
 - Payload: `PAYLOAD_SECRET`, `PAYLOAD_DATABASE_URL` if different from app DB, `PAYLOAD_PUBLIC_SERVER_URL`.
+- Payload connection pool: `PAYLOAD_DATABASE_POOL_MAX` (recommended staging/production value: `3`).
 - Supabase Postgres metadata/client compatibility: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; service keys only where server-side code explicitly requires them.
 - Email/social only if enabled: `RESEND_API_KEY`, `EMAIL_FROM`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`.
 - Operations/analytics: `REEL_ANALYTICS_SECRET`, `CRON_SECRET`, optional `REEL_VIEW_RETENTION_DAYS` and `EMAIL_REPLY_TO`.

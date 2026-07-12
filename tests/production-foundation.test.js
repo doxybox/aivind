@@ -37,3 +37,10 @@ test("auth waits for transactional email delivery", () => {
 
   assert.equal((auth.match(/await sendAuthEmail/g) || []).length, 2);
 });
+
+test("Payload prefers its dedicated database connection", () => {
+  const config = read("payload.config.js");
+
+  assert.match(config, /process\.env\.PAYLOAD_DATABASE_URL \|\| process\.env\.DATABASE_URI/);
+  assert.match(config, /PAYLOAD_DATABASE_POOL_MAX/);
+});
