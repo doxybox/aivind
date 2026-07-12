@@ -36,6 +36,8 @@ loadEnvFile(".env");
 
 const payloadDatabaseUrl = process.env.DATABASE_URI || process.env.PAYLOAD_DATABASE_URL || process.env.DATABASE_URL;
 const payloadSecret = process.env.PAYLOAD_SECRET;
+const configuredPoolMax = Number.parseInt(process.env.DATABASE_POOL_MAX || "1", 10);
+const payloadPoolMax = Number.isInteger(configuredPoolMax) && configuredPoolMax > 0 ? configuredPoolMax : 1;
 
 if (!payloadDatabaseUrl) {
   throw new Error("Missing DATABASE_URI, PAYLOAD_DATABASE_URL, or DATABASE_URL for Payload.");
@@ -58,6 +60,7 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: payloadDatabaseUrl,
+      max: payloadPoolMax,
     },
     push: false,
   }),

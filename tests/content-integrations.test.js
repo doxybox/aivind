@@ -113,6 +113,8 @@ test("build configuration does not require Ghost env vars", () => {
 
   assert.doesNotMatch(payloadConfig, /GHOST_/);
   assert.doesNotMatch(nextConfig, /GHOST_/);
+  assert.match(payloadConfig, /DATABASE_POOL_MAX/);
+  assert.match(payloadConfig, /max:\s*payloadPoolMax/);
 });
 
 test("Cloudflare image URL uses account hash and variant", () => {
