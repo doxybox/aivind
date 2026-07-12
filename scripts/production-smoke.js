@@ -33,4 +33,18 @@ for (const [path, expectedStatus] of checks) {
   }
 }
 
+if (process.env.CRON_SECRET) {
+  try {
+    const response = await fetch(`${baseUrl}/api/internal/maintenance/analytics`, {
+      headers: { Authorization: `Bearer ${process.env.CRON_SECRET}` },
+    });
+    const passed = response.status === 200;
+    failed ||= !passed;
+    console.log(`${passed ? "PASS" : "FAIL"} maintenance ${response.status} (expected 200)`);
+  } catch (error) {
+    failed = true;
+    console.error(`FAIL maintenance request failed: ${error.message}`);
+  }
+}
+
 process.exitCode = failed ? 1 : 0;
