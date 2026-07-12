@@ -1,0 +1,37 @@
+{
+  "name": "NewsletterPreferences",
+  "type": "object",
+  "properties": {
+    "daily_newsletter": {
+      "type": "boolean",
+      "default": true,
+      "description": "Motta daglig nyhetsbrev"
+    },
+    "weekly_summary": {
+      "type": "boolean",
+      "default": true,
+      "description": "Motta ukentlig oppsummering"
+    },
+    "breaking_news": {
+      "type": "boolean",
+      "default": true,
+      "description": "Motta viktige nyheter"
+    },
+    "ai_tech_news": {
+      "type": "boolean",
+      "default": false,
+      "description": "Motta AI- og teknologinyheter"
+    },
+    "gaming_news": {
+      "type": "boolean",
+      "default": false,
+      "description": "Motta gamingnyheter"
+    },
+    "offers_subscription_info": {
+      "type": "boolean",
+      "default": true,
+      "description": "Motta tilbud og abonnementsinfo"
+    }
+  },
+  "required": []
+}

@@ -1,0 +1,74 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "plan_type": {
+      "type": "string",
+      "enum": [
+        "free",
+        "pluss",
+        "premium",
+        "familie",
+        "bedrift"
+      ],
+      "default": "free",
+      "description": "Abonnementstype"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "expired",
+        "cancelled",
+        "free"
+      ],
+      "default": "free",
+      "description": "Abonnementsstatus"
+    },
+    "current_period_end": {
+      "type": "string",
+      "format": "date",
+      "description": "Neste fornyelsesdato"
+    },
+    "current_period_start": {
+      "type": "string",
+      "format": "date",
+      "description": "Startdato for innev\u00e6rende periode"
+    },
+    "price": {
+      "type": "number",
+      "default": 0,
+      "description": "Pris"
+    },
+    "billing_period": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "yearly"
+      ],
+      "default": "monthly",
+      "description": "Faktureringsperiode"
+    },
+    "payment_method": {
+      "type": "string",
+      "description": "Betalingsmetode"
+    },
+    "cancel_at_period_end": {
+      "type": "boolean",
+      "default": false,
+      "description": "Avsluttes ved periodens slutt"
+    },
+    "external_customer_id": {
+      "type": "string",
+      "description": "Kunde-ID hos betalingsleverand\u00f8r"
+    },
+    "external_subscription_id": {
+      "type": "string",
+      "description": "Abonnements-ID hos betalingsleverand\u00f8r"
+    }
+  },
+  "required": [
+    "plan_type",
+    "status"
+  ]
+}

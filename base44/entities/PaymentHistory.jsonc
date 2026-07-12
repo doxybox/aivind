@@ -1,0 +1,55 @@
+{
+  "name": "PaymentHistory",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Betalingsdato"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Bel\u00f8p i NOK"
+    },
+    "currency": {
+      "type": "string",
+      "default": "NOK",
+      "description": "Valuta"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "paid",
+        "pending",
+        "failed",
+        "refunded"
+      ],
+      "default": "paid",
+      "description": "Betalingsstatus"
+    },
+    "provider": {
+      "type": "string",
+      "description": "Betalingsleverand\u00f8r (stripe, vipps)"
+    },
+    "provider_payment_id": {
+      "type": "string",
+      "description": "Betalings-ID hos leverand\u00f8r"
+    },
+    "payment_method": {
+      "type": "string",
+      "description": "Betalingsmetode"
+    },
+    "invoice_url": {
+      "type": "string",
+      "description": "URL til faktura/kvittering"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beskrivelse"
+    }
+  },
+  "required": [
+    "amount",
+    "status"
+  ]
+}

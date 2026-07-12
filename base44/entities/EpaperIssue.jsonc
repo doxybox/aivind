@@ -1,0 +1,23 @@
+{
+  "name": "EpaperIssue",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "title": {
+      "type": "string"
+    },
+    "cover_image_url": {
+      "type": "string"
+    },
+    "pdf_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "date",
+    "title"
+  ]
+}

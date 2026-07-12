@@ -1,0 +1,70 @@
+{
+  "name": "Ad",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Intern navn p\u00e5 annonsen"
+    },
+    "slot": {
+      "type": "string",
+      "enum": [
+        "banner_top",
+        "in_feed_1",
+        "in_feed_2",
+        "native_card",
+        "pre_footer"
+      ],
+      "description": "Hvilken annonseplass denne annonsen skal vises p\u00e5",
+      "default": "banner_top"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "custom",
+        "google_ads"
+      ],
+      "description": "Egendefinert annonse eller Google Ads-kode",
+      "default": "custom"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Bilde for egendefinert annonse (URL)"
+    },
+    "headline": {
+      "type": "string",
+      "description": "Overskrift for egendefinert annonse"
+    },
+    "description": {
+      "type": "string",
+      "description": "Tekst for egendefinert annonse"
+    },
+    "cta_text": {
+      "type": "string",
+      "description": "Knappetekst",
+      "default": "Les mer"
+    },
+    "cta_url": {
+      "type": "string",
+      "description": "LenkeURL for annonsen"
+    },
+    "google_ad_slot": {
+      "type": "string",
+      "description": "Google Ads slot ID (for google_ads type)"
+    },
+    "google_ad_format": {
+      "type": "string",
+      "description": "Google Ads format, f.eks. 'auto', '970x250', '728x90'"
+    },
+    "is_active": {
+      "type": "boolean",
+      "description": "Om annonsen er aktiv",
+      "default": true
+    }
+  },
+  "required": [
+    "title",
+    "slot",
+    "type"
+  ]
+}

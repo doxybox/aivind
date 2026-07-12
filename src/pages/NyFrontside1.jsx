@@ -1,0 +1,551 @@
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Search, Menu, TrendingUp, TrendingDown, Moon, X, Loader2 } from "lucide-react";
+import { GiFlashGrenade } from "react-icons/gi";
+import { useTheme } from "@/hooks/useTheme";
+import SearchOverlay from "@/components/aivind/SearchOverlay";
+import { allArticles } from "@/lib/articles";
+import { fallbackMarketData } from "@/lib/market-data-fallback";
+import Footer from "@/components/aivind/Footer";
+import { categoryNavItems } from "@/components/aivind/categoryNav";
+import ReelsSection from "@/components/aivind/ReelsSection";
+
+const GridCard = ({ image, tag, title, subtitle, href = "#", className, titleClass = "text-xl md:text-2xl", tagClass = "text-[#ff6a00] bg-[#161a22]/80 backdrop-blur-sm border border-white/5", hasEmojis = false, reactions = 0 }) => (
+  <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
+    <div 
+      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
+      style={{ backgroundImage: `url(${image})` }} 
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-[#161a22]/60 to-transparent opacity-90" />
+    <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-transparent to-transparent opacity-80" />
+    
+    <div className="absolute inset-x-0 bottom-0 p-5 flex flex-col items-start z-10">
+      {tag && (
+        <span className={`text-[10px] font-bold px-2.5 py-1.5 uppercase rounded mb-3 tracking-wider ${tagClass}`}>
+          {tag}
+        </span>
+      )}
+      <h3 className={`font-bold text-white leading-[1.2] ${titleClass}`}>
+        {title}
+      </h3>
+      {subtitle && (
+        <p className="text-white/90 text-sm mt-3 line-clamp-2 leading-relaxed">
+          {subtitle}
+        </p>
+      )}
+      
+      {hasEmojis && (
+        <div className="flex items-center gap-1.5 mt-3 text-xs text-zinc-400 font-medium">
+          <span className="text-sm">😲</span>
+          <span className="text-sm -ml-1.5">😂</span>
+          <span className="text-sm -ml-1.5">😍</span>
+          <span className="ml-1 text-[#ff6a00]">{reactions}</span>
+        </div>
+      )}
+    </div>
+  </Link>
+);
+
+const MestLestItem = ({ index, title, views }) => (
+  <div className="flex items-start gap-4 py-3 group cursor-pointer">
+    <span className="text-[#ff6a00] font-bold text-lg">{index}</span>
+    <h4 className="text-zinc-800 dark:text-zinc-200 text-sm font-medium leading-snug flex-1 group-hover:text-black dark:group-hover:text-white transition-colors">
+      {title}
+    </h4>
+    <div className="flex items-center gap-1 text-xs text-red-500 font-medium whitespace-nowrap">
+      <TrendingUp className="w-3 h-3" />
+      {views}
+    </div>
+  </div>
+);
+
+const StockLogo = ({ stock }) => {
+  const [failed, setFailed] = useState(false);
+  const fallbackLabel = (stock.id || stock.name || "?").slice(0, 2).toUpperCase();
+
+  if (!stock.logo || failed) {
+    return (
+      <span className="w-full h-full rounded-md bg-zinc-100 dark:bg-white/10 flex items-center justify-center text-[10px] font-black text-zinc-700 dark:text-white">
+        {fallbackLabel}
+      </span>
+    );
+  }
+
+  return (
+    <img
+      src={stock.logo}
+      alt={stock.name}
+      className="w-full h-full object-contain"
+      onError={() => setFailed(true)}
+    />
+  );
+};
+
+const LiveStockWidget = () => {
+  const [stocks, setStocks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchStocks = async () => {
+    try {
+      setStocks([...fallbackMarketData.stocks].sort((a, b) => b.price - a.price));
+    } catch (e) {
+      console.error("Failed to fetch market data", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStocks();
+    const interval = setInterval(fetchStocks, 60000); // Fetch every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading && stocks.length === 0) {
+    return (
+      <div className="flex flex-col flex-1 items-center justify-center py-10">
+        <Loader2 className="w-8 h-8 animate-spin text-[#ff6a00]" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col flex-1 relative">
+      {stocks.map((stock) => {
+        const isPositive = stock.change >= 0;
+        
+        return (
+          <motion.div 
+            key={stock.id}
+            layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-3 py-3 group cursor-pointer border-b border-zinc-100 dark:border-white/5 last:border-0"
+          >
+            <div className="w-8 h-8 flex items-center justify-center shrink-0">
+              <StockLogo stock={stock} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-zinc-900 dark:text-white text-sm truncate">{stock.name}</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-end shrink-0">
+              <span className="text-sm font-medium transition-colors duration-300 text-zinc-900 dark:text-white">
+                {stock.price.toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} NOK
+              </span>
+              <div className={`flex items-center gap-1 text-xs font-bold transition-colors duration-300 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                <span>{isPositive ? '+' : ''}{stock.change.toFixed(2)}%</span>
+              </div>
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+};
+
+export default function NyFrontside1({ payloadHomepageContent = null }) {
+  const { theme, toggleTheme } = useTheme();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const payloadArticles = payloadHomepageContent?.articles || [];
+  const payloadReels = payloadHomepageContent?.reels || [];
+  const searchArticles = payloadArticles.length > 0 ? payloadArticles : allArticles;
+  const hasPayloadArticles = payloadArticles.length > 0;
+  const payloadCard = (index, fallback) => {
+    const article = payloadArticles[index];
+    if (!hasPayloadArticles || !article) return fallback;
+
+    return {
+      image: article.image || article.imageUrl || fallback.image,
+      tag: article.category || fallback.tag,
+      title: article.title || fallback.title,
+      subtitle: article.excerpt || fallback.subtitle,
+      href: article.href || fallback.href || "#",
+      reactions: article.comments ?? fallback.reactions ?? 0,
+    };
+  };
+  const topHero = payloadCard(0, {
+    image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?q=80&w=2070",
+    tag: "Tester",
+    title: "Neste generasjon VR er her",
+    subtitle: "Skarpere, lettere og mer virkelighetsnaert enn noen gang.",
+  });
+  const topSideCards = [
+    payloadCard(1, { image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070", tag: "Gaming", title: "Elden-ring moter Skyrim i nytt episk action-RPG", reactions: 56 }),
+    payloadCard(2, { image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2025", tag: "Video", title: "Regissoren hinter om Matrix 5", reactions: 31 }),
+  ];
+  const middleCards = [
+    payloadCard(3, { image: "https://images.unsplash.com/photo-1598327105666-5b89351cb31b?q=80&w=2000", tag: "Gadgets", title: "Nye flagship-telefoner" }),
+    payloadCard(4, { image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2071", tag: "Elbil", title: "Ny elbil med 700 km rekkevidde" }),
+    payloadCard(5, { image: "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=2070", tag: "Guider", title: "Smarte hjem som faktisk fungerer" }),
+  ];
+  const bottomFeature = payloadCard(6, {
+    image: "https://images.unsplash.com/photo-1616530940355-351fabd9524b?q=80&w=2070",
+    tag: "Video",
+    title: "Streamingkrigen tilspisser seg",
+    subtitle: "Nye priser og storre tap.",
+  });
+  const bottomSideCards = [
+    payloadCard(7, { image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000", tag: "AI", title: "Ny AI-brikke kan endre datakraft", reactions: 18 }),
+    payloadCard(8, { image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=2072", tag: "Tester", title: "Test: De beste treningsklokkene", reactions: 24 }),
+  ];
+
+  return (
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#161a22] text-zinc-900 dark:text-white font-sans selection:bg-[#ff6a00] selection:text-white transition-colors duration-300">
+      <SearchOverlay open={isSearchOpen} onClose={() => setIsSearchOpen(false)} articles={searchArticles} />
+      
+      {/* Mobile Menu */}
+      <div className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setIsMenuOpen(false)}>
+        <div className={`absolute top-0 right-0 bottom-0 w-64 bg-white dark:bg-[#161a22] border-l border-zinc-200 dark:border-white/10 p-6 flex flex-col transition-transform duration-300 ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`} onClick={e => e.stopPropagation()}>
+          <div className="flex justify-between items-center mb-8">
+            <span className="text-zinc-900 dark:text-white font-black text-xl tracking-tighter uppercase">MENY</span>
+            <button onClick={() => setIsMenuOpen(false)} className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          <nav className="flex flex-col gap-6">
+            {categoryNavItems.map((item) => (
+              <Link key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)} className="text-sm font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white transition-colors">
+                {item.label}
+              </Link>
+            ))}
+            <div className="h-px bg-zinc-200 dark:bg-white/10 w-full my-2" />
+            <Link href="/login" className="text-sm font-bold uppercase tracking-wider text-[#ff6a00] hover:text-[#ff8c33] transition-colors">
+              LOGG INN
+            </Link>
+          </nav>
+        </div>
+      </div>
+
+      {/* Header */}
+      <header className="h-[72px] flex items-center justify-between px-6 bg-white dark:bg-[#161a22] border-b border-zinc-200 dark:border-white/5 sticky top-0 z-50 transition-colors duration-300">
+        <div className="flex items-center gap-10">
+          <Link href="/nyfrontside1" className="flex items-center gap-2">
+            <span className="text-zinc-900 dark:text-white font-black text-2xl tracking-tighter uppercase">AIVIND<span className="text-[#ff6a00]">.NO</span></span>
+          </Link>
+          
+          <nav className="hidden lg:flex items-center gap-6">
+            {categoryNavItems.map((item) => (
+              <Link key={item.href} href={item.href} className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        
+        <div className="flex items-center gap-6">
+          <Link href="/login" className="text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white transition-colors hidden sm:block">
+            LOGG INN
+          </Link>
+          <div className="flex items-center gap-4 text-zinc-500 dark:text-zinc-400">
+            <button onClick={toggleTheme} className="hover:text-zinc-900 dark:hover:text-white transition-colors">
+              {theme === 'dark' ? <GiFlashGrenade className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <button onClick={() => setIsSearchOpen(true)} className="hover:text-zinc-900 dark:hover:text-white transition-colors"><Search className="w-5 h-5" /></button>
+            <button onClick={() => setIsMenuOpen(true)} className="hover:text-zinc-900 dark:hover:text-white transition-colors"><Menu className="w-6 h-6" /></button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-[1440px] mx-auto p-4 md:p-6 pb-20">
+        
+        {/* Top Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+          <GridCard
+            className="lg:col-span-2 min-h-[400px] lg:min-h-[500px]"
+            image={topHero.image}
+            tag={topHero.tag}
+            title={topHero.title}
+            titleClass="text-3xl md:text-5xl lg:text-[56px] font-black tracking-tight"
+            subtitle={topHero.subtitle}
+            href={topHero.href}
+          />
+          <div className="flex flex-col gap-4">
+            {topSideCards.map((card, index) => (
+              <GridCard
+                key={`${card.title}-${index}`}
+                className="flex-1 min-h-[240px]"
+                image={card.image}
+                tag={card.tag}
+                title={card.title}
+                subtitle={card.subtitle}
+                href={card.href}
+                titleClass="text-xl md:text-2xl"
+                hasEmojis={true}
+                reactions={card.reactions}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Middle Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          {middleCards.map((card, index) => (
+            <GridCard
+              key={`${card.title}-${index}`}
+              className="min-h-[280px]"
+              image={card.image}
+              tag={card.tag}
+              title={card.title}
+              subtitle={card.subtitle}
+              href={card.href}
+            />
+          ))}
+        </div>
+
+        {/* Bottom Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
+          <GridCard
+            className="lg:col-span-2 min-h-[380px]"
+            image={bottomFeature.image}
+            tag={bottomFeature.tag}
+            title={bottomFeature.title}
+            titleClass="text-2xl md:text-4xl lg:text-[40px] font-black tracking-tight"
+            subtitle={bottomFeature.subtitle}
+            href={bottomFeature.href}
+          />
+          <div className="flex flex-col gap-4">
+            {bottomSideCards.map((card, index) => (
+              <GridCard
+                key={`${card.title}-${index}`}
+                className="flex-1 min-h-[180px]"
+                image={card.image}
+                tag={card.tag}
+                title={card.title}
+                subtitle={card.subtitle}
+                href={card.href}
+                titleClass="text-lg md:text-xl"
+                hasEmojis={true}
+                reactions={card.reactions}
+              />
+            ))}
+          </div>
+
+          {/* Tech Aksjer */}
+          <div className="bg-white dark:bg-[#1e232e] rounded-xl p-6 border border-zinc-200 dark:border-white/5 flex flex-col h-full transition-colors duration-300">
+            <h3 className="text-[#ff6a00] font-bold text-sm tracking-widest uppercase mb-4">Tech Aksjer</h3>
+            <div className="flex flex-col flex-1">
+              <LiveStockWidget />
+            </div>
+          </div>
+        </div>
+
+        <ReelsSection items={payloadReels.length > 0 ? payloadReels : undefined} />
+
+        {payloadArticles.length > 0 && (
+          <section className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-[#ff6a00] text-[13px] font-black uppercase tracking-[0.25em]">Siste saker</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {payloadArticles.slice(0, 8).map((article, index) => (
+                <GridCard
+                  key={article.id || article.slug || index}
+                  className="min-h-[240px]"
+                  image={article.image}
+                  tag={article.category}
+                  title={article.title}
+                  subtitle={article.excerpt}
+                  href={article.href}
+                  hasEmojis
+                  reactions={article.comments || 0}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Google Ads Placeholder */}
+        <div className="w-full mx-auto h-[250px] bg-[#161a22] border border-[#ff6a00]/40 shadow-[0_0_15px_rgba(255,106,0,0.1)] rounded-xl mb-6 flex items-center justify-center relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-48 h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)', backgroundSize: '16px 16px', WebkitMaskImage: 'linear-gradient(to right, black, transparent)', maskImage: 'linear-gradient(to right, black, transparent)' }} />
+          <div className="absolute top-0 right-0 w-48 h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)', backgroundSize: '16px 16px', WebkitMaskImage: 'linear-gradient(to left, black, transparent)', maskImage: 'linear-gradient(to left, black, transparent)' }} />
+          
+          <div className="relative z-10 flex items-center gap-5">
+            <div className="w-14 h-14 rounded-xl border-[2px] border-[#ff6a00] flex items-center justify-center bg-transparent">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff6a00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </div>
+            <div className="flex flex-col text-left">
+              <h3 className="text-xl md:text-2xl font-bold text-[#ff6a00] tracking-tight">Google Ads 970×250</h3>
+              <p className="text-sm md:text-base text-zinc-400 font-medium mt-0.5">Best plassering på forsiden</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Flere Artikler (Rad 1) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070"
+            tag="Gaming"
+            title="Slik bygger du den ultimate gaming-PCen"
+          />
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070"
+            tag="Guider"
+            title="Passord er snart historie – slik fungerer passkeys"
+          />
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=2074"
+            tag="AI"
+            title="TikToks nye algoritme endrer alt for innholdsskapere"
+          />
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070"
+            tag="Gadgets"
+            title="Derfor kjøper alle gamle digitalkameraer igjen"
+          />
+        </div>
+
+        {/* Flere Artikler (Rad 2) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <GridCard 
+            className="min-h-[280px]"
+            image="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072"
+            tag="Guider"
+            title="De mest etterspurte programmeringsspråkene i år"
+          />
+          <GridCard 
+            className="min-h-[280px]"
+            image="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070"
+            tag="Tester"
+            title="Vi har testet de nye støyreduserende hodetelefonene"
+          />
+          <GridCard 
+            className="min-h-[280px]"
+            image="https://images.unsplash.com/photo-1478432780021-b8d273730d8c?q=80&w=2070"
+            tag="Gadgets"
+            title="Alt vi vet om den neste store Windows-oppdateringen"
+          />
+        </div>
+
+        {/* Flere Artikler (Rad 3) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1614624532983-4ce03382d63d?q=80&w=2070"
+            tag="AI"
+            title="Slik bruker du AI for å effektivisere hverdagen"
+          />
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070"
+            tag="Gaming"
+            title="Nye spillutgivelser du ikke kan gå glipp av"
+          />
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1512756290469-ec264b7fbf87?q=80&w=2070"
+            tag="Guider"
+            title="Webutvikling i 2024: Hva er nytt?"
+          />
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015"
+            tag="AI"
+            title="Big Data: Hvordan selskaper bruker informasjonen din"
+          />
+        </div>
+
+        {/* Flere Artikler (Rad 4) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <GridCard 
+            className="min-h-[280px]"
+            image="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070"
+            tag="Guider"
+            title="VPN-tjenester: Trenger du det egentlig i 2024?"
+          />
+          <GridCard 
+            className="min-h-[280px]"
+            image="https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?q=80&w=2070"
+            tag="Gadgets"
+            title="Apple Vision Pro vs Meta Quest 3"
+          />
+          <GridCard 
+            className="min-h-[280px]"
+            image="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070"
+            tag="AI"
+            title="Når tar robotene over husarbeidet?"
+          />
+        </div>
+
+        {/* Google Ads Placeholder (Bunn) */}
+        <div className="w-full mx-auto h-[250px] bg-[#161a22] border border-[#ff6a00]/40 shadow-[0_0_15px_rgba(255,106,0,0.1)] rounded-xl mt-8 mb-6 flex items-center justify-center relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-48 h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)', backgroundSize: '16px 16px', WebkitMaskImage: 'linear-gradient(to right, black, transparent)', maskImage: 'linear-gradient(to right, black, transparent)' }} />
+          <div className="absolute top-0 right-0 w-48 h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)', backgroundSize: '16px 16px', WebkitMaskImage: 'linear-gradient(to left, black, transparent)', maskImage: 'linear-gradient(to left, black, transparent)' }} />
+          
+          <div className="relative z-10 flex items-center gap-5">
+            <div className="w-14 h-14 rounded-xl border-[2px] border-[#ff6a00] flex items-center justify-center bg-transparent">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff6a00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </div>
+            <div className="flex flex-col text-left">
+              <h3 className="text-xl md:text-2xl font-bold text-[#ff6a00] tracking-tight">Google Ads 970×250</h3>
+              <p className="text-sm md:text-base text-zinc-400 font-medium mt-0.5">Plassering i bunn av siden</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Flere Artikler (Rad 5) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072"
+            tag="Guider"
+            title="Fremtiden for lagring: Hva betyr det for deg?"
+          />
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=2070"
+            tag="AI"
+            title="Slik fungerer kvantedatamaskiner"
+          />
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=2000"
+            tag="AI"
+            title="Trenger vi webdesignere når vi har AI?"
+          />
+          <GridCard 
+            className="min-h-[240px]"
+            image="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?q=80&w=2000"
+            tag="AI"
+            title="Dette er fremtidens jobbmarked"
+          />
+        </div>
+
+        {/* Flere Artikler (Rad 6) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <GridCard 
+            className="min-h-[280px]"
+            image="https://images.unsplash.com/photo-1531297172868-245842dd5027?q=80&w=2070"
+            tag="AI"
+            title="Hvordan startups overlever i 2024"
+          />
+          <GridCard 
+            className="min-h-[280px]"
+            image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070"
+            tag="AI"
+            title="Dette må du vite om data science"
+          />
+          <GridCard 
+            className="min-h-[280px]"
+            image="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070"
+            tag="Gadgets"
+            title="De beste dingsene for et smartere hjem"
+          />
+        </div>
+
+      </main>
+      
+      <Footer />
+    </div>
+  );
+}

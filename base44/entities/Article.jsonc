@@ -1,0 +1,45 @@
+{
+  "name": "Article",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Artikkeltittel"
+    },
+    "excerpt": {
+      "type": "string",
+      "description": "Utdrag/beskrivelse"
+    },
+    "category": {
+      "type": "string",
+      "description": "Kategori (AI, Gaming, Elbil, Gadgets, Guider, Video)"
+    },
+    "image": {
+      "type": "string",
+      "description": "Bilde-URL"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Forfatterens navn"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Forfatterens e-post"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Publiseringsdato"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Er denne en utvalgt artikkel?"
+    }
+  },
+  "required": [
+    "title",
+    "excerpt",
+    "category"
+  ]
+}

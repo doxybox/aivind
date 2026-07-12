@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1782587649308,
+      "tag": "0000_omniscient_romulus",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782589107012,
+      "tag": "0001_cool_human_torch",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782676050173,
+      "tag": "0002_faithful_bishop",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782685111740,
+      "tag": "0003_steep_gorilla_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1782733600000,
+      "tag": "0004_provider_neutral_billing",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782737200000,
+      "tag": "0005_billing_event_idempotency",
+      "breakpoints": true
+    }
+  ]
+}

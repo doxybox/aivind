@@ -1,0 +1,34 @@
+{
+  "name": "SavedArticle",
+  "type": "object",
+  "properties": {
+    "article_title": {
+      "type": "string",
+      "description": "Artikkeltittel"
+    },
+    "article_category": {
+      "type": "string",
+      "description": "Kategori"
+    },
+    "article_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Artikkeldato"
+    },
+    "article_url": {
+      "type": "string",
+      "description": "Artikkel-URL"
+    },
+    "article_image": {
+      "type": "string",
+      "description": "Bilde-URL"
+    },
+    "article_excerpt": {
+      "type": "string",
+      "description": "Utdrag"
+    }
+  },
+  "required": [
+    "article_title"
+  ]
+}

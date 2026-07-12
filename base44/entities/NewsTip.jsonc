@@ -1,0 +1,30 @@
+{
+  "name": "NewsTip",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "contact_info": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string"
+    },
+    "is_anonymous": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "category",
+    "description"
+  ]
+}

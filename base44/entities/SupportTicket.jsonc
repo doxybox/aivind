@@ -1,0 +1,47 @@
+{
+  "name": "SupportTicket",
+  "type": "object",
+  "properties": {
+    "subject": {
+      "type": "string",
+      "description": "Emne"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "\u00c5pen",
+        "Under behandling",
+        "Svart",
+        "Lukket"
+      ],
+      "default": "\u00c5pen",
+      "description": "Status p\u00e5 henvendelsen"
+    },
+    "category": {
+      "type": "string",
+      "description": "Kategori"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sender": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "subject",
+    "messages"
+  ]
+}

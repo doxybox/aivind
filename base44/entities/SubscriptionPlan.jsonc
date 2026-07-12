@@ -1,0 +1,64 @@
+{
+  "name": "SubscriptionPlan",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Visningsnavn p\u00e5 planen"
+    },
+    "slug": {
+      "type": "string",
+      "description": "Unik slug for planen"
+    },
+    "description": {
+      "type": "string",
+      "description": "Kort beskrivelse"
+    },
+    "monthly_price": {
+      "type": "number",
+      "description": "M\u00e5nedlig pris i NOK"
+    },
+    "yearly_price": {
+      "type": "number",
+      "description": "\u00c5rlig pris i NOK"
+    },
+    "currency": {
+      "type": "string",
+      "default": "NOK",
+      "description": "Valuta"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Fordeler inkludert i planen"
+    },
+    "is_popular": {
+      "type": "boolean",
+      "default": false,
+      "description": "Marker som mest popul\u00e6r"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Er planen aktiv"
+    },
+    "sort_order": {
+      "type": "number",
+      "description": "Sorteringsrekkef\u00f8lge"
+    },
+    "external_price_id_monthly": {
+      "type": "string",
+      "description": "Ekstern pris-ID for m\u00e5nedlig betaling (Stripe/Vipps)"
+    },
+    "external_price_id_yearly": {
+      "type": "string",
+      "description": "Ekstern pris-ID for \u00e5rlig betaling (Stripe/Vipps)"
+    }
+  },
+  "required": [
+    "name",
+    "slug"
+  ]
+}

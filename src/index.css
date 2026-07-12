@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@layer base {
+  :root {
+    /* Light theme */
+    --background: 240 5% 96%;
+    --foreground: 240 10% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 8%;
+    --primary: 25 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 10% 94%;
+    --secondary-foreground: 240 10% 8%;
+    --muted: 240 10% 90%;
+    --muted-foreground: 240 5% 35%;
+    --accent: 25 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5% 90%;
+    --input: 240 10% 90%;
+    --ring: 25 100% 50%;
+    --chart-1: 170 100% 35%;
+    --chart-2: 25 100% 50%;
+    --chart-3: 240 80% 55%;
+    --chart-4: 330 80% 55%;
+    --chart-5: 50 90% 50%;
+    --radius: 0.5rem;
+    --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5% 26%;
+    --sidebar-primary: 170 100% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 10% 94%;
+    --sidebar-accent-foreground: 240 5% 26%;
+    --sidebar-border: 240 10% 88%;
+    --sidebar-ring: 170 100% 40%;
+  }
+
+  .dark {
+    /* Dark theme */
+    --background: 240 20% 3.5%;
+    --foreground: 240 5% 96%;
+    --card: 240 15% 6%;
+    --card-foreground: 240 5% 96%;
+    --popover: 240 15% 6%;
+    --popover-foreground: 240 5% 96%;
+    --primary: 25 100% 55%;
+    --primary-foreground: 240 20% 3.5%;
+    --secondary: 240 10% 12%;
+    --secondary-foreground: 240 5% 96%;
+    --muted: 240 10% 12%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 25 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 10% 14%;
+    --input: 240 10% 14%;
+    --ring: 25 100% 55%;
+    --chart-1: 170 100% 65%;
+    --chart-2: 25 100% 50%;
+    --chart-3: 240 80% 65%;
+    --chart-4: 330 80% 60%;
+    --chart-5: 50 90% 55%;
+    --sidebar-background: 240 15% 5%;
+    --sidebar-foreground: 240 5% 96%;
+    --sidebar-primary: 170 100% 65%;
+    --sidebar-primary-foreground: 240 20% 3.5%;
+    --sidebar-accent: 240 10% 10%;
+    --sidebar-accent-foreground: 240 5% 96%;
+    --sidebar-border: 240 10% 14%;
+    --sidebar-ring: 170 100% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Light pipe glow effects */
+.light-pipe {
+  background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+  height: 1px;
+  opacity: 0.3;
+}
+
+.light-pipe-vertical {
+  background: linear-gradient(180deg, transparent, hsl(var(--primary)), transparent);
+  width: 1px;
+  opacity: 0.3;
+}
+
+/* Article card hover glow */
+.article-card {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.article-card:hover {
+  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.3), 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+.dark .article-card:hover {
+  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.3), 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Orange accent border */
+.accent-border-left {
+  border-left: 3px solid #F97316;
+}
+
+/* Category tag active glow */
+.category-active {
+  background: #F97316;
+  color: white;
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+}
+
+/* Trending item hover */
+.trending-item {
+  transition: background 0.2s ease;
+}
+.trending-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+.dark .trending-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Hero gradient overlay */
+.hero-gradient {
+  background: linear-gradient(135deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.72) 50%, rgba(255,255,255,0.3) 100%);
+}
+.dark .hero-gradient {
+  background: linear-gradient(135deg, rgba(8,8,12,0.92) 0%, rgba(8,8,12,0.7) 50%, rgba(8,8,12,0.3) 100%);
+}
+
+/* Search overlay animation */
+@keyframes search-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.search-animate {
+  animation: search-slide-down 0.2s ease-out;
+}
+
+@keyframes search-result-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.search-result-animate {
+  animation: search-result-fade 0.15s ease-out;
+}
