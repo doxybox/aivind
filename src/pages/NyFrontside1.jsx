@@ -102,8 +102,16 @@ const LiveStockWidget = () => {
 
   useEffect(() => {
     fetchStocks();
-    const interval = setInterval(fetchStocks, 60 * 1000);
-    return () => clearInterval(interval);
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === "visible") fetchStocks();
+    };
+    const interval = setInterval(refreshWhenVisible, 15 * 1000);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
   }, []);
 
   if (loading && stocks.length === 0) {

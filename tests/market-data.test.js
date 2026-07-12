@@ -57,14 +57,15 @@ test("market data fetches four quotes and USD/NOK server-side", async () => {
   assert.equal(result.delayed, true);
 });
 
-test("market data API is GET-only, rate limited and cached for one minute", () => {
+test("market data API is GET-only, rate limited and cached for fifteen seconds", () => {
   const apiSource = readProjectFile("src/pages/api/market-data.js");
   const pageSource = readProjectFile("src/pages/NyFrontside1.jsx");
 
   assert.match(apiSource, /req\.method !== "GET"/);
   assert.match(apiSource, /enforceRateLimit\(req, res/);
-  assert.match(apiSource, /s-maxage=60/);
+  assert.match(apiSource, /s-maxage=15/);
   assert.match(pageSource, /fetch\("\/api\/market-data"\)/);
-  assert.match(pageSource, /setInterval\(fetchStocks, 60 \* 1000\)/);
+  assert.match(pageSource, /setInterval\(refreshWhenVisible, 15 \* 1000\)/);
+  assert.match(pageSource, /document\.visibilityState === "visible"/);
   assert.doesNotMatch(pageSource, /fallbackMarketData/);
 });

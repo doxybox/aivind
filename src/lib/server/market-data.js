@@ -6,7 +6,7 @@ const QUOTE_SYMBOLS = [
 ];
 
 const FX_SYMBOL = "NOK=X";
-const CACHE_TTL_MS = 60 * 1000;
+const CACHE_TTL_MS = 15 * 1000;
 
 let memoryCache = null;
 
