@@ -8,7 +8,7 @@ import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
-import PremiumArticleBadge, { isPremiumArticle } from "@/components/aivind/PremiumArticleBadge";
+import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 import { allArticles } from "@/lib/articles";
 
 const defaultCategoryConfig = {
@@ -294,9 +294,9 @@ function ArticleCard({ story, large = false, className = "" }) {
       <img src={story.image} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-[#161a22]/60 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-transparent to-transparent opacity-80" />
+      <PremiumArticleBadge article={story} corner />
       <div className="absolute inset-x-0 bottom-0 z-10 p-5 flex flex-col items-start">
-        <PremiumArticleBadge article={story} />
-        <h2 className={`${isPremiumArticle(story) ? "mt-4" : "mt-0"} font-bold text-white leading-[1.2] ${large ? "text-3xl md:text-5xl lg:text-[56px] font-black tracking-tight" : "text-xl md:text-2xl line-clamp-2"}`}>
+        <h2 className={`font-bold text-white leading-[1.2] ${large ? "text-3xl md:text-5xl lg:text-[56px] font-black tracking-tight" : "text-xl md:text-2xl line-clamp-2"}`}>
           {story.title}
         </h2>
         <ArticleReactions article={story} count={story.reactions} className="mt-3" />
@@ -325,9 +325,9 @@ function SmallArticle({ story }) {
       <img src={story.image} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#111722] from-0% via-[#111722]/68 via-48% to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-80" />
+      <PremiumArticleBadge article={story} compact corner />
       <div className="absolute inset-x-0 bottom-0 z-10 p-4 flex max-h-[78%] flex-col items-start">
-        <PremiumArticleBadge article={story} compact />
-        <h3 className={`${isPremiumArticle(story) ? "mt-3" : "mt-0"} text-[17px] md:text-[18px] font-bold text-white leading-[1.18] line-clamp-2`}>{story.title}</h3>
+        <h3 className="text-[17px] md:text-[18px] font-bold text-white leading-[1.18] line-clamp-2">{story.title}</h3>
         <ArticleReactions article={story} count={story.reactions} className="mt-3" />
       </div>
     </>

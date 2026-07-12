@@ -10,7 +10,7 @@ import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
-import PremiumArticleBadge, { isPremiumArticle } from "@/components/aivind/PremiumArticleBadge";
+import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 
 const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl", reactions = 0 }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
@@ -20,13 +20,9 @@ const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href =
     />
     <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-[#161a22]/60 to-transparent opacity-90" />
     <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-transparent to-transparent opacity-80" />
-    
+    <PremiumArticleBadge article={{ type, accessLevel, paywallEnabled }} corner />
+
     <div className="absolute inset-x-0 bottom-0 p-5 flex flex-col items-start z-10">
-      {isPremiumArticle({ type, accessLevel, paywallEnabled }) && (
-        <div className="mb-3">
-          <PremiumArticleBadge article={{ type, accessLevel, paywallEnabled }} />
-        </div>
-      )}
       <h3 className={`font-bold text-white leading-[1.2] ${titleClass}`}>
         {title}
       </h3>

@@ -33,8 +33,6 @@ export default function ArticleCard({ article }) {
             </span>
           )}
 
-          <PremiumArticleBadge article={article} />
-
           {isVideo && (
             <span className="flex items-center gap-1.5 px-2.5 py-1 bg-orange-500 text-white text-[10px] font-bold uppercase tracking-wider rounded shadow-sm">
               <PlayCircle className="w-3 h-3" />
@@ -42,6 +40,8 @@ export default function ArticleCard({ article }) {
             </span>
           )}
         </div>
+
+        <PremiumArticleBadge article={article} corner />
 
         {/* Test Score Badge */}
         {isTest && article.score && (

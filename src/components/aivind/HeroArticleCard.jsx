@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
 import ArticleReactions from "./ArticleReactions";
-import PremiumArticleBadge, { isPremiumArticle } from "./PremiumArticleBadge";
+import PremiumArticleBadge from "./PremiumArticleBadge";
 
 export default function HeroArticleCard({ article }) {
   const isVideo = article.type === "video";
@@ -23,17 +23,18 @@ export default function HeroArticleCard({ article }) {
         <div className="absolute inset-0 bg-gradient-to-r from-card from-20% via-card/80 via-50% to-transparent" />
       </div>
 
+      <PremiumArticleBadge article={article} compact corner />
+
       {/* Text content */}
       <div className="relative z-10 flex flex-col justify-between p-4 sm:p-5 w-[85%]">
         <div>
-          {(isSponsored || isPremiumArticle(article) || isVideo) && (
+          {(isSponsored || isVideo) && (
             <div className="flex gap-1.5 flex-wrap mb-2.5">
             {isSponsored && (
               <span className="inline-block px-2.5 py-0.5 bg-orange-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-sm shadow-sm">
                 Sponset
               </span>
             )}
-            <PremiumArticleBadge article={article} compact />
             {isVideo && (
               <span className="flex items-center gap-1 px-1.5 py-0.5 bg-orange-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-sm shadow-sm">
                 <PlayCircle className="w-3 h-3" />

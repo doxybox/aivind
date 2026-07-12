@@ -17,6 +17,7 @@ test("premium badge uses the existing article access fields", () => {
   assert.match(badge, /article\.paywallEnabled/);
   assert.match(badge, /article\.type === "video"/);
   assert.match(badge, /Tekkno plussartikkel - krever abonnement/);
+  assert.match(badge, /absolute right-3 top-3 z-20/);
 });
 
 test("all public article card variants render the premium badge", () => {
@@ -31,4 +32,9 @@ test("all public article card variants render the premium badge", () => {
   for (const file of files) {
     assert.match(readProjectFile(file), /PremiumArticleBadge/);
   }
+
+  assert.match(readProjectFile("src/components/aivind/ArticleCard.jsx"), /article=\{article\} corner/);
+  assert.match(readProjectFile("src/components/aivind/HeroArticleCard.jsx"), /article=\{article\} compact corner/);
+  assert.match(readProjectFile("src/pages/AiNewspaperPage.jsx"), /article=\{story\} corner/);
+  assert.match(readProjectFile("src/pages/NyFrontside1.jsx"), /paywallEnabled \}\} corner/);
 });
