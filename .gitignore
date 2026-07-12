@@ -46,3 +46,4 @@ build/
 *.pid
 .codex-*.pid
 .vercel
+.backups/

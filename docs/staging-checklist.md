@@ -22,7 +22,7 @@ Source of truth for open blockers: `docs/production-blockers.md`.
 - [ ] Future-publish workflow is tested.
 - [ ] Logged-in role matrix is signed off.
 - [x] Database credential rotation is complete.
-- [ ] Backup/restore ownership is assigned and tested.
+- [x] Backup/restore ownership is assigned and tested.
 
 ## Anonymous Browser QA
 
@@ -76,8 +76,8 @@ Source of truth for open blockers: `docs/production-blockers.md`.
 - [x] Run the public smoke script against staging.
 - [x] Confirm `/api/health` returns 200.
 - [x] Confirm public and admin Vercel logs contain no new 5xx errors.
-- [ ] Record backup, restore, migration and deploy owners.
-- [ ] Complete a non-production restore test.
+- [x] Record backup, restore, migration and deploy owners.
+- [x] Complete a non-production restore test (passed 13 July 2026).
 - [ ] Confirm rollback to `CONTENT_SOURCE=legacy` is understood and assigned.
 
 ## Automated Checks
@@ -89,7 +89,7 @@ npm run lint
 npm run build
 npm run payload-admin:build
 npm run payload:verify-public-rendering:strict
-npm run payload:audit-editorial-content -- --strict
+npm run payload:audit-editorial-content:strict
 ```
 
 ## Sign-Off

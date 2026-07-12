@@ -115,7 +115,7 @@ Before production:
 
 1. Announce migration window.
 2. Confirm current deploy version and target deploy version.
-3. Take a Supabase Postgres backup/snapshot.
+3. Confirm the Supabase managed backup/PITR state and take an encrypted logical app-relations dump when required by the release plan.
 4. Record backup timestamp and restore owner.
 5. Confirm `.env`/deployment env points to the intended database.
 6. Confirm no destructive migration is planned without rollback approval.
@@ -136,6 +136,8 @@ Rules:
 - Verify migration output and app health before production.
 - Do not run from a machine with mixed or unknown env values.
 - Do not hardcode credentials in commands, scripts, docs, or chat.
+
+Restore process evidence: the non-production restore test passed on 13 July 2026 using a separate Supabase project. The restored copy matched 39 app tables, 71 constraints, 162 indexes and all row counts, and passed `npm run payload:verify-public-rendering:strict`. Eivind Von Døhlen owns backup, restore, migrations and deploy. Test dumps are deleted immediately; an encrypted cutover dump is retained for 7 days after successful launch and then deleted.
 
 ### Running Payload Migrations
 

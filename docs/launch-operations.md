@@ -20,9 +20,9 @@ These actions cannot be completed safely from source code alone:
 
 1. Rotate every database, Cloudflare, Vipps, auth and Payload credential that has ever been pasted into chat, logs or screenshots. Revoke old values and update Vercel through its encrypted environment settings.
 2. Enable Resend only after `tekkno.no` is verified and a production sender is approved. Set `RESEND_API_KEY`, `EMAIL_FROM` and optionally `EMAIL_REPLY_TO`, then test verification and password reset end to end.
-3. Assign named owners for Supabase backup/restore, migrations, Vercel incidents, Payload Admin access and security response.
+3. Keep named owners for Supabase backup/restore, migrations, Vercel incidents, Payload Admin access and security response current in the release record.
 4. Create real editorial content and complete editorial staging QA. Demo content cannot approve production.
-   Run `npm run payload:audit-editorial-content -- --strict` against the target environment to verify the database minimum without printing article content.
+   Run `npm run payload:audit-editorial-content:strict` against the target environment to verify the database minimum without printing article content.
 5. Decide explicitly whether Vipps and Cloudflare are parked or active at launch. An active decision requires provider-specific runtime QA.
 
 Current editorial inventory on 13 July 2026: four published demo articles (two public, one members, one paid), two categories, one author, one active frontpage slot and one draft. A future-scheduled test article and all non-demo launch content are still missing.
@@ -43,7 +43,9 @@ Generate server secrets with a cryptographically secure generator, store them on
 
 ## Database Migration And Restore
 
-Owner for backup, restore, migrations and deploy: Eivind Von Døhlen. A non-production restore test is still required before sign-off.
+Owner for backup, restore, migrations and deploy: Eivind Von Døhlen.
+
+The non-production restore test passed on 13 July 2026. A PostgreSQL 18 logical dump copied only the `public` and `drizzle` app relations into a separate, empty Supabase project. Validation matched 39/39 tables, 71/71 constraints, 162/162 indexes and every table row count; the strict Payload public-rendering verifier also passed against the restored database. Supabase-managed backups/PITR remain the primary operational backup where supported. Restore-test dumps must be deleted immediately, while an encrypted pre-cutover logical dump may be retained for 7 days after a successful launch.
 
 1. Confirm the target database and current deployment SHA.
 2. Take or verify a restorable Supabase backup before migration.

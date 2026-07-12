@@ -19,6 +19,21 @@ test("staff media page is server-side protected and does not expose Cloudflare t
   assert.doesNotMatch(page, /NEXT_PUBLIC_CLOUDFLARE/);
 });
 
+test("editorial dashboard is staff-only and links to owned Payload collections", () => {
+  const page = readProjectFile("src/pages/redaksjon/index.page.jsx");
+
+  assert.match(page, /requireAnyRole\(req, STAFF_ROLES\)/);
+  assert.match(page, /const STAFF_ROLES = \["journalist", "editor", "admin"\]/);
+  assert.match(page, /PAYLOAD_PUBLIC_SERVER_URL/);
+  assert.match(page, /collections\/\$\{tool\.collection\}/);
+  assert.match(page, /collection: "articles"/);
+  assert.match(page, /collection: "categories"/);
+  assert.match(page, /collection: "authors"/);
+  assert.match(page, /collection: "frontpage-slots"/);
+  assert.match(page, /href="\/redaksjon\/media"/);
+  assert.doesNotMatch(page, /PAYLOAD_SECRET|DATABASE_URI|DATABASE_URL/);
+});
+
 test("staff media upload UI uses direct Cloudflare upload URLs without sending user id", () => {
   const page = readProjectFile("src/pages/redaksjon/media.page.jsx");
 

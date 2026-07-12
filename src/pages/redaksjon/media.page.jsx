@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Check, Clipboard, Image as ImageIcon, RefreshCw, Upload, Video } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Check, Clipboard, Image as ImageIcon, RefreshCw, Upload, Video } from "lucide-react";
 import { redirectForAuthError, requireAnyRole } from "@/lib/server/auth-helpers";
 import { getCloudflareMediaStatus } from "@/lib/server/cloudflare-media";
 
@@ -352,6 +353,10 @@ export default function StaffMediaPage({ user, roles, mediaStatus }) {
       <div className="mx-auto max-w-7xl">
         <header className="mb-8 flex flex-col justify-between gap-4 border-b border-white/10 pb-6 md:flex-row md:items-end">
           <div>
+            <Link href="/redaksjon" className="mb-4 inline-flex items-center gap-2 text-sm font-bold text-zinc-400 transition hover:text-[#ff6a00]">
+              <ArrowLeft className="h-4 w-4" />
+              Redaksjonsoversikt
+            </Link>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-[#ff6a00]">Redaksjon</p>
             <h1 className="mt-2 text-3xl font-black">Mediaopplasting</h1>
             <p className="mt-2 max-w-2xl text-sm text-zinc-400">
