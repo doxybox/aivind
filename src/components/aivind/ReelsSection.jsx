@@ -39,7 +39,7 @@ export default function ReelsSection({ items = defaultReels }) {
                 <button
                   type="button"
                   onClick={() => setActiveReel(reel)}
-                  className="group relative block h-[372px] w-full overflow-hidden rounded-[14px] border border-white/10 bg-zinc-900 p-0 text-left shadow-[0_18px_60px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-[#ff6a00] focus:ring-offset-2 focus:ring-offset-zinc-50 dark:focus:ring-offset-[#161a22]"
+                  className="group relative block h-[372px] w-full overflow-hidden rounded-[14px] border border-white/10 bg-zinc-900 p-0 text-left shadow-[0_18px_60px_rgba(0,0,0,0.35)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-[#161a22]"
                   aria-label={`Spill av ${reel.title}`}
                 >
                   <img src={reel.image} alt={reel.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
