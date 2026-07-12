@@ -22,7 +22,7 @@ try {
   `;
   const [row] = await sql`
     insert into rate_limit_bucket (key, count, reset_at, updated_at)
-    values (${key}, 1, ${new Date(Date.now() + 60_000)}, now())
+    values (${key}, 1, ${new Date(Date.now() + 60_000).toISOString()}, now())
     on conflict (key) do update set
       count = case
         when rate_limit_bucket.reset_at <= now() then 1

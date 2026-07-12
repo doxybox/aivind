@@ -20,7 +20,7 @@ export function getClientIp(req) {
 }
 
 async function consume(key, limit, windowMs, now) {
-  const nextResetAt = new Date(now + windowMs);
+  const nextResetAt = new Date(now + windowMs).toISOString();
   const [bucket] = await sql`
     insert into rate_limit_bucket (key, count, reset_at, updated_at)
     values (${key}, 1, ${nextResetAt}, now())

@@ -26,8 +26,8 @@ export default async function handler(req, res) {
   const retentionDays = Number.isInteger(configuredDays) && configuredDays >= 30 && configuredDays <= 730
     ? configuredDays
     : 395;
-  const reelCutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
-  const bucketCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const reelCutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000).toISOString();
+  const bucketCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
   try {
     const removedViews = await sql`delete from reel_view where last_viewed_at < ${reelCutoff}`;
