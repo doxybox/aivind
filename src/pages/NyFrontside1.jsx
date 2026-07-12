@@ -6,7 +6,6 @@ import { GiFlashGrenade } from "react-icons/gi";
 import { useTheme } from "@/hooks/useTheme";
 import SearchOverlay from "@/components/aivind/SearchOverlay";
 import { allArticles } from "@/lib/articles";
-import { fallbackMarketData } from "@/lib/market-data-fallback";
 import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
@@ -79,12 +78,23 @@ const StockLogo = ({ stock }) => {
 const LiveStockWidget = () => {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [asOf, setAsOf] = useState(null);
 
   const fetchStocks = async () => {
+    setError("");
     try {
-      setStocks([...fallbackMarketData.stocks].sort((a, b) => b.price - a.price));
+      const response = await fetch("/api/market-data");
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !Array.isArray(data.stocks)) {
+        throw new Error(data.error || "Kunne ikke hente kurser");
+      }
+
+      setStocks([...data.stocks].sort((a, b) => b.price - a.price));
+      setAsOf(data.asOf || null);
     } catch (e) {
-      console.error("Failed to fetch market data", e);
+      setStocks([]);
+      setError(e.message || "Kunne ikke hente kurser");
     } finally {
       setLoading(false);
     }
@@ -92,7 +102,7 @@ const LiveStockWidget = () => {
 
   useEffect(() => {
     fetchStocks();
-    const interval = setInterval(fetchStocks, 60000); // Fetch every minute
+    const interval = setInterval(fetchStocks, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -100,6 +110,17 @@ const LiveStockWidget = () => {
     return (
       <div className="flex flex-col flex-1 items-center justify-center py-10">
         <Loader2 className="w-8 h-8 animate-spin text-[#ff6a00]" />
+      </div>
+    );
+  }
+
+  if (error && stocks.length === 0) {
+    return (
+      <div className="flex flex-col flex-1 items-start justify-center py-8">
+        <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">Kursene er midlertidig utilgjengelige.</p>
+        <button type="button" onClick={fetchStocks} className="mt-3 text-xs font-bold text-[#ff6a00] hover:underline">
+          Prøv igjen
+        </button>
       </div>
     );
   }
@@ -128,7 +149,7 @@ const LiveStockWidget = () => {
             </div>
             <div className="flex flex-col items-end shrink-0">
               <span className="text-sm font-medium transition-colors duration-300 text-zinc-900 dark:text-white">
-                {stock.price.toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} NOK
+                {stock.price.toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {stock.currency || "NOK"}
               </span>
               <div className={`flex items-center gap-1 text-xs font-bold transition-colors duration-300 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
                 {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
@@ -138,6 +159,9 @@ const LiveStockWidget = () => {
           </motion.div>
         );
       })}
+      <p className="mt-4 text-[10px] leading-4 text-zinc-500 dark:text-zinc-400">
+        Forsinkede kurser{asOf ? ` · oppdatert ${new Date(asOf).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Oslo" })}` : ""}
+      </p>
     </div>
   );
 };

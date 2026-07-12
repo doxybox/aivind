@@ -16,11 +16,12 @@ This project is moving Base44 out of core application flows while preserving the
 - `src/components/minside/cards/TipsOssCard.jsx` now sends text tips through `/api/tips` and only shows success after Payload accepts the submission.
 - `src/components/minside/cards/SecurityCard.jsx` no longer shows fake password-change dates or device counts.
 - `src/components/aivind/AdSlot.jsx` no longer reads Base44 ads. It renders the existing placeholder for Payload-configured ads.
-- `src/pages/NyFrontside1.jsx` no longer calls Base44 for market data. It uses the local fallback market data helper.
+- `src/pages/NyFrontside1.jsx` no longer calls Base44 for market data. It reads normalized NOK quotes from the first-party `/api/market-data` route.
 
 ## New account APIs
 
 - `POST /api/tips`
+- `GET /api/market-data`
 - `GET /api/account/newsletter-preferences`
 - `POST /api/account/newsletter-preferences`
 - `GET /api/account/payment-history`
