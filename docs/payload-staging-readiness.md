@@ -80,7 +80,6 @@ Content rules:
 Public frontend:
 
 - `/`
-- `/nyfrontside1`
 - `/ai`
 - `/artikler/<public-article-slug>`
 - `/artikler/<members-article-slug>`
@@ -180,7 +179,6 @@ Editorial minimum content:
 
 Routes tested:
 - /:
-- /nyfrontside1:
 - /ai:
 - public article:
 - members article:

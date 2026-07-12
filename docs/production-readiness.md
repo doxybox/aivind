@@ -19,7 +19,7 @@ For the cutover-day checklist, env matrix, backup/migration runbook and smoke-te
 - Better Auth login/register/session is integrated with Pages Router API routes.
 - Account overview, profile, subscription read layer, saved articles, newsletter preferences, and tips are backed by real server-side APIs.
 - Paywall/entitlement checks are server-side and do not trust client-supplied `userId`.
-- Payload public rendering is verified for `/`, `/nyfrontside1`, `/ai`, and article routes behind `CONTENT_SOURCE=payload`.
+- Payload public rendering is verified for `/`, `/ai`, and article routes behind `CONTENT_SOURCE=payload`.
 - Public, members, premium, draft, future-published, and unknown Payload article cases are covered by verifier/tests.
 - Premium body content is not serialized to unauthorized users.
 - `CONTENT_SOURCE=legacy` rollback build has been verified.
@@ -74,7 +74,7 @@ Rollback steps:
 
 1. Change the environment variable in the deployment platform.
 2. Restart/redeploy the public app.
-3. Smoke-test `/`, `/nyfrontside1`, `/ai`, at least one article route, `/min-side`, and `/abonnement`.
+3. Smoke-test `/`, `/ai`, at least one article route, `/min-side`, and `/abonnement`.
 4. Confirm Payload Admin remains available separately if editors still need CMS access.
 
 Do not remove legacy fallback until production has run safely on Payload and a separate cleanup decision is made.

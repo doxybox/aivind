@@ -365,8 +365,8 @@ test("Payload demo seed covers AI public, members, paid and draft content withou
   assert.doesNotMatch(seedScript, /heroMedia|seoImage|cloudflare/i);
 });
 
-test("nyfrontside1 accepts empty Payload homepage data and keeps legacy visual fallback", () => {
-  const routeSource = readProjectFile("src/pages/nyfrontside1.page.jsx");
+test("homepage accepts empty Payload data and the old nyfrontside1 route is removed", () => {
+  const routeSource = readProjectFile("src/pages/index.page.jsx");
   const pageSource = readProjectFile("src/pages/NyFrontside1.jsx");
 
   assert.match(routeSource, /getHomepageContent/);
@@ -378,6 +378,8 @@ test("nyfrontside1 accepts empty Payload homepage data and keeps legacy visual f
   assert.match(pageSource, /payloadArticles\.length > 0/);
   assert.match(pageSource, /payloadReels\.length > 0/);
   assert.match(pageSource, /allArticles/);
+  assert.equal(existsSync(path.join(rootDir, "src/pages/nyfrontside1.page.jsx")), false);
+  assert.doesNotMatch(pageSource, /href="\/nyfrontside1"/);
 });
 
 test("Payload homepage articles are not discarded when optional reels fail", () => {

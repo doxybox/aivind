@@ -116,7 +116,6 @@ ALLOW_PAYLOAD_DEMO_SEED=true
 Connected when `CONTENT_SOURCE=payload`:
 
 - `/`
-- `/nyfrontside1`
 - `/artikler/[slug]`
 - `/ai`
 - `/gaming`
@@ -128,7 +127,7 @@ Connected when `CONTENT_SOURCE=payload`:
 
 `/ai` uses its bespoke newspaper layout, but swaps its article data to published Payload articles in the `ai` category when `CONTENT_SOURCE=payload`. If no published AI articles exist, it shows an empty Payload state instead of falling back to Base44/Ghost.
 
-`/` and `/nyfrontside1` use `getHomepageContent()` when `CONTENT_SOURCE=payload`. Active `frontpage-slots` are mapped first, followed by latest published articles. The existing visual grid is preserved: Payload articles can fill the hero, top stories, section cards and "Siste saker", while legacy hardcoded cards remain the fallback when Payload has no data.
+`/` uses `getHomepageContent()` when `CONTENT_SOURCE=payload`. Active `frontpage-slots` are mapped first, followed by latest published articles. The existing visual grid is preserved: Payload articles can fill the hero, top stories, section cards and "Siste saker", while legacy hardcoded cards remain the fallback when Payload has no data.
 
 Reels in `getHomepageContent()` are optional for staging. A missing or temporarily incompatible reels query returns an empty reels array and must not discard homepage articles.
 
@@ -138,7 +137,7 @@ Runtime QA was run locally with the public app started as `CONTENT_SOURCE=payloa
 
 Verified public routes:
 
-- `/` and `/nyfrontside1` render Payload homepage content from the active demo frontpage slot and latest published articles.
+- `/` renders Payload homepage content from the active demo frontpage slot and latest published articles.
 - `/ai` renders published Payload articles in the `ai` category and does not show draft or future-published demo content.
 - `/artikler/demo-payload-driver-ai-forsiden` renders as a public article.
 - `/artikler/demo-ai-medlemssak-fra-payload` hides the body while logged out and shows it when logged in.
@@ -204,8 +203,7 @@ CONTENT_SOURCE=payload
 
 5. Start the public app.
 6. Verify `/`.
-7. Verify `/nyfrontside1`.
-8. Verify `/ai`.
+7. Verify `/ai`.
 9. Verify `/gaming` or the category printed by the verifier.
 10. Verify `/artikler/demo-payload-driver-ai-forsiden` or the article printed by the verifier.
 11. Verify `/artikler/demo-ai-medlemssak-fra-payload` while logged out and logged in.

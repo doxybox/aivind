@@ -225,7 +225,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
       {/* Header */}
       <header className="h-[72px] flex items-center justify-between px-6 bg-white dark:bg-[#161a22] border-b border-zinc-200 dark:border-white/5 sticky top-0 z-50 transition-colors duration-300">
         <div className="flex items-center gap-10">
-          <Link href="/nyfrontside1" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <span className="text-zinc-900 dark:text-white font-black text-2xl tracking-tighter uppercase">TEKKNO<span className="text-[#ff6a00]">.NO</span></span>
           </Link>
           

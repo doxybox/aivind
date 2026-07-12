@@ -186,7 +186,6 @@ With `CONTENT_SOURCE=payload`, server-side page loaders read from Payload and pa
 Connected behind the flag:
 
 - `/`
-- `/nyfrontside1`
 - `/artikler/[slug]`
 - `/ai`
 - `/gaming`
@@ -271,7 +270,7 @@ To test the public site locally with Payload content:
 1. Set `DATABASE_URI` safely in `.env.local` or the current shell.
 2. Set `CONTENT_SOURCE=payload`.
 3. Start the public Next.js app.
-4. Open `/`, `/nyfrontside1`, or one of the connected category URLs.
+4. Open `/` or one of the connected category URLs.
 5. Open `/artikler/<article-slug>` for a published Payload article.
 
 To roll back instantly:

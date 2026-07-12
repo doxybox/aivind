@@ -164,7 +164,6 @@ Run immediately after deploy and again after changing `CONTENT_SOURCE`.
 Public routes:
 
 - `/`
-- `/nyfrontside1`
 - `/ai`
 - `/artikler/<public-article-slug>`
 - `/artikler/<members-article-slug>`
@@ -264,7 +263,7 @@ Rollback process:
 
 1. Change production env in the hosting/deployment platform.
 2. Redeploy or restart the public app.
-3. Smoke-test `/`, `/nyfrontside1`, `/ai`, one article route, `/login`, `/min-side`, `/abonnement`.
+3. Smoke-test `/`, `/ai`, one article route, `/login`, `/min-side`, `/abonnement`.
 4. Keep Payload Admin online unless it is the failure source.
 5. Do not delete Payload content during rollback.
 6. Record rollback time, owner, and reason.
@@ -338,7 +337,6 @@ Editorial QA:
 
 Smoke test:
 - /:
-- /nyfrontside1:
 - /ai:
 - public article:
 - members article:

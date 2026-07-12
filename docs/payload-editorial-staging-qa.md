@@ -103,7 +103,7 @@ Run this in Payload Admin:
 5. Create a premium article and confirm users without entitlement cannot read body.
 6. Create a draft article and confirm `/artikler/<draft-slug>` returns 404.
 7. Create a future-published article and confirm `/artikler/<future-slug>` returns 404 before publish time.
-8. Create or update a frontpage slot and confirm `/` and `/nyfrontside1` show the selected article.
+8. Create or update a frontpage slot and confirm `/` shows the selected article.
 9. Remove optional image/author/category from a safe test article and confirm frontend does not crash.
 
 Acceptance criteria:
@@ -137,7 +137,6 @@ Payload Admin setup:
 Public staging:
 
 - [ ] `/` displays the intended hero and frontpage slots.
-- [ ] `/nyfrontside1` renders without layout or image failures.
 - [ ] `/ai` contains only the expected AI articles.
 - [ ] `/gaming` contains only the expected Gaming articles.
 - [ ] `/artikler/<public-slug>` displays the full public body.
@@ -180,7 +179,6 @@ Image policy for staging:
 Test:
 
 - `/`
-- `/nyfrontside1`
 - `/ai`
 - `/artikler/<public-real-slug>`
 - `/artikler/<members-real-slug>`
@@ -219,8 +217,7 @@ After changing it:
 
 1. Restart/redeploy the public staging app.
 2. Smoke-test `/`.
-3. Smoke-test `/nyfrontside1`.
-4. Smoke-test `/ai`.
+3. Smoke-test `/ai`.
 5. Smoke-test one known legacy article route.
 6. Confirm Payload Admin can remain online; rollback only affects public content source.
 
@@ -230,7 +227,7 @@ Rollback verification:
 
 - [ ] Set staging `CONTENT_SOURCE=legacy` without changing production.
 - [ ] Redeploy the public staging project.
-- [ ] Verify `/`, `/nyfrontside1`, `/ai`, one legacy article, `/login` and `/min-side`.
+- [ ] Verify `/`, `/ai`, one legacy article, `/login` and `/min-side`.
 - [ ] Set staging back to `CONTENT_SOURCE=payload` and redeploy after the rollback exercise.
 
 ## Before Production Default
