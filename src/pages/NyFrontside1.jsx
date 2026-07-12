@@ -102,7 +102,7 @@ const LiveStockWidget = () => {
 
   useEffect(() => {
     fetchStocks();
-    const interval = setInterval(fetchStocks, 5 * 60 * 1000);
+    const interval = setInterval(fetchStocks, 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 

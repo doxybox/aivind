@@ -10,12 +10,12 @@ The `Tech Aksjer` widget reads data from `GET /api/market-data`.
 4. Daily percentage change is calculated from the previous close.
 5. The API returns only normalized public quote data to the browser.
 
-No market-data secret or upstream URL is sent from the client. The endpoint is GET-only, rate limited, cached in memory for five minutes, and emits CDN cache headers (`s-maxage=300`, `stale-while-revalidate=900`).
+No market-data secret or upstream URL is sent from the client. The endpoint is GET-only, rate limited, cached in memory for one minute, and emits CDN cache headers (`s-maxage=60`, `stale-while-revalidate=120`).
 
 ## Product behavior
 
 - Quotes are marked as delayed and include an `asOf` timestamp.
-- The frontend refreshes every five minutes.
+- The frontend refreshes every minute.
 - If the upstream provider is unavailable, the widget shows an honest unavailable state and retry button.
 - Hardcoded fallback prices are not shown as current market data.
 

@@ -6,7 +6,7 @@ const QUOTE_SYMBOLS = [
 ];
 
 const FX_SYMBOL = "NOK=X";
-const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_TTL_MS = 60 * 1000;
 
 let memoryCache = null;
 
@@ -27,7 +27,7 @@ export function calculatePercentChange(price, previousClose) {
 }
 
 function chartUrl(symbol) {
-  return `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=1d`;
+  return `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1m`;
 }
 
 async function fetchChartMeta(symbol, fetchImpl) {
