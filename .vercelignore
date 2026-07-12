@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+.next
+node_modules
+payload-admin/.next
+payload-admin/node_modules
+*.log
+*.pid
+.codex-tmp
+
