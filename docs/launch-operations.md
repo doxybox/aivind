@@ -12,7 +12,7 @@ This runbook covers the operational work that remains before TEKKNO can be treat
 - Reel analytics uses a server-side HMAC pseudonym and does not set a dedicated viewer cookie.
 - `/api/health` checks database readiness without returning secrets.
 - The public staging Vercel project uses `CONTENT_SOURCE=payload`; rollback remains `CONTENT_SOURCE=legacy`.
-- Payload uses `PAYLOAD_DATABASE_URL` ahead of the general app connection. Serverless staging/production uses the Supabase session pooler with `PAYLOAD_DATABASE_POOL_MAX=1`; transaction mode is not used because Payload 3.86 Local API initialization hangs against it. Monitor pool saturation and increase the Supabase pool capacity before production traffic requires more than the available sessions.
+- Payload uses `PAYLOAD_DATABASE_URL` ahead of the general app connection. Serverless staging/production uses the Supabase session pooler with `PAYLOAD_DATABASE_POOL_MAX=1` for the public app and `2` for Payload Admin. Admin SSR deadlocks at `1`, while the former value `3` exhausted the 15-session pool too quickly. Transaction mode is not used because Payload 3.86 Local API initialization hangs against it. Monitor saturation and increase Supabase pool capacity before production traffic requires more sessions.
 
 ## P0 Manual Actions
 
