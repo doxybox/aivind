@@ -36,14 +36,17 @@ loadEnvFile(".env");
 
 const payloadDatabaseUrl = process.env.PAYLOAD_DATABASE_URL || process.env.DATABASE_URI || process.env.DATABASE_URL;
 const payloadSecret = process.env.PAYLOAD_SECRET;
+const isVercelServerless = process.env.VERCEL === "1";
 const defaultPayloadPoolMax = process.env.NODE_ENV === "production" ? 1 : 3;
 const configuredPoolMax = Number.parseInt(
   process.env.PAYLOAD_DATABASE_POOL_MAX || process.env.DATABASE_POOL_MAX || String(defaultPayloadPoolMax),
   10,
 );
-const payloadPoolMax = Number.isInteger(configuredPoolMax) && configuredPoolMax > 0
-  ? configuredPoolMax
-  : defaultPayloadPoolMax;
+const payloadPoolMax = isVercelServerless
+  ? 1
+  : Number.isInteger(configuredPoolMax) && configuredPoolMax > 0
+    ? configuredPoolMax
+    : defaultPayloadPoolMax;
 
 if (!payloadDatabaseUrl) {
   throw new Error("Missing DATABASE_URI, PAYLOAD_DATABASE_URL, or DATABASE_URL for Payload.");
