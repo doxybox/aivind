@@ -7,6 +7,7 @@ import { GiFlashGrenade } from "react-icons/gi";
 import { useTheme } from "@/hooks/useTheme";
 import SearchOverlay from "@/components/aivind/SearchOverlay";
 import { allArticles } from "@/lib/articles";
+import { withArticleHref } from "@/lib/article-slugs";
 import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
@@ -174,23 +175,41 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const payloadArticles = payloadHomepageContent?.articles || [];
+  const payloadFrontpageSlots = payloadHomepageContent?.frontpageSlots || [];
   const payloadReels = payloadHomepageContent?.reels || [];
-  const searchArticles = payloadArticles.length > 0 ? payloadArticles : allArticles;
-  const hasPayloadArticles = payloadArticles.length > 0;
+  const heroSlotArticle = payloadFrontpageSlots.find(
+    (slot) => slot.placement === "hero" && slot.article,
+  )?.article;
+  const orderedPayloadArticles = heroSlotArticle
+    ? [
+        heroSlotArticle,
+        ...payloadArticles.filter((article) => String(article.id) !== String(heroSlotArticle.id)),
+      ]
+    : payloadArticles;
+  const uniquePayloadArticles = orderedPayloadArticles.filter(
+    (article, index, articles) => article?.id && articles.findIndex((candidate) => String(candidate.id) === String(article.id)) === index,
+  );
+  const legacyArticleCards = allArticles.map(withArticleHref);
+  const contentArticles = [
+    ...uniquePayloadArticles,
+    ...legacyArticleCards.filter((legacyArticle) => !uniquePayloadArticles.some((payloadArticle) => payloadArticle.slug === legacyArticle.slug)),
+  ];
+  const searchArticles = contentArticles.length > 0 ? contentArticles : allArticles;
+  const hasContentArticles = contentArticles.length > 0;
+  const toCard = (article, fallback = {}) => ({
+    id: article?.id || fallback.id,
+    slug: article?.slug || fallback.slug,
+    image: article?.image || article?.imageUrl || fallback.image || "/images/placeholders/article-placeholder.svg",
+    tag: article?.category || article?.tag || fallback.tag || "Nyheter",
+    title: article?.title || fallback.title || "Uten tittel",
+    href: article?.href || fallback.href || "#",
+    type: article?.type || fallback.type,
+    accessLevel: article?.accessLevel || fallback.accessLevel,
+    paywallEnabled: article?.paywallEnabled ?? fallback.paywallEnabled ?? false,
+    reactions: article?.comments ?? article?.reactions ?? fallback.reactions ?? 0,
+  });
   const payloadCard = (index, fallback) => {
-    const article = payloadArticles[index];
-    if (!hasPayloadArticles || !article) return fallback;
-
-    return {
-      image: article.image || article.imageUrl || fallback.image,
-      tag: article.category || fallback.tag,
-      title: article.title || fallback.title,
-      href: article.href || fallback.href || "#",
-      type: article.type || fallback.type,
-      accessLevel: article.accessLevel || fallback.accessLevel,
-      paywallEnabled: article.paywallEnabled ?? fallback.paywallEnabled ?? false,
-      reactions: article.comments ?? fallback.reactions ?? 0,
-    };
+    return toCard(contentArticles[index], fallback);
   };
   const topHero = payloadCard(0, {
     image: "/images/placeholders/article-placeholder.svg",
@@ -214,6 +233,24 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
   const bottomSideCards = [
     payloadCard(7, { image: "/images/placeholders/article-placeholder.svg", tag: "AI", title: "Ny AI-brikke kan endre datakraft", reactions: 18 }),
     payloadCard(8, { image: "/images/placeholders/article-placeholder.svg", tag: "Tester", title: "Test: De beste treningsklokkene", reactions: 24 }),
+  ];
+  const latestCards = [
+    payloadCard(9, { image: "/images/placeholders/article-placeholder.svg", tag: "Gaming", title: "Slik bygger du den ultimate gaming-PCen" }),
+    payloadCard(10, { image: "/images/placeholders/article-placeholder.svg", tag: "Guider", title: "Passord er snart historie - slik fungerer passkeys" }),
+    payloadCard(11, { image: "/images/placeholders/article-placeholder.svg", tag: "AI", title: "TikToks nye algoritme endrer alt for innholdsskapere" }),
+    payloadCard(12, { image: "/images/placeholders/article-placeholder.svg", tag: "Gadgets", title: "Derfor kjoper alle gamle digitalkameraer igjen" }),
+    payloadCard(13, { image: "/images/placeholders/article-placeholder.svg", tag: "Guider", title: "De mest etterspurte programmeringssprakene i ar" }),
+    payloadCard(14, { image: "/images/placeholders/article-placeholder.svg", tag: "Tester", title: "Vi har testet de nye stoyreduserende hodetelefonene" }),
+    payloadCard(15, { image: "/images/placeholders/article-placeholder.svg", tag: "Gadgets", title: "Alt vi vet om den neste store Windows-oppdateringen" }),
+    payloadCard(16, { image: "/images/placeholders/article-placeholder.svg", tag: "AI", title: "Slik bruker du AI for a effektivisere hverdagen" }),
+  ];
+  const additionalArticleRowsBeforeAd = [
+    { gridClass: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4", cardClass: "min-h-[240px]", articles: contentArticles.slice(17, 21) },
+    { gridClass: "grid-cols-1 md:grid-cols-3", cardClass: "min-h-[280px]", articles: contentArticles.slice(21, 24) },
+  ];
+  const additionalArticleRowsAfterAd = [
+    { gridClass: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4", cardClass: "min-h-[240px]", articles: contentArticles.slice(24, 28) },
+    { gridClass: "grid-cols-1 md:grid-cols-3", cardClass: "min-h-[280px]", articles: contentArticles.slice(28, 31) },
   ];
 
   return (
@@ -365,15 +402,15 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
 
         <ReelsSection items={payloadReels.length > 0 ? payloadReels : undefined} />
 
-        {payloadArticles.length > 0 && (
+        {hasContentArticles && (
           <section className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-[#ff6a00] text-[13px] font-black uppercase tracking-[0.25em]">Siste saker</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {payloadArticles.slice(0, 8).map((article, index) => (
+              {latestCards.map((article, index) => (
                 <GridCard
-                  key={article.id || article.slug || index}
+                  key={article.id || article.slug || article.title || index}
                   className="min-h-[240px]"
                   image={article.image}
                   tag={article.category}
@@ -404,6 +441,32 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
           </div>
         </div>
 
+        {additionalArticleRowsBeforeAd.map((row, rowIndex) => (
+          row.articles.length > 0 && (
+            <div key={`before-ad-${rowIndex}`} className={`grid ${row.gridClass} gap-4 mb-6`}>
+              {row.articles.map((article, articleIndex) => {
+                const card = toCard(article);
+
+                return (
+                  <GridCard
+                    key={card.id || card.slug || `${card.title}-${articleIndex}`}
+                    className={row.cardClass}
+                    image={card.image}
+                    tag={card.tag}
+                    type={card.type}
+                    accessLevel={card.accessLevel}
+                    paywallEnabled={card.paywallEnabled}
+                    title={card.title}
+                    href={card.href}
+                  />
+                );
+              })}
+            </div>
+          )
+        ))}
+
+        {!hasContentArticles && (
+          <>
         {/* Flere Artikler (Rad 1) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <GridCard 
@@ -504,6 +567,9 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
           />
         </div>
 
+          </>
+        )}
+
         {/* Google Ads Placeholder (Bunn) */}
         <div className="w-full mx-auto h-[250px] bg-[#161a22] border border-[#ff6a00]/40 shadow-[0_0_15px_rgba(255,106,0,0.1)] rounded-xl mt-8 mb-6 flex items-center justify-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-48 h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)', backgroundSize: '16px 16px', WebkitMaskImage: 'linear-gradient(to right, black, transparent)', maskImage: 'linear-gradient(to right, black, transparent)' }} />
@@ -520,6 +586,32 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
           </div>
         </div>
 
+        {additionalArticleRowsAfterAd.map((row, rowIndex) => (
+          row.articles.length > 0 && (
+            <div key={`after-ad-${rowIndex}`} className={`grid ${row.gridClass} gap-4 mb-6`}>
+              {row.articles.map((article, articleIndex) => {
+                const card = toCard(article);
+
+                return (
+                  <GridCard
+                    key={card.id || card.slug || `${card.title}-${articleIndex}`}
+                    className={row.cardClass}
+                    image={card.image}
+                    tag={card.tag}
+                    type={card.type}
+                    accessLevel={card.accessLevel}
+                    paywallEnabled={card.paywallEnabled}
+                    title={card.title}
+                    href={card.href}
+                  />
+                );
+              })}
+            </div>
+          )
+        ))}
+
+        {!hasContentArticles && (
+          <>
         {/* Flere Artikler (Rad 5) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <GridCard 
@@ -569,6 +661,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
             title="De beste dingsene for et smartere hjem"
           />
         </div>
+          </>
+        )}
 
       </main>
       

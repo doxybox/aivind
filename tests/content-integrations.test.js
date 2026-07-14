@@ -407,7 +407,7 @@ test("homepage accepts empty Payload data and the old nyfrontside1 route is remo
   assert.match(pageSource, /topHero/);
   assert.match(pageSource, /topSideCards/);
   assert.match(pageSource, /middleCards/);
-  assert.match(pageSource, /payloadArticles\.length > 0/);
+  assert.match(pageSource, /hasContentArticles/);
   assert.match(pageSource, /payloadReels\.length > 0/);
   assert.match(pageSource, /allArticles/);
   assert.equal(existsSync(path.join(rootDir, "src/pages/nyfrontside1.page.jsx")), false);

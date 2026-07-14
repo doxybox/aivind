@@ -309,7 +309,30 @@ export async function getServerSideProps({ params, req }) {
   if (isPayloadContentSource()) {
     const payloadArticle = await getArticleBySlug(slug);
 
-    if (!payloadArticle) return { notFound: true };
+    if (!payloadArticle) {
+      const legacyArticle = getLegacyArticleBySlug(slug);
+      if (!legacyArticle) return { notFound: true };
+
+      return {
+        props: {
+          article: {
+            ...legacyArticle,
+            body: legacyArticle.content || legacyArticle.excerpt || "",
+            content: legacyArticle.content || legacyArticle.excerpt || "",
+            restricted: false,
+            canReadFullBody: true,
+            heroImage: legacyArticle.image,
+            heroImageAlt: legacyArticle.title,
+            seoTitle: legacyArticle.title,
+            seoDescription: legacyArticle.excerpt || "",
+            seoImage: legacyArticle.image,
+            publishedAt: legacyArticle.publishedAt || "",
+          },
+          searchArticles: getLegacyArticles(),
+          canonicalUrl: siteUrl ? `${siteUrl.replace(/\/$/, "")}/artikler/${legacyArticle.slug}` : "",
+        },
+      };
+    }
 
     const user = await getCurrentUser(req);
     const viewerAccess = await getArticleAccessForUser(user, payloadArticle);
