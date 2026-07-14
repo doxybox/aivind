@@ -1,14 +1,13 @@
 import React, { useMemo, useState } from "react";
+import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { Lock, Menu, Moon, Search, X } from "lucide-react";
-import { GiFlashGrenade } from "react-icons/gi";
-import { useTheme } from "@/hooks/useTheme";
+import { CalendarDays, Clock3, Copy, Link2, Lock, Mail, MessageCircle, Share2 } from "lucide-react";
 import Footer from "@/components/aivind/Footer";
+import Navbar from "@/components/aivind/Navbar";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
+import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 import SearchOverlay from "@/components/aivind/SearchOverlay";
-import { categoryNavItems } from "@/components/aivind/categoryNav";
 import { getLegacyArticleBySlug, getLegacyArticles } from "@/lib/legacy-article-data";
 import { isPayloadContentSource } from "@/lib/server/content-source";
 import {
@@ -20,100 +19,176 @@ import {
 import { getArticleAccessForUser } from "@/lib/server/article-access";
 import { getCurrentUser } from "@/lib/server/auth-helpers";
 
-function ArticleHeader({ onSearchClick }) {
-  const { theme, toggleTheme } = useTheme();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+function renderArticleBlocks(body = "", fallback = "") {
+  const blocks = String(body || fallback || "")
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  return blocks.map((block, index) => {
+    if (block.startsWith("## ")) {
+      return <h2 key={index} className="mt-10 text-2xl font-black leading-tight tracking-tight text-foreground md:text-3xl">{block.slice(3)}</h2>;
+    }
+
+    if (block.startsWith("> ")) {
+      return (
+        <blockquote key={index} className="my-8 border-l-2 border-[#ff6a00] bg-muted/25 px-5 py-4 text-lg italic leading-8 text-foreground/85">
+          {block.slice(2)}
+        </blockquote>
+      );
+    }
+
+    return <p key={index} className="mt-5 text-[16px] leading-8 text-foreground/90 md:text-[17px]">{block}</p>;
+  });
+}
+
+function formatPublishedDate(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleDateString("nb-NO", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function ShareActions({ title, canonicalUrl }) {
+  const [copied, setCopied] = useState(false);
+  const url = canonicalUrl || (typeof window !== "undefined" ? window.location.href : "");
+
+  const copyLink = async () => {
+    if (!url || !navigator.clipboard) return;
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1800);
+  };
+
+  const share = async () => {
+    if (navigator.share && url) {
+      await navigator.share({ title, url });
+      return;
+    }
+    await copyLink();
+  };
 
   return (
-    <>
-      <div
-        className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-        onClick={() => setIsMenuOpen(false)}
-      >
-        <div
-          className={`absolute top-0 right-0 bottom-0 w-64 bg-white dark:bg-[#161a22] border-l border-zinc-200 dark:border-white/10 p-6 flex flex-col transition-transform duration-300 ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}
-          onClick={(event) => event.stopPropagation()}
-        >
-          <div className="flex justify-between items-center mb-8">
-            <span className="text-zinc-900 dark:text-white font-black text-xl tracking-tighter uppercase">MENY</span>
-            <button onClick={() => setIsMenuOpen(false)} className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-          <nav className="flex flex-col gap-6">
-            {categoryNavItems.map((item) => (
-              <Link key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)} className="text-sm font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white transition-colors">
-                {item.label}
-              </Link>
-            ))}
-            <div className="h-px bg-zinc-200 dark:bg-white/10 w-full my-2" />
-            <Link href="/login" className="text-sm font-bold uppercase tracking-wider text-[#ff6a00] hover:text-[#ff8c33] transition-colors">
-              LOGG INN
-            </Link>
-          </nav>
-        </div>
-      </div>
-
-      <header className="h-[72px] flex items-center justify-between px-6 bg-white dark:bg-[#161a22] border-b border-zinc-200 dark:border-white/5 sticky top-0 z-50 transition-colors duration-300">
-        <div className="flex items-center gap-10">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-zinc-900 dark:text-white font-black text-2xl tracking-tighter uppercase">
-              TEKKNO<span className="text-[#ff6a00]">.NO</span>
-            </span>
-          </Link>
-          <nav className="hidden lg:flex items-center gap-6">
-            {categoryNavItems.map((item) => (
-              <Link key={item.href} href={item.href} className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        <div className="flex items-center gap-6">
-          <Link href="/login" className="text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white transition-colors hidden sm:block">
-            LOGG INN
-          </Link>
-          <div className="flex items-center gap-4 text-zinc-500 dark:text-zinc-400">
-            <button onClick={toggleTheme} className="hover:text-zinc-900 dark:hover:text-white transition-colors">
-              {theme === "dark" ? <GiFlashGrenade className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            <button onClick={onSearchClick} className="hover:text-zinc-900 dark:hover:text-white transition-colors">
-              <Search className="w-5 h-5" />
-            </button>
-            <button onClick={() => setIsMenuOpen(true)} className="hover:text-zinc-900 dark:hover:text-white transition-colors">
-              <Menu className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-      </header>
-    </>
+    <div className="flex items-center gap-2" aria-label="Del artikkelen">
+      <span className="hidden text-[11px] text-muted-foreground sm:inline">Del artikkelen</span>
+      <button type="button" onClick={copyLink} className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-[#ff6a00] hover:text-[#ff6a00]" aria-label="Kopier lenke" title={copied ? "Lenke kopiert" : "Kopier lenke"}>
+        {copied ? <Copy className="h-4 w-4 text-[#ff6a00]" /> : <Link2 className="h-4 w-4" />}
+      </button>
+      <button type="button" onClick={share} className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-[#ff6a00] hover:text-[#ff6a00]" aria-label="Del artikkelen" title="Del artikkelen">
+        <Share2 className="h-4 w-4" />
+      </button>
+      <a href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`} className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-[#ff6a00] hover:text-[#ff6a00]" aria-label="Del med e-post" title="Del med e-post">
+        <Mail className="h-4 w-4" />
+      </a>
+    </div>
   );
 }
 
-function renderParagraphs(body = "") {
-  return body
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
+function ArticleNewsletter() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("idle");
+  const [message, setMessage] = useState("");
+
+  const subscribe = async (event) => {
+    event.preventDefault();
+    setStatus("loading");
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Kunne ikke melde deg på nyhetsbrevet.");
+
+      setEmail("");
+      setStatus("success");
+      setMessage("Du er påmeldt nyhetsbrevet.");
+    } catch (error) {
+      setStatus("error");
+      setMessage(error.message || "Kunne ikke melde deg på nyhetsbrevet.");
+    }
+  };
+
+  return (
+    <section className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
+      <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 text-[#ff6a00]">
+        <Mail className="h-5 w-5" />
+      </div>
+      <h2 className="text-xl font-black leading-tight text-foreground">Få de viktigste nyhetene rett i innboksen</h2>
+      <p className="mt-3 text-sm leading-6 text-muted-foreground">Meld deg på vårt nyhetsbrev og få ukens viktigste saker hver fredag.</p>
+      <form className="mt-5" onSubmit={subscribe} noValidate>
+        <label htmlFor="article-newsletter-email" className="sr-only">E-postadresse</label>
+        <input id="article-newsletter-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Din e-postadresse" autoComplete="email" required disabled={status === "loading"} className="w-full rounded-lg border border-border bg-background px-3 py-3 text-sm text-foreground outline-none transition focus:border-[#ff6a00] disabled:opacity-60" />
+        <button type="submit" disabled={status === "loading" || !email.trim()} className="mt-3 w-full rounded-lg bg-[#ff6a00] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-[#ea5f00] disabled:cursor-not-allowed disabled:opacity-60">
+          {status === "loading" ? "Melder på..." : "Meld meg på"}
+        </button>
+      </form>
+      <p className="mt-4 text-[11px] leading-5 text-muted-foreground">Vi respekterer personvernet ditt. Du kan melde deg av når som helst.</p>
+      {message && <p className={`mt-3 text-xs font-medium ${status === "success" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`} role="status">{message}</p>}
+    </section>
+  );
+}
+
+function AdPlaceholder({ size }) {
+  return (
+    <div className={`flex items-center justify-center rounded-xl bg-muted/35 px-4 text-center ${size === "300x600" ? "min-h-[370px]" : "min-h-[170px]"}`}>
+      <div>
+        <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Annonse</p>
+        <p className="mt-1 text-sm text-muted-foreground">{size}</p>
+      </div>
+    </div>
+  );
+}
+
+function RelatedArticleCard({ article }) {
+  const image = article.image || article.imageUrl || "/images/placeholders/article-placeholder.svg";
+  const href = article.href || (article.slug ? `/artikler/${article.slug}` : "#");
+
+  return (
+    <Link href={href} className="group overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-[#ff6a00]/50">
+      <div className="relative aspect-[16/9] bg-muted">
+        <Image src={image} alt={article.imageAlt || article.title} fill sizes="(max-width: 768px) 100vw, 33vw" unoptimized className="object-cover transition-transform duration-300 group-hover:scale-105" />
+        <PremiumArticleBadge article={article} compact corner />
+      </div>
+      <div className="p-4">
+        <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#ff6a00]">{article.category || "Nyheter"}</p>
+        <h3 className="mt-2 text-base font-bold leading-snug text-foreground transition-colors group-hover:text-[#ff6a00]">{article.title}</h3>
+        {article.time && <p className="mt-3 text-xs text-muted-foreground">{article.time}</p>}
+      </div>
+    </Link>
+  );
 }
 
 export default function ArticlePage({ article, searchArticles = [], canonicalUrl = "" }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const router = useRouter();
-  const paragraphs = useMemo(() => renderParagraphs(article.content || article.body || ""), [article]);
-  const publishedLabel = article.publishedAt
-    ? new Date(article.publishedAt).toLocaleDateString("nb-NO", { day: "numeric", month: "long", year: "numeric" })
-    : "";
+  const paragraphs = useMemo(() => renderArticleBlocks(article.content || article.body || "", article.excerpt || ""), [article]);
+  const publishedLabel = formatPublishedDate(article.publishedAt);
   const showPaywall = article.restricted && !article.canReadFullBody;
   const title = article.seoTitle || article.title;
   const description = article.seoDescription || article.excerpt || "";
   const canonical = article.canonicalUrl || canonicalUrl || "";
   const access = article.viewerAccess || {};
   const loginRequired = access.requiredAction === "login";
+  const categories = article.categories?.length ? article.categories : article.category ? [{ name: article.category, slug: article.categorySlug }] : [];
+  const authorName = article.authorName || article.author || "TEKKNO";
+  const authorInitial = authorName.charAt(0).toUpperCase();
+  const relatedArticles = useMemo(() => {
+    const others = searchArticles.filter((candidate) => candidate?.slug && candidate.slug !== article.slug);
+    const categoryMatches = others.filter((candidate) => candidate.categorySlug && candidate.categorySlug === article.categorySlug);
+    return [...categoryMatches, ...others.filter((candidate) => !categoryMatches.includes(candidate))].slice(0, 3);
+  }, [article.categorySlug, article.slug, searchArticles]);
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#161a22] text-zinc-900 dark:text-white font-sans selection:bg-[#ff6a00] selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground selection:bg-[#ff6a00] selection:text-white">
       <Head>
         <title>{title}</title>
         {description && <meta name="description" content={description} />}
@@ -127,84 +202,99 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
       </Head>
 
       <SearchOverlay open={isSearchOpen} onClose={() => setIsSearchOpen(false)} articles={searchArticles} />
-      <ArticleHeader onSearchClick={() => setIsSearchOpen(true)} />
+      <Navbar onSearchClick={() => setIsSearchOpen(true)} />
 
-      <main className="max-w-[980px] mx-auto px-4 md:px-6 py-8 md:py-12">
-        <button onClick={() => router.back()} className="text-[12px] font-bold uppercase tracking-[0.2em] text-[#ff6a00] mb-6">
-          Tilbake
-        </button>
+      <main className="mx-auto max-w-[1280px] px-4 pb-12 pt-24 sm:px-6 lg:px-8 lg:pt-28">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start xl:grid-cols-[minmax(0,1fr)_320px]">
+          <article className="min-w-0">
+            <header className="max-w-4xl">
+              <div className="mb-5 flex flex-wrap items-center gap-3">
+                {categories.map((category) => (
+                  <Link key={category.slug || category.name} href={category.slug ? `/${category.slug}` : "#"} className="text-sm font-black uppercase tracking-[0.16em] text-[#ff6a00] transition-opacity hover:opacity-75">
+                    {category.name}
+                  </Link>
+                ))}
+                <PremiumArticleBadge article={article} compact />
+              </div>
 
-        <article>
-          <div className="mb-5 flex flex-wrap items-center gap-3">
-            {article.category && (
-              <Link href={article.categorySlug ? `/${article.categorySlug}` : "#"} className="text-[11px] font-black uppercase tracking-[0.25em] text-[#ff6a00]">
-                {article.category}
-              </Link>
-            )}
-            {article.accessLevel && article.accessLevel !== "public" && (
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                <Lock className="w-3.5 h-3.5" />
-                {article.accessLevel}
-              </span>
-            )}
-          </div>
+              <h1 className="max-w-4xl text-4xl font-black leading-[1.04] tracking-[-0.035em] text-foreground sm:text-5xl lg:text-6xl">{article.title}</h1>
 
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.02] mb-5">
-            {article.title}
-          </h1>
+              {article.excerpt && <p className="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground sm:text-xl">{article.excerpt}</p>}
 
-          {article.excerpt && (
-            <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
-              {article.excerpt}
-            </p>
-          )}
-
-          <div className="flex flex-wrap items-center gap-3 text-[13px] text-zinc-500 dark:text-zinc-400 mb-8">
-            <span className="font-semibold text-zinc-800 dark:text-zinc-200">{article.authorName || article.author || "TEKKNO"}</span>
-            {publishedLabel && <><span className="w-1 h-1 rounded-full bg-[#ff6a00]" /><span>{publishedLabel}</span></>}
-            {article.readTime && <><span className="w-1 h-1 rounded-full bg-[#ff6a00]" /><span>{article.readTime}</span></>}
-          </div>
-
-          <ArticleReactions article={article} className="-mt-5 mb-8" interactive />
-
-          {article.heroImage && (
-            <figure className="mb-8 rounded-xl overflow-hidden border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-[#1e232e]">
-              <img src={article.heroImage} alt={article.heroImageAlt || article.title} className="w-full aspect-[16/9] object-cover" />
-            </figure>
-          )}
-
-          <div className="prose prose-zinc dark:prose-invert max-w-none prose-p:text-[18px] prose-p:leading-8">
-            {paragraphs.length > 0 ? paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>) : <p>{article.excerpt}</p>}
-          </div>
-
-          {showPaywall && (
-            <div className="mt-8 rounded-xl border border-[#ff6a00]/30 bg-[#ff6a00]/10 p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-[#ff6a00]/20 flex items-center justify-center shrink-0">
-                  <Lock className="w-5 h-5 text-[#ff6a00]" />
+              <div className="mt-7 flex flex-col justify-between gap-5 border-y border-border py-4 sm:flex-row sm:items-center">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] text-muted-foreground">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-black text-foreground">{authorInitial}</span>
+                  <span className="font-bold text-foreground">{authorName}</span>
+                  {publishedLabel && <><span className="hidden h-1 w-1 rounded-full bg-[#ff6a00] sm:inline" /><span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" />{publishedLabel}</span></>}
+                  {article.readTime && <><span className="hidden h-1 w-1 rounded-full bg-[#ff6a00] sm:inline" /><span className="inline-flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5" />{article.readTime} lesetid</span></>}
+                  <span className="hidden h-1 w-1 rounded-full bg-[#ff6a00] sm:inline" />
+                  <span className="inline-flex items-center gap-1.5"><MessageCircle className="h-3.5 w-3.5" />{article.comments || 0} kommentarer</span>
                 </div>
-                <div>
-                  <h2 className="text-lg font-bold text-zinc-900 dark:text-white">Denne artikkelen krever tilgang</h2>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
-                    {loginRequired
-                      ? "Logg inn for a sjekke om brukeren din har tilgang, eller velg et abonnement."
-                      : "Full artikkeltekst vises bare nar aktivt abonnement eller riktig entitlement er bekreftet server-side."}
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-3">
-                    {loginRequired && (
-                      <Link href={`/login?next=${encodeURIComponent(`/artikler/${article.slug}`)}`} className="inline-flex px-4 py-2 rounded-lg border border-[#ff6a00]/40 text-[#ff6a00] text-sm font-bold hover:bg-[#ff6a00]/10 transition-colors">
-                        Logg inn
-                      </Link>
-                    )}
-                    <Link href="/min-side?upgrade=true" className="inline-flex px-4 py-2 rounded-lg bg-[#ff6a00] text-white text-sm font-bold hover:bg-[#ff7f24] transition-colors">
-                      Se abonnement
-                    </Link>
+                <ShareActions title={article.title} canonicalUrl={canonical} />
+              </div>
+            </header>
+
+            {article.heroImage && (
+              <figure className="mt-7 overflow-hidden rounded-xl border border-border bg-muted">
+                <Image src={article.heroImage} alt={article.heroImageAlt || article.title} width={1600} height={900} unoptimized priority className="aspect-[16/9] w-full object-cover" />
+              </figure>
+            )}
+
+            <ArticleReactions article={article} className="mt-6" interactive />
+
+            <div className="mt-8 max-w-3xl">
+              {paragraphs.length > 0 ? paragraphs : <p className="text-[16px] leading-8 text-foreground/90 md:text-[17px]">{article.excerpt}</p>}
+            </div>
+
+            {showPaywall && (
+              <section className="mt-9 max-w-3xl rounded-xl border border-[#ff6a00]/35 bg-[#ff6a00]/10 p-6 sm:p-8">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#ff6a00]/15 text-[#ff6a00]"><Lock className="h-5 w-5" /></div>
+                  <div>
+                    <h2 className="text-xl font-black text-foreground">Denne artikkelen krever tilgang</h2>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{loginRequired ? "Logg inn for å sjekke om brukeren din har tilgang, eller velg et abonnement." : "Full artikkeltekst vises bare når aktivt abonnement eller riktig tilgang er bekreftet server-side."}</p>
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      {loginRequired && <Link href={`/login?next=${encodeURIComponent(`/artikler/${article.slug}`)}`} className="rounded-lg border border-[#ff6a00]/40 px-4 py-2.5 text-sm font-bold text-[#ff6a00] transition-colors hover:bg-[#ff6a00]/10">Logg inn</Link>}
+                      <Link href="/min-side?upgrade=true" className="rounded-lg bg-[#ff6a00] px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#ea5f00]">Se abonnement</Link>
+                    </div>
                   </div>
                 </div>
+              </section>
+            )}
+
+            {categories.length > 0 && (
+              <section className="mt-10 max-w-3xl border-t border-border pt-6">
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Emner</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {categories.map((category) => <Link key={category.slug || category.name} href={category.slug ? `/${category.slug}` : "#"} className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-[#ff6a00] hover:text-[#ff6a00]">{category.name}</Link>)}
+                </div>
+              </section>
+            )}
+
+            <section className="mt-10 max-w-3xl rounded-xl border border-border bg-card p-5 sm:p-6">
+              <div className="flex gap-4">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-muted text-lg font-black text-foreground">{authorInitial}</span>
+                <div>
+                  <p className="text-lg font-black text-foreground">{authorName}</p>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">Skribent i TEKKNO.</p>
+                </div>
               </div>
-            </div>
-          )}
-        </article>
+            </section>
+
+            {relatedArticles.length > 0 && (
+              <section className="mt-12">
+                <h2 className="text-2xl font-black tracking-tight text-foreground">Les også</h2>
+                <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{relatedArticles.map((relatedArticle) => <RelatedArticleCard key={relatedArticle.slug} article={relatedArticle} />)}</div>
+              </section>
+            )}
+          </article>
+
+          <aside className="space-y-8 lg:sticky lg:top-24">
+            <AdPlaceholder size="300 x 600" />
+            <ArticleNewsletter />
+            <AdPlaceholder size="300 x 250" />
+          </aside>
+        </div>
       </main>
 
       <Footer />
@@ -219,9 +309,7 @@ export async function getServerSideProps({ params, req }) {
   if (isPayloadContentSource()) {
     const payloadArticle = await getArticleBySlug(slug);
 
-    if (!payloadArticle) {
-      return { notFound: true };
-    }
+    if (!payloadArticle) return { notFound: true };
 
     const user = await getCurrentUser(req);
     const viewerAccess = await getArticleAccessForUser(user, payloadArticle);
@@ -241,10 +329,7 @@ export async function getServerSideProps({ params, req }) {
   }
 
   const legacyArticle = getLegacyArticleBySlug(slug);
-
-  if (!legacyArticle) {
-    return { notFound: true };
-  }
+  if (!legacyArticle) return { notFound: true };
 
   return {
     props: {

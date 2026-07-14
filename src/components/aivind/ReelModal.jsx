@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import Image from "next/image";
 import { createPortal } from "react-dom";
 import { Play, X } from "lucide-react";
 import { getCloudflareReelEmbedUrl, getDirectReelVideoUrl } from "@/lib/reel-playback";
@@ -38,10 +39,13 @@ export default function ReelModal({ reel, onClose }) {
       }}
     >
       {reel.image && (
-        <img
+        <Image
           src={reel.image}
           alt=""
           aria-hidden="true"
+          width={1920}
+          height={1080}
+          unoptimized
           className="pointer-events-none absolute inset-[-8%] h-[116%] w-[116%] scale-110 object-cover opacity-20 blur-3xl"
         />
       )}
@@ -86,7 +90,7 @@ export default function ReelModal({ reel, onClose }) {
           </video>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-zinc-950">
-            {reel.image && <img src={reel.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-55" />}
+            {reel.image && <Image src={reel.image} alt="" fill sizes="(max-width: 640px) 92vw, 430px" unoptimized className="absolute inset-0 h-full w-full object-cover opacity-55" />}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/15" />
             <div className="relative mx-8 flex flex-col items-center text-center text-white">
               <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-black/50 backdrop-blur-md">

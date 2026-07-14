@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { Play } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import ReelModal from "@/components/aivind/ReelModal";
@@ -83,7 +84,7 @@ export default function ReelsSection({ items = defaultReels }) {
                   className="group relative block h-[372px] w-full overflow-hidden rounded-[14px] border border-white/10 bg-zinc-900 p-0 text-left shadow-[0_18px_60px_rgba(0,0,0,0.35)] outline-none ring-0 [-webkit-tap-highlight-color:transparent] focus:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                   aria-label={`Spill av ${reel.title}`}
                 >
-                  <img src={reel.image} alt={reel.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={reel.image} alt={reel.title} fill sizes="(max-width: 640px) 75vw, (max-width: 1024px) 40vw, 280px" unoptimized className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-white/10" />
                   <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/20 to-transparent opacity-60" />
 

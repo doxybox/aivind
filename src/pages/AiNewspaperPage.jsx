@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, Moon, Search, X } from "lucide-react";
 import { GiFlashGrenade } from "react-icons/gi";
@@ -280,7 +281,7 @@ function PayloadEmptyState({ categoryTitle }) {
 function ArticleCard({ story, large = false, className = "" }) {
   const content = (
     <>
-      <img src={story.image} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+      <Image src={story.image} alt="" fill sizes={large ? "(max-width: 1024px) 100vw, 66vw" : "(max-width: 640px) 100vw, 25vw"} unoptimized className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-[#161a22]/60 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#161a22] via-transparent to-transparent opacity-80" />
       <PremiumArticleBadge article={story} corner />
@@ -311,7 +312,7 @@ function ArticleCard({ story, large = false, className = "" }) {
 function SmallArticle({ story }) {
   const content = (
     <>
-      <img src={story.image} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+      <Image src={story.image} alt="" fill sizes="(max-width: 640px) 100vw, 25vw" unoptimized className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#111722] from-0% via-[#111722]/68 via-48% to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-80" />
       <PremiumArticleBadge article={story} compact corner />
@@ -475,9 +476,12 @@ export default function AiNewspaperPage({
       <main className="max-w-[1440px] mx-auto p-4 md:p-6 pb-20">
         <section className="relative mb-4 overflow-hidden rounded-xl border border-white/15 bg-[#0b141d] text-white transition-colors duration-300">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_50%,rgba(255,106,0,0.33),transparent_32%),linear-gradient(90deg,rgba(7,16,25,0.98),rgba(7,16,25,0.76),rgba(7,16,25,0.2))]" />
-          <img
+          <Image
             src={heroImage}
             alt=""
+            fill
+            sizes="(max-width: 1024px) 100vw, 1440px"
+            unoptimized
             className="absolute right-0 top-0 h-full w-full object-cover opacity-55"
           />
           <div className="relative z-10 min-h-[220px] px-6 py-8 md:px-8 md:py-10">

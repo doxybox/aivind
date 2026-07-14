@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Clock, ExternalLink, PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
@@ -18,9 +19,12 @@ export default function ArticleCard({ article }) {
     <Link href={href} className="group flex flex-col bg-card rounded-xl border border-border overflow-hidden shadow-sm hover:shadow-md dark:shadow-none transition-shadow h-full">
       {/* Image Container */}
       <div className="relative aspect-[16/10] overflow-hidden shrink-0 bg-muted border-b border-border/50">
-        <img
+        <Image
           src={article.image}
           alt={article.title}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          unoptimized
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
         />
         

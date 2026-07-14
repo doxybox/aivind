@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
@@ -14,9 +15,12 @@ export default function HeroArticleCard({ article }) {
     <Link href={linkedArticle.href || "#"} className="group relative flex bg-card rounded-xl border border-border overflow-hidden shadow-sm dark:shadow-none flex-1 min-h-0">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <img
+        <Image
           src={article.image}
           alt={article.title}
+          fill
+          sizes="(max-width: 1024px) 100vw, 33vw"
+          unoptimized
           className="w-full h-full object-cover object-right group-hover:scale-105 transition-transform duration-700"
         />
         {/* Gradient Overlay to blend image into the card background */}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { getAccountOverview } from "@/lib/account-client";
 import { Crown, ShieldCheck, Mail, Star } from "lucide-react";
 import { formatAccountDate } from "@/lib/account-display";
@@ -55,7 +56,7 @@ export default function ProfileSummaryCard({ user, onEdit }) {
         <div className="flex items-center gap-5">
           <div className="w-16 h-16 rounded-full bg-[#1A1A24] border border-white/10 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
             {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+              <Image src={profile.avatar_url} alt="" width={64} height={64} unoptimized className="w-full h-full object-cover" />
             ) : (
               <span className="text-[#888888] font-bold text-xl">{initials}</span>
             )}

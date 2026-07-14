@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Clock } from "lucide-react";
 import HeroArticleCard from "./HeroArticleCard";
 import ArticleReactions from "./ArticleReactions";
@@ -12,9 +13,12 @@ export default function HeroSection({ heroImage, articles = [] }) {
           <div className="lg:col-span-8">
             <div className="relative rounded-xl overflow-hidden group cursor-pointer min-h-[320px] sm:min-h-[420px] lg:min-h-[480px] bg-black">
               {/* Background image */}
-              <img
+              <Image
                 src={heroImage}
                 alt="OpenAI lanserer GPT-4o"
+                fill
+                sizes="(max-width: 1024px) 100vw, 66vw"
+                unoptimized
                 className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-1000 ease-out"
               />
               {/* Gradient overlays */}
@@ -35,7 +39,7 @@ export default function HeroSection({ heroImage, articles = [] }) {
                   {/* Author and metadata */}
                   <div className="flex items-center gap-3 text-[13px] text-gray-400 font-medium flex-wrap">
                     <div className="flex items-center gap-2">
-                      <img src="/images/placeholders/avatar-placeholder.svg" alt="Martin Berg" className="w-6 h-6 rounded-full object-cover" />
+                      <Image src="/images/placeholders/avatar-placeholder.svg" alt="Martin Berg" width={24} height={24} className="w-6 h-6 rounded-full object-cover" />
                       <span className="text-gray-200">Martin Berg</span>
                     </div>
                     <span className="text-gray-600">•</span>

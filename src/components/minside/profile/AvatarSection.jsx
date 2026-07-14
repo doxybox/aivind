@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { toast } from "@/components/ui/use-toast";
 import { Camera, Trash2 } from "lucide-react";
 
@@ -37,9 +38,12 @@ export default function AvatarSection({ form, update, onPersistAvatar }) {
         <div className="relative">
           <div className="w-32 h-32 rounded-full bg-orange-500/10 border-4 border-orange-500/20 flex items-center justify-center overflow-hidden shadow-xl shadow-orange-500/10">
             {showImg ? (
-              <img
+              <Image
                 src={form.avatar_url}
                 alt="Profilbilde"
+                width={128}
+                height={128}
+                unoptimized
                 className="w-full h-full object-cover"
                 onError={() => setImgError(true)}
               />

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Search, X } from "lucide-react";
 import PremiumArticleBadge from "./PremiumArticleBadge";
 
@@ -86,9 +87,12 @@ export default function SearchOverlay({ open, onClose, articles = [] }) {
                   className="search-result-animate flex items-center gap-3 px-4 py-3 hover:bg-accent transition-colors group"
                   style={{ animationDelay: `${index * 30}ms` }}
                 >
-                  <img
+                  <Image
                     src={article.image || article.imageUrl}
                     alt=""
+                    width={56}
+                    height={56}
+                    unoptimized
                     className="w-14 h-14 rounded-lg object-cover shrink-0"
                   />
                   <div className="min-w-0 flex-1">

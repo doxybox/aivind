@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Check, Clipboard, Image as ImageIcon, RefreshCw, Upload, Video } from "lucide-react";
 import { redirectForAuthError, requireAnyRole } from "@/lib/server/auth-helpers";
@@ -130,7 +131,7 @@ function MediaCard({ item, onRefresh, copiedId, onCopy, busy = false }) {
       <div className="flex gap-4">
         <div className="flex h-20 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-black/30">
           {item.thumbnailUrl ? (
-            <img src={item.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+            <Image src={item.thumbnailUrl} alt="" width={96} height={80} unoptimized className="h-full w-full object-cover" />
           ) : item.type === "video" ? (
             <Video className="h-6 w-6 text-zinc-500" />
           ) : (

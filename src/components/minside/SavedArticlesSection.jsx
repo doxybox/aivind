@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { deleteSavedArticle, getSavedArticles } from "@/lib/account-client";
 import { Bookmark, ExternalLink, Trash2 } from "lucide-react";
 import SectionSkeleton from "./SectionSkeleton";
@@ -59,7 +60,7 @@ export default function SavedArticlesSection() {
 
             return (
               <div key={savedId} className="article-card bg-card rounded-lg border border-border p-4 flex items-center gap-4">
-                {article.article_image && <img src={article.article_image} alt="" className="w-16 h-16 rounded object-cover shrink-0" />}
+                {article.article_image && <Image src={article.article_image} alt="" width={64} height={64} unoptimized className="w-16 h-16 rounded object-cover shrink-0" />}
                 <div className="flex-1 min-w-0">
                   <p className="text-[14px] font-bold text-foreground line-clamp-1">{article.article_title}</p>
                   <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">

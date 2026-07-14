@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Search, Menu, TrendingUp, TrendingDown, Moon, X, Loader2 } from "lucide-react";
@@ -44,9 +45,12 @@ const StockLogo = ({ stock }) => {
   }
 
   return (
-    <img
+    <Image
       src={stock.logo}
       alt={stock.name}
+      width={40}
+      height={40}
+      unoptimized
       className="w-full h-full object-contain"
       onError={() => setFailed(true)}
     />
