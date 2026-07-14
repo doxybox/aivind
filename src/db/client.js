@@ -20,7 +20,8 @@ const databasePoolMax = isVercelServerless
 
 const connectionOptions = {
   max: databasePoolMax,
-  idle_timeout: 20,
+  // Avoid stale pooled connections when a Vercel function is frozen between requests.
+  idle_timeout: isVercelServerless ? 5 : 20,
   connect_timeout: 10,
   prepare: false,
 };

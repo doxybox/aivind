@@ -70,6 +70,10 @@ export default buildConfig({
     pool: {
       connectionString: payloadDatabaseUrl,
       max: payloadPoolMax,
+      // Serverless instances must not keep pooled Supabase sessions alive between requests.
+      connectionTimeoutMillis: 10_000,
+      idleTimeoutMillis: isVercelServerless ? 5_000 : 30_000,
+      allowExitOnIdle: isVercelServerless,
     },
     push: false,
   }),
