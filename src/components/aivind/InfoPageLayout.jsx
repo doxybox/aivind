@@ -5,6 +5,7 @@ import { ArrowLeft, Moon, Sun } from "lucide-react";
 import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import { useTheme } from "@/hooks/useTheme";
+import BrandLogo from "@/components/aivind/BrandLogo";
 
 export function InfoSection({ title, children }) {
   return (
@@ -28,8 +29,8 @@ export default function InfoPageLayout({ title, kicker, intro, description, chil
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-xl">
         <div className="max-w-[1400px] mx-auto h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
           <div className="flex items-center gap-8 min-w-0">
-            <Link href="/" className="font-black text-xl tracking-tight whitespace-nowrap">
-              TEKKNO<span className="text-orange-500">.NO</span>
+            <Link href="/" className="shrink-0" aria-label="TEKKNO forside">
+              <BrandLogo className="h-9 max-w-[154px]" priority />
             </Link>
             <nav className="hidden lg:flex items-center gap-5" aria-label="Kategorier">
               {categoryNavItems.map((item) => (

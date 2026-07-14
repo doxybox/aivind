@@ -4,6 +4,7 @@ import {
   Home, CreditCard, Bookmark, Newspaper, Mail, Megaphone,
   Headphones, LogOut
 } from "lucide-react";
+import BrandLogo from "@/components/aivind/BrandLogo";
 
 const sections = [
   { id: "oversikt", label: "Hjem", icon: Home },
@@ -28,11 +29,8 @@ export default function DashboardSidebar({ activeSection, onSelect, onLogout }) 
         <div className="absolute inset-0 z-[-1] bg-black/70 backdrop-blur-2xl" />
 
         <div className="h-24 flex items-center px-8 shrink-0 relative z-10">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500/40 to-orange-600/20 border border-orange-500/20 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.2)] group-hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] transition-all backdrop-blur-md">
-              <span className="text-white font-black text-lg leading-none">A</span>
-            </div>
-            <span className="text-white font-black text-xl tracking-widest uppercase">Tekkno</span>
+          <Link href="/" className="shrink-0" aria-label="TEKKNO forside">
+            <BrandLogo className="h-10 max-w-[190px]" priority />
           </Link>
         </div>
 
@@ -77,11 +75,8 @@ export default function DashboardSidebar({ activeSection, onSelect, onLogout }) 
       {/* Mobile top bar */}
       <div className="lg:hidden sticky top-0 z-40 bg-black/40 backdrop-blur-2xl border-b border-white/10 font-sans">
         <div className="flex items-center justify-between px-4 h-16">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500/40 to-orange-600/20 border border-orange-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.3)]">
-              <span className="text-white font-black text-sm leading-none">A</span>
-            </div>
-            <span className="text-white font-bold text-lg tracking-wider uppercase">Tekkno</span>
+          <Link href="/" className="shrink-0" aria-label="TEKKNO forside">
+            <BrandLogo className="h-9 max-w-[154px]" priority />
           </Link>
           <button
             onClick={onLogout}

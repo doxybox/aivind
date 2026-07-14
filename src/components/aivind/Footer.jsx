@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, ChevronDown, ChevronRight, Instagram, Linkedin, Loader2, Moon, Rss, ShieldCheck, Sun, Youtube } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
+import BrandLogo from "@/components/aivind/BrandLogo";
 
 const footerLinks = [
   { label: "Om oss", href: "/om-oss" },
@@ -49,11 +50,8 @@ export default function Footer() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-10 lg:gap-0 py-10">
           <div className="lg:col-span-4 lg:border-r border-border/40 lg:pr-10 flex flex-col">
-            <div className="flex items-center gap-3 mb-4 group cursor-default">
-              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center shadow-sm shadow-orange-500/20">
-                <span className="text-white font-black text-[15px] leading-none">T</span>
-              </div>
-              <span className="text-foreground font-extrabold text-[20px] tracking-[-0.04em]">TEKKNO</span>
+            <div className="mb-4">
+              <BrandLogo className="h-11 max-w-[190px]" />
             </div>
             <p className="text-[13px] text-muted-foreground leading-relaxed mb-5 max-w-[95%]">
               Norges nyhetskilde for teknologi,<br />

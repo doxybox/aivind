@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/lib/AuthContext";
+import BrandLogo from "@/components/aivind/BrandLogo";
 
 const navLinks = [
   { label: "AI", href: "#" },
@@ -26,11 +27,8 @@ export default function Navbar({ onSearchClick }) {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-sm shadow-orange-500/20 group-hover:scale-105 transition-transform">
-              <span className="text-white font-black text-sm leading-none">A</span>
-            </div>
-            <span className="text-foreground font-extrabold text-[19px] tracking-[-0.04em] group-hover:text-orange-500 transition-colors">TEKKNO</span>
+          <Link href="/" className="shrink-0" aria-label="TEKKNO forside">
+            <BrandLogo className="h-9 max-w-[154px]" priority />
           </Link>
 
           {/* Desktop nav links */}

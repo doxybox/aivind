@@ -12,6 +12,7 @@ import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
+import BrandLogo from "@/components/aivind/BrandLogo";
 
 const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl" }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
@@ -245,8 +246,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
       {/* Header */}
       <header className="h-[72px] flex items-center justify-between px-6 bg-white dark:bg-[#161a22] border-b border-zinc-200 dark:border-white/5 sticky top-0 z-50 transition-colors duration-300">
         <div className="flex items-center gap-10">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-zinc-900 dark:text-white font-black text-2xl tracking-tighter uppercase">TEKKNO<span className="text-[#ff6a00]">.NO</span></span>
+          <Link href="/" className="shrink-0" aria-label="TEKKNO forside">
+            <BrandLogo className="h-10 max-w-[172px]" priority />
           </Link>
           
           <nav className="hidden lg:flex items-center gap-6">
