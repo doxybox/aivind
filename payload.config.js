@@ -42,9 +42,12 @@ const configuredPoolMax = Number.parseInt(
   process.env.PAYLOAD_DATABASE_POOL_MAX || process.env.DATABASE_POOL_MAX || String(defaultPayloadPoolMax),
   10,
 );
+const hasConfiguredPoolMax = Number.isInteger(configuredPoolMax) && configuredPoolMax > 0;
+// Payload Admin can make nested SSR queries. One pooled connection deadlocks those
+// requests on Vercel, while more than two connections exhausts the Supabase pool.
 const payloadPoolMax = isVercelServerless
-  ? 1
-  : Number.isInteger(configuredPoolMax) && configuredPoolMax > 0
+  ? Math.min(hasConfiguredPoolMax ? configuredPoolMax : 2, 2)
+  : hasConfiguredPoolMax
     ? configuredPoolMax
     : defaultPayloadPoolMax;
 
