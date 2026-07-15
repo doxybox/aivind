@@ -1,6 +1,6 @@
 # Production Blocker Tracker
 
-Last updated: 13 July 2026
+Last updated: 15 July 2026
 
 This document is the production go/no-go source of truth for TEKKNO. It records operational and editorial work only; it does not enable parked services or change runtime behavior.
 
@@ -16,7 +16,7 @@ This document is the production go/no-go source of truth for TEKKNO. It records 
 | Runtime logs | Green at last check | No new Vercel runtime errors after staging smoke |
 | Editorial content | Not production-ready | Six active `[DEMO]` records; no future-published test article |
 | Billing/Vipps | Parked | Must remain disabled unless a separate provider QA is approved |
-| Email provider | Out of scope | Production delivery will be configured in a later phase |
+| Email provider | Safely parked | Self-service registration and password reset are disabled until a verified sender is configured; existing users can still log in |
 | Cloudflare Images/Stream | Out of scope for this tracker | No behavior or enablement change is made here |
 
 Current Payload inventory:

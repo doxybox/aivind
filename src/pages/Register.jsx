@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Info } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { isClientEmailSelfServiceEnabled } from "@/lib/auth-launch-mode";
 import {
   AuthCard,
   AuthError,
@@ -21,6 +22,22 @@ export default function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
+  const emailSelfServiceEnabled = isClientEmailSelfServiceEnabled();
+
+  if (!emailSelfServiceEnabled) {
+    return (
+      <AuthPage>
+        <AuthCard title="Registrering åpner snart">
+          <p className="text-[15px] leading-6 text-zinc-600">
+            Selvbetjent registrering er ikke aktivert i denne lanseringen. Har du allerede fått tilgang, kan du logge inn.
+          </p>
+          <AuthSwitch href="/login" linkText="Logg inn">
+            Har du en konto?
+          </AuthSwitch>
+        </AuthCard>
+      </AuthPage>
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,7 +87,7 @@ export default function Register() {
 
   if (registered) {
     return (
-      <AuthPage ssoLabel="Sign up with SSO">
+      <AuthPage>
         <AuthCard title="Check your email">
           <p className="mb-6 text-[15px] font-medium text-zinc-600">
             Vi har sendt en bekreftelseslenke til <span className="font-bold text-black">{email}</span>. Bekreft e-posten din før du logger inn.
@@ -88,7 +105,7 @@ export default function Register() {
   }
 
   return (
-    <AuthPage ssoLabel="Sign up with SSO">
+    <AuthPage>
       <AuthCard title="Signup">
         <ProviderButtons mode="signup" onGoogle={handleGoogle} onApple={handleApple} />
         <Divider>Sign up with Email</Divider>

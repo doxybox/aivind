@@ -1,9 +1,11 @@
 import React from "react";
 import Link from "next/link";
 import { Shield, KeyRound, Lock } from "lucide-react";
+import { isClientEmailSelfServiceEnabled } from "@/lib/auth-launch-mode";
 
 export default function SecuritySection({ user }) {
   const loginMethod = user.email ? "E-post og passord" : "Ukjent";
+  const emailSelfServiceEnabled = isClientEmailSelfServiceEnabled();
 
   return (
     <div className="space-y-6">
@@ -27,7 +29,9 @@ export default function SecuritySection({ user }) {
             <p className="text-[12px] text-muted-foreground">Passord</p>
             <p className="text-[14px] font-semibold text-foreground">Endre passord</p>
           </div>
-          <Link href="/forgot-password" className="px-3 py-1.5 border border-border rounded-lg text-[12px] font-semibold text-foreground hover:border-orange-500/40 transition-colors">Endre</Link>
+          <Link href={emailSelfServiceEnabled ? "/forgot-password" : "/kontakt"} className="px-3 py-1.5 border border-border rounded-lg text-[12px] font-semibold text-foreground hover:border-orange-500/40 transition-colors">
+            {emailSelfServiceEnabled ? "Endre" : "Kontakt oss"}
+          </Link>
         </div>
 
         <div className="flex items-center gap-3 pt-4 border-t border-border">
@@ -36,7 +40,9 @@ export default function SecuritySection({ user }) {
             <p className="text-[12px] text-muted-foreground">Glemt passord?</p>
             <p className="text-[14px] font-semibold text-foreground">Tilbakestill passord</p>
           </div>
-          <Link href="/forgot-password" className="px-3 py-1.5 border border-border rounded-lg text-[12px] font-semibold text-foreground hover:border-orange-500/40 transition-colors">Tilbakestill</Link>
+          <Link href={emailSelfServiceEnabled ? "/forgot-password" : "/kontakt"} className="px-3 py-1.5 border border-border rounded-lg text-[12px] font-semibold text-foreground hover:border-orange-500/40 transition-colors">
+            {emailSelfServiceEnabled ? "Tilbakestill" : "Kontakt oss"}
+          </Link>
         </div>
       </div>
 

@@ -38,7 +38,7 @@ export default function Footer() {
 
       setEmail("");
       setStatus("success");
-      setMessage("Du er påmeldt nyhetsbrevet.");
+      setMessage("Takk! Vi har registrert interessen din.");
     } catch (error) {
       setStatus("error");
       setMessage(error.message || "Kunne ikke melde deg på akkurat nå");
@@ -106,11 +106,11 @@ export default function Footer() {
           <div className="lg:col-span-4 lg:pl-10 flex flex-col">
             <h3 className="text-[10px] font-bold text-orange-500 uppercase tracking-wider mb-4">Nyhetsbrev</h3>
             <h4 className="text-[18px] font-bold text-foreground mb-3 leading-snug">
-              Få de viktigste tech-<br />nyhetene rett i innboksen.
+              Meld interesse for<br />TEKKNOs nyhetsbrev.
             </h4>
             <p className="text-[13px] text-muted-foreground mb-5 leading-relaxed">
-              Ukentlig oppsummering. Eksklusive analyser.<br />
-              Ingen støy, bare det som betyr noe.
+              Vi lagrer interessen din og gir beskjed når utsendingene åpner.<br />
+              Ingen e-post sendes før det.
             </p>
 
             <form onSubmit={handleNewsletterSignup} className="w-full" noValidate>
@@ -132,7 +132,7 @@ export default function Footer() {
                   disabled={status === "loading" || !email.trim()}
                   className="absolute right-1 top-1 bottom-1 min-w-[88px] px-4 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:hover:bg-orange-500 text-white text-[12px] font-semibold rounded-lg shadow-sm transition-colors flex items-center justify-center"
                 >
-                  {status === "loading" ? <Loader2 className="w-4 h-4 animate-spin" aria-label="Melder på" /> : "Meld på"}
+                  {status === "loading" ? <Loader2 className="w-4 h-4 animate-spin" aria-label="Registrerer interesse" /> : "Meld interesse"}
                 </button>
               </div>
               <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">

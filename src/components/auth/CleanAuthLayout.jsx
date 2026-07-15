@@ -3,14 +3,11 @@ import Link from "next/link";
 import { Apple, Loader2 } from "lucide-react";
 import GoogleIcon from "@/components/GoogleIcon";
 
-export function AuthPage({ children, ssoLabel }) {
+export function AuthPage({ children }) {
   return (
     <main className="min-h-screen bg-[#f7f7f7] px-5 py-12 font-sans text-black">
       <div className="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-[526px] flex-col items-center justify-center">
         {children}
-        <a href="#" className="mt-5 text-[15px] text-zinc-600 underline underline-offset-2 hover:text-black">
-          {ssoLabel}
-        </a>
       </div>
     </main>
   );
@@ -27,25 +24,33 @@ export function AuthCard({ title, children }) {
 
 export function ProviderButtons({ mode, onGoogle, onApple }) {
   const verb = mode === "signup" ? "Sign up" : "Log in";
+  const googleEnabled = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true";
+  const appleEnabled = process.env.NEXT_PUBLIC_APPLE_AUTH_ENABLED === "true";
+
+  if (!googleEnabled && !appleEnabled) return null;
 
   return (
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-      <button
-        type="button"
-        onClick={onGoogle}
-        className="flex h-8 items-center justify-center gap-2 rounded-full border border-black/70 bg-white px-4 text-[15px] font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
-      >
-        <GoogleIcon className="h-4 w-4" />
-        {verb} with Google
-      </button>
-      <button
-        type="button"
-        onClick={onApple}
-        className="flex h-8 items-center justify-center gap-2 rounded-full border border-black/70 bg-white px-4 text-[15px] font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
-      >
-        <Apple className="h-4 w-4 fill-zinc-700 text-zinc-700" />
-        {verb} with Apple
-      </button>
+      {googleEnabled && (
+        <button
+          type="button"
+          onClick={onGoogle}
+          className="flex h-8 items-center justify-center gap-2 rounded-full border border-black/70 bg-white px-4 text-[15px] font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
+        >
+          <GoogleIcon className="h-4 w-4" />
+          {verb} with Google
+        </button>
+      )}
+      {appleEnabled && (
+        <button
+          type="button"
+          onClick={onApple}
+          className="flex h-8 items-center justify-center gap-2 rounded-full border border-black/70 bg-white px-4 text-[15px] font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
+        >
+          <Apple className="h-4 w-4 fill-zinc-700 text-zinc-700" />
+          {verb} with Apple
+        </button>
+      )}
     </div>
   );
 }

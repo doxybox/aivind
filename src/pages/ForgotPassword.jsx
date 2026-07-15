@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { isClientEmailSelfServiceEnabled } from "@/lib/auth-launch-mode";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,26 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const emailSelfServiceEnabled = isClientEmailSelfServiceEnabled();
+
+  if (!emailSelfServiceEnabled) {
+    return (
+      <AuthLayout
+        icon={Mail}
+        title="Passordhjelp åpner snart"
+        subtitle="Passordreset blir tilgjengelig når e-postlevering er aktivert."
+        footer={
+          <Link href="/login" className="text-[#ff6a00] font-bold uppercase tracking-widest hover:text-[#ff8c33] transition-colors flex items-center justify-center">
+            <ArrowLeft className="w-4 h-4 inline mr-2" />Tilbake til innlogging
+          </Link>
+        }
+      >
+        <p className="text-center text-[14px] leading-6 text-[#888888]">
+          Kontakt redaksjonen dersom du trenger hjelp med en eksisterende konto.
+        </p>
+      </AuthLayout>
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -12,6 +12,7 @@ import {
   ProviderButtons,
 } from "@/components/auth/CleanAuthLayout";
 import { authClient } from "@/lib/auth-client";
+import { isClientEmailSelfServiceEnabled } from "@/lib/auth-launch-mode";
 import { cleanInternalRedirectPath } from "@/lib/safe-redirect";
 
 export default function Login() {
@@ -20,6 +21,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const emailSelfServiceEnabled = isClientEmailSelfServiceEnabled();
 
   const callbackURL = cleanInternalRedirectPath(
     typeof router.query.callbackURL === "string" ? router.query.callbackURL : "",
@@ -89,7 +91,7 @@ export default function Login() {
   };
 
   return (
-    <AuthPage ssoLabel="Log in with SSO">
+    <AuthPage>
       <AuthCard title="Login">
         <ProviderButtons mode="login" onGoogle={handleGoogle} onApple={handleApple} />
         <Divider>Log in with Email</Divider>
@@ -117,18 +119,22 @@ export default function Login() {
             />
           </div>
 
-          <Link href="/forgot-password" className="mt-4 inline-block text-[16px] text-black underline underline-offset-2 hover:text-zinc-700">
-            Forgot password?
-          </Link>
+          {emailSelfServiceEnabled && (
+            <Link href="/forgot-password" className="mt-4 inline-block text-[16px] text-black underline underline-offset-2 hover:text-zinc-700">
+              Forgot password?
+            </Link>
+          )}
 
           <PrimaryAuthButton loading={loading} loadingText="Logger inn...">
             Log in
           </PrimaryAuthButton>
         </form>
 
-        <AuthSwitch href="/register" linkText="Sign Up">
-          New to TEKKNO?
-        </AuthSwitch>
+        {emailSelfServiceEnabled && (
+          <AuthSwitch href="/register" linkText="Sign Up">
+            New to TEKKNO?
+          </AuthSwitch>
+        )}
       </AuthCard>
     </AuthPage>
   );

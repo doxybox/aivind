@@ -107,14 +107,14 @@ function ArticleNewsletter() {
         body: JSON.stringify({ email }),
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || "Kunne ikke melde deg på nyhetsbrevet.");
+      if (!response.ok) throw new Error(data.error || "Kunne ikke registrere interessen din.");
 
       setEmail("");
       setStatus("success");
-      setMessage("Du er påmeldt nyhetsbrevet.");
+      setMessage("Takk! Vi har registrert interessen din.");
     } catch (error) {
       setStatus("error");
-      setMessage(error.message || "Kunne ikke melde deg på nyhetsbrevet.");
+      setMessage(error.message || "Kunne ikke registrere interessen din.");
     }
   };
 
@@ -123,16 +123,16 @@ function ArticleNewsletter() {
       <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 text-[#ff6a00]">
         <Mail className="h-5 w-5" />
       </div>
-      <h2 className="text-xl font-black leading-tight text-foreground">Få de viktigste nyhetene rett i innboksen</h2>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">Meld deg på vårt nyhetsbrev og få ukens viktigste saker hver fredag.</p>
+      <h2 className="text-xl font-black leading-tight text-foreground">Meld interesse for TEKKNOs nyhetsbrev</h2>
+      <p className="mt-3 text-sm leading-6 text-muted-foreground">Vi lagrer interessen din og gir beskjed når utsendingene åpner.</p>
       <form className="mt-5" onSubmit={subscribe} noValidate>
         <label htmlFor="article-newsletter-email" className="sr-only">E-postadresse</label>
         <input id="article-newsletter-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Din e-postadresse" autoComplete="email" required disabled={status === "loading"} className="w-full rounded-lg border border-border bg-background px-3 py-3 text-sm text-foreground outline-none transition focus:border-[#ff6a00] disabled:opacity-60" />
         <button type="submit" disabled={status === "loading" || !email.trim()} className="mt-3 w-full rounded-lg bg-[#ff6a00] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-[#ea5f00] disabled:cursor-not-allowed disabled:opacity-60">
-          {status === "loading" ? "Melder på..." : "Meld meg på"}
+          {status === "loading" ? "Registrerer..." : "Meld interesse"}
         </button>
       </form>
-      <p className="mt-4 text-[11px] leading-5 text-muted-foreground">Vi respekterer personvernet ditt. Du kan melde deg av når som helst.</p>
+      <p className="mt-4 text-[11px] leading-5 text-muted-foreground">Vi lagrer e-postadressen sikkert. Ingen utsendinger sendes før nyhetsbrevet åpner.</p>
       {message && <p className={`mt-3 text-xs font-medium ${status === "success" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`} role="status">{message}</p>}
     </section>
   );

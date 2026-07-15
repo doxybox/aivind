@@ -64,7 +64,7 @@ export default function NewsletterSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-foreground tracking-[-0.02em]">Nyhetsbrev og varsler</h2>
-        <p className="text-[13px] text-muted-foreground mt-1">Velg hvilke e-poster du ønsker å motta.</p>
+        <p className="text-[13px] text-muted-foreground mt-1">Lagre hvilke utsendinger du ønsker når nyhetsbrevet åpner.</p>
         {loadFailed && <p className="text-[12px] text-destructive mt-2">Kunne ikke hente nyhetsbrevvalgene dine akkurat nå.</p>}
       </div>
 

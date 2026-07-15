@@ -8,6 +8,7 @@ This runbook covers the operational work that remains before TEKKNO can be treat
 - `CONTENT_SOURCE=legacy` remains the production rollback/default until editorial sign-off.
 - Vipps must remain disabled while provider runtime and webhook verification are unsigned.
 - Cloudflare media must remain disabled unless customer-owned quotas, tokens and end-to-end uploads are verified.
+- Until Resend and a verified sender are configured, set `EMAIL_AUTH_ENABLED=false` and `NEXT_PUBLIC_EMAIL_AUTH_ENABLED=false`. Registration and password reset are then safely unavailable, while existing verified users can still log in.
 - Rate limiting is shared through Postgres after migration `0009_chief_dark_beast.sql`.
 - Reel analytics uses a server-side HMAC pseudonym and does not set a dedicated viewer cookie.
 - `/api/health` checks database readiness without returning secrets.

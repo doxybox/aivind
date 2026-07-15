@@ -4,6 +4,7 @@ import * as authSchema from "@/db/auth-schema";
 import { db } from "@/db/client";
 import { ensureReaderRoleAndProfile } from "@/lib/server/user-records";
 import { sendAuthEmail } from "@/lib/email";
+import { isEmailDeliveryConfigured } from "@/lib/auth-launch-mode";
 
 const appUrl = process.env.BETTER_AUTH_URL || "http://localhost:3000";
 const localTrustedOrigins =
@@ -36,6 +37,7 @@ const trustedOrigins = Array.from(
 
 const socialProviders = {};
 const betterAuthSecret = process.env.BETTER_AUTH_SECRET;
+const emailDeliveryEnabled = isEmailDeliveryConfigured();
 
 if (process.env.NODE_ENV === "production" && !betterAuthSecret) {
   throw new Error("BETTER_AUTH_SECRET must be set in production.");
@@ -78,7 +80,7 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendOnSignUp: true,
-    sendOnSignIn: true,
+    sendOnSignIn: emailDeliveryEnabled,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       await sendAuthEmail({

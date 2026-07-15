@@ -68,7 +68,7 @@ export default function NewsletterCard() {
         </div>
         <div>
           <h2 className="text-[24px] font-bold text-white">Nyhetsbrev</h2>
-          <p className="text-[14px] text-zinc-400 mt-1">Skreddersy hvilke e-poster du onsker a motta fra oss.</p>
+          <p className="text-[14px] text-zinc-400 mt-1">Lagre hvilke utsendinger du ønsker når nyhetsbrevet åpner.</p>
         </div>
       </div>
 
