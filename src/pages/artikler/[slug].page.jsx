@@ -202,9 +202,9 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
       </Head>
 
       <SearchOverlay open={isSearchOpen} onClose={() => setIsSearchOpen(false)} articles={searchArticles} />
-      <Navbar onSearchClick={() => setIsSearchOpen(true)} />
+      <EditorialHeader onSearchClick={() => setIsSearchOpen(true)} />
 
-      <main className="mx-auto max-w-[1280px] px-4 pb-12 pt-24 sm:px-6 lg:px-8 lg:pt-28">
+      <main className="mx-auto max-w-[1280px] px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start xl:grid-cols-[minmax(0,1fr)_320px]">
           <article className="min-w-0">
             <header className="max-w-4xl">
