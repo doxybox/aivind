@@ -4,6 +4,7 @@ import sharp from "sharp";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import path from "path";
+import { createHash } from "crypto";
 import { collections } from "./src/payload/collections/index.js";
 
 const filename = fileURLToPath(import.meta.url);
@@ -36,6 +37,7 @@ loadEnvFile(".env");
 
 const payloadDatabaseUrl = process.env.PAYLOAD_DATABASE_URL || process.env.DATABASE_URI || process.env.DATABASE_URL;
 const payloadSecret = process.env.PAYLOAD_SECRET;
+const expectedDatabaseFingerprint = process.env.PAYLOAD_DATABASE_FINGERPRINT_EXPECTED;
 const isVercelServerless = process.env.VERCEL === "1";
 const defaultPayloadPoolMax = process.env.NODE_ENV === "production" ? 1 : 3;
 const configuredPoolMax = Number.parseInt(
@@ -57,6 +59,16 @@ if (!payloadDatabaseUrl) {
 
 if (!payloadSecret) {
   throw new Error("Missing PAYLOAD_SECRET for Payload.");
+}
+
+if (expectedDatabaseFingerprint) {
+  const actualDatabaseFingerprint = createHash("sha256")
+    .update(payloadDatabaseUrl)
+    .digest("hex");
+
+  if (actualDatabaseFingerprint !== expectedDatabaseFingerprint) {
+    throw new Error("Payload database configuration does not match the expected staging database.");
+  }
 }
 
 export default buildConfig({
