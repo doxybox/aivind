@@ -3,8 +3,8 @@ import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
 import { CalendarDays, Clock3, Copy, Link2, Lock, Mail, MessageCircle, Share2 } from "lucide-react";
+import EditorialHeader from "@/components/aivind/EditorialHeader";
 import Footer from "@/components/aivind/Footer";
-import Navbar from "@/components/aivind/Navbar";
 import ArticleReactions from "@/components/aivind/ArticleReactions";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 import SearchOverlay from "@/components/aivind/SearchOverlay";
@@ -188,7 +188,7 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
   }, [article.categorySlug, article.slug, searchArticles]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-[#ff6a00] selection:text-white">
+    <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 selection:bg-[#ff6a00] selection:text-white transition-colors duration-300 dark:bg-[#161a22] dark:text-white">
       <Head>
         <title>{title}</title>
         {description && <meta name="description" content={description} />}
