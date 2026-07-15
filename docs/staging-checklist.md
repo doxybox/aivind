@@ -1,6 +1,6 @@
 # Final Staging QA Checklist
 
-Last updated: 13 July 2026
+Last updated: 16 July 2026
 
 Staging URLs:
 
@@ -19,39 +19,39 @@ Source of truth for open blockers: `docs/production-blockers.md`.
 - [x] No high or critical npm audit findings.
 - [x] Billing/Vipps is parked.
 - [x] Non-demo starter editorial content is present; editorial approval remains required.
-- [x] A future-published article is configured; browser before/after proof remains required.
-- [ ] Logged-in role matrix is signed off.
+- [x] A future-published article was verified as 404 before publication and 200/on-frontpage after publication.
+- [x] Automated logged-in role matrix passed for reader, subscriber, premium-entitlement and editor accounts; ephemeral QA accounts were removed.
 - [x] Database credential rotation is complete.
 - [x] Backup/restore ownership is assigned and tested.
 
 ## Anonymous Browser QA
 
-- [ ] `/` renders Payload content without an error overlay.
-- [ ] `/ai` renders the AI category.
-- [ ] `/gaming` renders the gaming category.
-- [ ] Public article is readable.
-- [ ] Members article shows login CTA without body leakage.
-- [ ] Premium article shows login/subscribe CTA without body leakage.
-- [ ] Draft slug returns 404.
-- [ ] Future slug returns 404 before publication.
-- [ ] Unknown slug returns 404.
-- [ ] `/min-side` redirects to login.
-- [ ] `/redaksjon/media` redirects or denies access.
-- [ ] `/abonnement` truthfully presents parked billing.
-- [ ] Payload Admin opens its login page.
+- [x] `/` renders Payload content without an error overlay.
+- [x] `/ai` renders the AI category.
+- [x] `/gaming` renders the gaming category.
+- [x] Public article is readable.
+- [x] Members article shows login CTA without body leakage.
+- [x] Premium article shows login/subscribe CTA without body leakage.
+- [x] Draft slug returns 404.
+- [x] Future slug returned 404 before publication and 200 after publication.
+- [x] Unknown slug returns 404.
+- [x] `/min-side` redirects to login.
+- [x] `/redaksjon/media` redirects or denies access.
+- [x] `/abonnement` truthfully presents parked billing.
+- [x] Payload Admin opens its login page.
 - [ ] No hydration errors, broken images or obvious layout breaks are visible.
 
 ## Logged-In QA
 
-- [ ] Reader can log in and access only their own account data.
+- [x] Reader can log in and access only their own account data.
 - [ ] Reader can save/remove their own articles.
-- [ ] Reader can read and update their own newsletter preferences.
-- [ ] Reader can access members content but not premium content.
-- [ ] Subscriber/member behavior matches database entitlements.
-- [ ] Premium test user can access premium body.
-- [ ] Premium body remains absent for users without entitlement.
-- [ ] Staff role can access `/redaksjon/media`.
-- [ ] Non-staff receives 403 or redirect from staff surfaces.
+- [x] Reader can read and update their own newsletter preferences.
+- [x] Reader can access members content but not premium content.
+- [x] Subscriber/member behavior matches database entitlements.
+- [x] Premium test user can access premium body.
+- [x] Premium body remains absent for users without entitlement.
+- [x] Staff role can access `/redaksjon/media`.
+- [x] Non-staff receives 403 or redirect from staff surfaces.
 - [ ] Payload admin/editor can open permitted collections.
 - [ ] Public users cannot self-assign staff roles.
 

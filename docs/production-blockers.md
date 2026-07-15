@@ -1,6 +1,6 @@
 # Production Blocker Tracker
 
-Last updated: 15 July 2026
+Last updated: 16 July 2026
 
 This document is the production go/no-go source of truth for TEKKNO. It records operational and editorial work only; it does not enable parked services or change runtime behavior.
 
@@ -8,20 +8,20 @@ This document is the production go/no-go source of truth for TEKKNO. It records 
 
 | Area | Status | Evidence |
 | --- | --- | --- |
-| Public staging | Green | `https://staging.tekkno.no` responds and public smoke checks pass |
-| Payload Admin staging | Green | `https://admin-staging.tekkno.no/admin` responds |
+| Public staging | Green | `https://staging.tekkno.no` renders Payload content after the bounded Payload pool fix |
+| Payload Admin staging | Green | `https://admin-staging.tekkno.no/admin` responds after a fresh deploy |
 | Content source | Green for staging | `CONTENT_SOURCE=payload`; strict Payload verifier passes |
 | Public rendering | Green | Homepage, category, article, health, 404 and protected-route smoke checks pass |
 | Security audit | Accepted for staging | No high or critical findings; moderate findings remain documented |
-| Runtime logs | Green at last check | No new Vercel runtime errors after staging smoke |
-| Editorial content | Ready for staging QA | Six starter articles, two real categories, one active author and a hero slot; editorial sign-off is still required |
+| Runtime logs | Green at last check | No new public-app Vercel errors after the final content smoke check |
+| Editorial content | Ready for editorial approval | Six non-demo published QA articles, two categories, two authors and a hero slot render from Payload; editorial sign-off is still required |
 | Billing/Vipps | Parked | Must remain disabled unless a separate provider QA is approved |
 | Email provider | Safely parked | Self-service registration and password reset are disabled until a verified sender is configured; existing users can still log in |
 | Cloudflare Images/Stream | Parked | Uploads are explicitly disabled until end-to-end upload QA is approved |
 
 Current Payload inventory:
 
-- 5 published articles: 3 public, 1 members and 1 premium.
+- 6 published articles: 3 public, 1 members and 1 premium, plus one additional published article.
 - 2 active categories, 2 active authors, 1 active frontpage slot and 1 draft.
 - 1 future-published article.
 - 0 active `[DEMO]` records.
@@ -31,12 +31,12 @@ Current Payload inventory:
 
 | ID | Blocker | Severity | Owner | Status | Evidence | Required action | Verification step | Production blocker |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| PB-01 | Editorial starter content needs approval | P0 | Editorial lead (unassigned) | In progress | Strict audit on 15 July 2026 reports 0 `[DEMO]` records, 5 published articles and 1 active hero slot | Review, fact-check and approve or replace starter categories, author, articles and frontpage slot | Review every record in Payload Admin and run `npm run payload:audit-editorial-content:strict` | Yes |
-| PB-02 | Future-publish workflow needs live proof | P1 | Editor + QA owner (unassigned) | In progress | Strict audit on 15 July 2026 reports 1 future-published article | Complete before/after publication checks against staging | Before time: public route is 404. After time: article is public and appears only where curated | Yes |
+| PB-01 | Editorial starter content needs approval | P0 | Editorial lead (unassigned) | In progress | On 16 July 2026, strict verification reports 0 `[DEMO]` records, 6 published articles, 2 categories, 2 authors and 1 active hero slot | Review, fact-check and approve or replace starter categories, author, articles and frontpage slot | Review every record in Payload Admin and run `npm run payload:audit-editorial-content:strict` | Yes |
+| PB-02 | Future-publish workflow needs live proof | P1 | Editor + QA owner (unassigned) | Done | On 16 July 2026, the scheduled article returned 404 before its publication time, then returned 200 and appeared on the staging frontpage after the timestamp passed | Keep this workflow in the editorial release checklist | Before time: public route is 404. After time: article is public and appears only where curated | Yes |
 | PB-03 | Supabase password was previously shared | P0 | Project/database owner | Done | Password rotated; public deploy `dpl_9ge4hjcazLsJs4iJxLL9yJ7yEJR1` and admin deploy `dpl_HerHxjxwLC8q3wNFhq6cFRoqbygE` are Ready | Completed 13 July 2026; keep the new credential only in approved secret stores | DB probe, strict Payload verifier, health, Better Auth session, Payload Admin, public smoke and Vercel error-log checks passed | Yes |
 | PB-04 | Backup and restore process verification | P0 | Eivind Von Døhlen | Done | Non-production restore completed on 13 July 2026: 39/39 app tables, 71/71 constraints, 162/162 indexes and all row counts matched; strict Payload verifier passed against the restored database | Use the documented managed-backup plus reviewed logical-dump process for cutover | Record a fresh backup timestamp and Eivind Von Døhlen's approval in the release record | Yes |
-| PB-05 | Logged-in role QA is incomplete | P0 | QA lead (unassigned) | In progress | An ephemeral QA runner creates and removes reader, subscriber, premium and editor accounts; staging deployment is pending | Run the controlled QA runner and complete manual Payload Admin sign-off | Complete the role matrix below and attach evidence without passwords | Yes |
-| PB-09 | Session-pooler client limit was reached | P1 | Eivind Von Dohlen | Done | Local Payload QA hit Supabase session-pooler limit on 15 July 2026; strict checks pass through transaction pooler | Use transaction-pooler port 6543 for serverless app and Payload connections, with bounded client pools | Staging health, Payload verifier and role QA pass after deploy | Yes |
+| PB-05 | Logged-in role QA is incomplete | P0 | QA lead (unassigned) | Done for automated staging QA | On 16 July 2026, the controlled runner passed reader, subscriber, premium-entitlement and editor checks; all four accounts were deleted | Complete manual Payload Admin/editor workflow sign-off as part of PB-01 | Complete the role matrix below and attach evidence without passwords | Yes |
+| PB-09 | Session-pooler client limit was reached | P1 | Eivind Von Dohlen | Done | Public staging Payload queries initially had no spare client because `PAYLOAD_DATABASE_POOL_MAX=1`; setting the bounded Payload pool to 2 restored article, category and slot queries on 16 July 2026 | Use transaction-pooler port 6543 for serverless app and Payload connections, with bounded client pools | Staging health, Payload verifier and role QA pass after deploy | Yes |
 | PB-06 | Production domain and DNS cutover are not approved | P1 | Release owner + DNS owner (unassigned) | Open | Only staging URLs are approved | Approve production public/admin domains, DNS records, TTL window and certificate plan | Resolve both domains over HTTPS and complete production-origin auth checks | Yes |
 | PB-07 | Moderate dependency findings remain | P2 | Dependency owner (unassigned) | In progress | Root: 8 moderate. Admin: 8 moderate, 1 low. No safe automatic fix | Track upstream fixes; do not use forced breaking upgrades during cutover | `npm audit` has no high/critical; accepted-risk sign-off references exact advisories | No |
 | PB-08 | Raw `<img>` build warnings remain | P2 | Frontend owner (unassigned) | Open | Next build reports image optimization warnings | Accept for launch or schedule provider-aware `next/image` migration | Build passes and release owner records the warning as non-blocking | No |
@@ -53,8 +53,8 @@ Current Payload inventory:
 - [x] Replace active demo records with non-demo starter categories, author, articles and frontpage slot.
 - [ ] Editorially approve or replace each starter record before production.
 - [x] Create one future-published article.
-- [ ] Complete before/after future-publish checks on staging.
-- [ ] Run and sign off logged-in role QA.
+- [x] Complete before/after future-publish checks on staging.
+- [x] Run and record automated logged-in role QA.
 - [ ] Approve production public/admin domains and DNS cutover plan.
 
 ## User-Role QA Matrix
