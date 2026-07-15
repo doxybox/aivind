@@ -18,8 +18,27 @@ function safeArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
+function getPayloadErrorMetadata(error) {
+  const errors = [];
+  let current = error;
+
+  for (let index = 0; current && index < 3; index += 1) {
+    errors.push({
+      name: current.name || "Error",
+      code: current.code || null,
+      severity: current.severity || null,
+    });
+    current = current.cause;
+  }
+
+  return errors;
+}
+
 function logPayloadPublicError(scope, error) {
-  console.error(`[payload-public:${scope}]`, error?.message || error);
+  // Keep Vercel logs useful for database incidents without logging SQL params or URLs.
+  console.error(`[payload-public:${scope}]`, {
+    errors: getPayloadErrorMetadata(error),
+  });
 }
 
 async function withPayloadFallback(scope, fallback, fn) {
