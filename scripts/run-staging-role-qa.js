@@ -50,6 +50,21 @@ function buildEmail(key) {
   return `${qaPrefix}-${key}@${qaDomain}`;
 }
 
+function delay(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function getRetryDelay(response) {
+  const retryAfter = Number.parseInt(response.headers.get("retry-after") || "", 10);
+  if (Number.isFinite(retryAfter) && retryAfter > 0) return retryAfter * 1000;
+
+  const resetAt = Number.parseInt(response.headers.get("x-ratelimit-reset") || "", 10);
+  if (Number.isFinite(resetAt) && resetAt > Date.now()) return resetAt - Date.now() + 1_000;
+
+  // Better Auth uses a one-minute default window when no retry headers are present.
+  return 61_000;
+}
+
 function cookieHeader(response) {
   const values = typeof response.headers.getSetCookie === "function"
     ? response.headers.getSetCookie()
@@ -134,23 +149,32 @@ async function cleanupQaAccounts(sql) {
 }
 
 async function signIn(email) {
-  const response = await fetch(`${baseUrl}/api/auth/sign-in/email`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Origin: baseUrl,
-    },
-    body: JSON.stringify({ email, password, rememberMe: false }),
-    redirect: "manual",
-  });
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const response = await fetch(`${baseUrl}/api/auth/sign-in/email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: baseUrl,
+      },
+      body: JSON.stringify({ email, password, rememberMe: false }),
+      redirect: "manual",
+    });
 
-  if (!response.ok) {
-    throw new Error(`Sign-in failed for staging QA (${response.status}).`);
+    if (response.status === 429 && attempt < 2) {
+      await delay(getRetryDelay(response));
+      continue;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Sign-in failed for staging QA (${response.status}).`);
+    }
+
+    const cookie = cookieHeader(response);
+    if (!cookie) throw new Error("Sign-in did not issue a session cookie.");
+    return cookie;
   }
 
-  const cookie = cookieHeader(response);
-  if (!cookie) throw new Error("Sign-in did not issue a session cookie.");
-  return cookie;
+  throw new Error("Sign-in retry limit was reached for staging QA.");
 }
 
 async function request(path, { cookie = "", redirect = "manual" } = {}) {
