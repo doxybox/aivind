@@ -27,6 +27,8 @@
     "payload:verify-public-rendering:strict": "node --import tsx scripts/verify-payload-public-rendering.js --strict",
     "payload:audit-editorial-content": "node scripts/audit-editorial-content.js",
     "payload:audit-editorial-content:strict": "node scripts/audit-editorial-content.js --strict",
+    "payload:replace-demo-content": "node scripts/replace-demo-content.js",
+    "qa:staging-roles": "node scripts/run-staging-role-qa.js",
     "payload:seed-demo-content": "node --import tsx scripts/seed-payload-demo-content.js",
     "smoke:production": "node scripts/production-smoke.js",
     "test:auth": "node --test tests/*.test.js",

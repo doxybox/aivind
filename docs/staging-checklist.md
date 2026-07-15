@@ -18,8 +18,8 @@ Source of truth for open blockers: `docs/production-blockers.md`.
 - [x] Anonymous public smoke, health, 404 and protected-route checks pass.
 - [x] No high or critical npm audit findings.
 - [x] Billing/Vipps is parked.
-- [ ] Real non-demo editorial content is present.
-- [ ] Future-publish workflow is tested.
+- [x] Non-demo starter editorial content is present; editorial approval remains required.
+- [x] A future-published article is configured; browser before/after proof remains required.
 - [ ] Logged-in role matrix is signed off.
 - [x] Database credential rotation is complete.
 - [x] Backup/restore ownership is assigned and tested.

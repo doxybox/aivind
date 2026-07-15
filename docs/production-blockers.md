@@ -14,27 +14,29 @@ This document is the production go/no-go source of truth for TEKKNO. It records 
 | Public rendering | Green | Homepage, category, article, health, 404 and protected-route smoke checks pass |
 | Security audit | Accepted for staging | No high or critical findings; moderate findings remain documented |
 | Runtime logs | Green at last check | No new Vercel runtime errors after staging smoke |
-| Editorial content | Not production-ready | Six active `[DEMO]` records; no future-published test article |
+| Editorial content | Ready for staging QA | Six starter articles, two real categories, one active author and a hero slot; editorial sign-off is still required |
 | Billing/Vipps | Parked | Must remain disabled unless a separate provider QA is approved |
 | Email provider | Safely parked | Self-service registration and password reset are disabled until a verified sender is configured; existing users can still log in |
-| Cloudflare Images/Stream | Out of scope for this tracker | No behavior or enablement change is made here |
+| Cloudflare Images/Stream | Parked | Uploads are explicitly disabled until end-to-end upload QA is approved |
 
 Current Payload inventory:
 
-- 4 published articles: 2 public, 1 members and 1 premium.
-- 2 categories, 1 author, 1 active frontpage slot and 1 draft.
-- 0 future-published articles.
-- 6 `[DEMO]` records. Demo content cannot approve production.
+- 5 published articles: 3 public, 1 members and 1 premium.
+- 2 active categories, 2 active authors, 1 active frontpage slot and 1 draft.
+- 1 future-published article.
+- 0 active `[DEMO]` records.
+- The replacement copy is starter editorial content. An editorial owner must review, fact-check and approve it before production.
 
 ## Production Blockers
 
 | ID | Blocker | Severity | Owner | Status | Evidence | Required action | Verification step | Production blocker |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| PB-01 | Demo content is still active | P0 | Editorial lead (unassigned) | Open | Strict audit on 13 July 2026 reports 6 `[DEMO]` records and exits non-zero as intended | Replace demo categories, author, articles and frontpage slot with approved editorial content | Run `npm run payload:audit-editorial-content:strict`; manually review Payload Admin | Yes |
-| PB-02 | Future-publish workflow is untested | P1 | Editor + QA owner (unassigned) | Open | Strict audit on 13 July 2026 reports 0 future-published articles | Create a scheduled test article and complete before/after publication checks | Before time: public route is 404. After time: article is public and appears only where curated | Yes |
+| PB-01 | Editorial starter content needs approval | P0 | Editorial lead (unassigned) | In progress | Strict audit on 15 July 2026 reports 0 `[DEMO]` records, 5 published articles and 1 active hero slot | Review, fact-check and approve or replace starter categories, author, articles and frontpage slot | Review every record in Payload Admin and run `npm run payload:audit-editorial-content:strict` | Yes |
+| PB-02 | Future-publish workflow needs live proof | P1 | Editor + QA owner (unassigned) | In progress | Strict audit on 15 July 2026 reports 1 future-published article | Complete before/after publication checks against staging | Before time: public route is 404. After time: article is public and appears only where curated | Yes |
 | PB-03 | Supabase password was previously shared | P0 | Project/database owner | Done | Password rotated; public deploy `dpl_9ge4hjcazLsJs4iJxLL9yJ7yEJR1` and admin deploy `dpl_HerHxjxwLC8q3wNFhq6cFRoqbygE` are Ready | Completed 13 July 2026; keep the new credential only in approved secret stores | DB probe, strict Payload verifier, health, Better Auth session, Payload Admin, public smoke and Vercel error-log checks passed | Yes |
 | PB-04 | Backup and restore process verification | P0 | Eivind Von Døhlen | Done | Non-production restore completed on 13 July 2026: 39/39 app tables, 71/71 constraints, 162/162 indexes and all row counts matched; strict Payload verifier passed against the restored database | Use the documented managed-backup plus reviewed logical-dump process for cutover | Record a fresh backup timestamp and Eivind Von Døhlen's approval in the release record | Yes |
-| PB-05 | Logged-in role QA is incomplete | P0 | QA lead (unassigned) | Open | 127 automated auth/access tests passed on 13 July 2026; no QA login credentials are configured, so browser role QA remains unsigned | Provide controlled reader, subscriber/member, premium-entitlement and staff test accounts and run browser QA | Complete the role matrix below and attach evidence without passwords | Yes |
+| PB-05 | Logged-in role QA is incomplete | P0 | QA lead (unassigned) | In progress | An ephemeral QA runner creates and removes reader, subscriber, premium and editor accounts; staging deployment is pending | Run the controlled QA runner and complete manual Payload Admin sign-off | Complete the role matrix below and attach evidence without passwords | Yes |
+| PB-09 | Session-pooler client limit was reached | P1 | Eivind Von Dohlen | Done | Local Payload QA hit Supabase session-pooler limit on 15 July 2026; strict checks pass through transaction pooler | Use transaction-pooler port 6543 for serverless app and Payload connections, with bounded client pools | Staging health, Payload verifier and role QA pass after deploy | Yes |
 | PB-06 | Production domain and DNS cutover are not approved | P1 | Release owner + DNS owner (unassigned) | Open | Only staging URLs are approved | Approve production public/admin domains, DNS records, TTL window and certificate plan | Resolve both domains over HTTPS and complete production-origin auth checks | Yes |
 | PB-07 | Moderate dependency findings remain | P2 | Dependency owner (unassigned) | In progress | Root: 8 moderate. Admin: 8 moderate, 1 low. No safe automatic fix | Track upstream fixes; do not use forced breaking upgrades during cutover | `npm audit` has no high/critical; accepted-risk sign-off references exact advisories | No |
 | PB-08 | Raw `<img>` build warnings remain | P2 | Frontend owner (unassigned) | Open | Next build reports image optimization warnings | Accept for launch or schedule provider-aware `next/image` migration | Build passes and release owner records the warning as non-blocking | No |
@@ -48,8 +50,10 @@ Current Payload inventory:
 - [x] Run database, Better Auth, Payload Admin and public-content smoke tests after rotation.
 - [x] Assign backup, restore, migration and deploy owners by name.
 - [x] Record the Supabase backup method and retention policy.
-- [ ] Replace all active demo content with approved editorial content.
-- [ ] Create and test one future-published article.
+- [x] Replace active demo records with non-demo starter categories, author, articles and frontpage slot.
+- [ ] Editorially approve or replace each starter record before production.
+- [x] Create one future-published article.
+- [ ] Complete before/after future-publish checks on staging.
 - [ ] Run and sign off logged-in role QA.
 - [ ] Approve production public/admin domains and DNS cutover plan.
 
