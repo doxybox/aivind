@@ -174,6 +174,12 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
 
               {article.excerpt && <p className="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground sm:text-xl">{article.excerpt}</p>}
 
+              {article.heroImage && (
+                <figure className="mt-7 overflow-hidden rounded-xl border border-border bg-muted">
+                  <Image src={article.heroImage} alt={article.heroImageAlt || article.title} width={1600} height={900} unoptimized priority className="aspect-[16/9] w-full object-cover" />
+                </figure>
+              )}
+
               <div className="mt-7 flex flex-col justify-between gap-5 border-y border-border py-4 sm:flex-row sm:items-center">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] text-muted-foreground">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-black text-foreground">{authorInitial}</span>
@@ -186,12 +192,6 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
                 <ShareActions title={article.title} canonicalUrl={canonical} />
               </div>
             </header>
-
-            {article.heroImage && (
-              <figure className="mt-7 overflow-hidden rounded-xl border border-border bg-muted">
-                <Image src={article.heroImage} alt={article.heroImageAlt || article.title} width={1600} height={900} unoptimized priority className="aspect-[16/9] w-full object-cover" />
-              </figure>
-            )}
 
             <div className="mt-8 max-w-3xl">
               {paragraphs.length > 0 ? paragraphs : <p className="text-[16px] leading-8 text-foreground/90 md:text-[17px]">{article.excerpt}</p>}
@@ -223,16 +223,6 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
                 </div>
               </section>
             )}
-
-            <section className="mt-10 max-w-3xl rounded-xl border border-border bg-card p-5 sm:p-6">
-              <div className="flex gap-4">
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-muted text-lg font-black text-foreground">{authorInitial}</span>
-                <div>
-                  <p className="text-lg font-black text-foreground">{authorName}</p>
-                  <p className="mt-1 text-sm leading-6 text-muted-foreground">Skribent i TEKKNO.</p>
-                </div>
-              </div>
-            </section>
 
             {relatedArticles.length > 0 && (
               <section className="mt-12">
