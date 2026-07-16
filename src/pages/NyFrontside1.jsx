@@ -440,7 +440,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
         </div>
 
         {additionalArticleRowsBeforeAd.map((row, rowIndex) => (
-          row.articles.length > 0 && (
+          row.articles.length > 1 && (
             <div key={`before-ad-${rowIndex}`} className={`grid ${row.gridClass} gap-4 mb-6`}>
               {row.articles.map((article, articleIndex) => {
                 const card = toCard(article);
@@ -585,7 +585,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
         </div>
 
         {additionalArticleRowsAfterAd.map((row, rowIndex) => (
-          row.articles.length > 0 && (
+          row.articles.length > 1 && (
             <div key={`after-ad-${rowIndex}`} className={`grid ${row.gridClass} gap-4 mb-6`}>
               {row.articles.map((article, articleIndex) => {
                 const card = toCard(article);
