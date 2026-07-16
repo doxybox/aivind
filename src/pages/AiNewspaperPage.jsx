@@ -441,7 +441,7 @@ export default function AiNewspaperPage({
   reels = aiReels,
 }) {
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
-  const category = { ...defaultCategoryConfig, ...categoryConfig };
+  const category = { ...defaultCategoryConfig, ...categoryConfig, ...(payloadCategoryPage?.category || {}) };
   const categoryTitle = payloadCategoryPage?.category?.title || payloadCategoryPage?.category?.name || category.title;
   const categoryPath = `/${category.slug}`;
   const payloadStories = (payloadCategoryPage?.articles || []).map((story) => normalizeAiStory(story, categoryTitle));

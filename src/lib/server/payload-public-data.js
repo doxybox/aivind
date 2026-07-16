@@ -110,6 +110,9 @@ export function mapPayloadMediaToImage(mediaAsset) {
 }
 
 export function mapPayloadCategoryToLegacyCategory(category = {}) {
+  const heroMediaDocument = getRelationshipDoc(category.heroMedia);
+  const heroMedia = heroMediaDocument ? mapPayloadMediaToImage(heroMediaDocument) : null;
+
   return {
     id: category.id || "",
     name: category.name || "",
@@ -118,6 +121,8 @@ export function mapPayloadCategoryToLegacyCategory(category = {}) {
     href: category.existingRoute || (category.slug ? `/${category.slug}` : "#"),
     description: category.description || "",
     intro: category.description || "",
+    heroImage: heroMedia?.imageUrl || "",
+    heroImageAlt: heroMedia?.imageAlt || category.name || "",
     seoTitle: category.seoTitle || "",
     seoDescription: category.seoDescription || "",
     isActive: category.isActive !== false,

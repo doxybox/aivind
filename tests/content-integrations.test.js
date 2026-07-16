@@ -180,10 +180,16 @@ test("Payload mappers return legacy-safe frontend shapes", () => {
     slug: "gaming",
     existingRoute: "/gaming",
     description: "Spill og maskinvare",
+    heroMedia: { deliveryUrl: "https://images.example/gaming.jpg", alt: "Gaming-bilde" },
   });
 
   assert.equal(mappedCategory.href, "/gaming");
   assert.equal(mappedCategory.title, "Gaming");
+  assert.equal(mappedCategory.heroImage, "https://images.example/gaming.jpg");
+  assert.equal(mappedCategory.heroImageAlt, "Gaming-bilde");
+
+  const categoryWithoutImage = mapPayloadCategoryToLegacyCategory({ name: "Elbil", slug: "elbil" });
+  assert.equal(categoryWithoutImage.heroImage, "");
 
   const mappedArticle = mapPayloadArticleToLegacyArticle({
     id: 7,

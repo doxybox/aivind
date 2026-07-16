@@ -27,6 +27,15 @@ export const Categories = {
     { name: "name", type: "text", required: true },
     { name: "slug", type: "text", required: true, unique: true, index: true },
     { name: "description", type: "textarea" },
+    {
+      name: "heroMedia",
+      label: "Kategori-bilde",
+      type: "relationship",
+      relationTo: "media-assets",
+      admin: {
+        description: "Vises i toppen av kategorisiden. Lar du feltet sta tomt, brukes dagens reservebilde.",
+      },
+    },
     { name: "parent", type: "relationship", relationTo: "categories" },
     {
       name: "existingRoute",

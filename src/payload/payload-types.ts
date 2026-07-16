@@ -206,6 +206,10 @@ export interface Category {
   name: string;
   slug: string;
   description?: string | null;
+  /**
+   * Vises i toppen av kategorisiden. Lar du feltet sta tomt, brukes dagens reservebilde.
+   */
+  heroMedia?: (number | null) | MediaAsset;
   parent?: (number | null) | Category;
   existingRoute?: ('/ai' | '/gaming' | '/elbil' | '/gadgets' | '/tester' | '/guider' | '/video') | null;
   seoTitle?: string | null;
@@ -572,6 +576,7 @@ export interface CategoriesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   description?: T;
+  heroMedia?: T;
   parent?: T;
   existingRoute?: T;
   seoTitle?: T;
