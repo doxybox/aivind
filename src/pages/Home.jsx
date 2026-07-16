@@ -18,6 +18,7 @@ import {
   aiArticlesData
 } from "@/lib/articles";
 import TrendingSidebar from "@/components/aivind/TrendingSidebar";
+import AdSlot from "@/components/aivind/AdSlot";
 
 export default function Home() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -47,7 +48,8 @@ export default function Home() {
           <div className="lg:col-span-4 xl:col-span-3 flex flex-col order-3 lg:order-2 gap-6">
             <TrendingSidebar />
             {/* Flexible Ad Slot Sidebar */}
-            <div className="w-full flex-1 bg-border/30 dark:bg-card/30 border border-border/60 rounded-lg flex flex-col items-center justify-center shadow-sm dark:shadow-none relative hidden lg:flex min-h-[250px]">
+            <AdSlot placement="article-sidebar-bottom" className="min-h-[250px] w-full flex-1" fallbackDescription="Annonseplass" />
+            <div className="hidden w-full flex-1 bg-border/30 dark:bg-card/30 border border-border/60 rounded-lg flex flex-col items-center justify-center shadow-sm dark:shadow-none relative min-h-[250px]">
                <span className="absolute top-3 right-3 text-[10px] text-muted-foreground uppercase tracking-widest font-bold">ANNONSE</span>
                <span className="text-xl text-muted-foreground/50 font-medium tracking-[0.1em] text-center px-4">REKLAMEPLASS</span>
             </div>
@@ -55,7 +57,8 @@ export default function Home() {
         </div>
 
         {/* Ad Slot Horizontal (970x250) */}
-        <div className="w-full bg-border/30 dark:bg-card/30 border border-border/60 rounded-lg flex flex-col items-center justify-center py-14 shadow-sm dark:shadow-none relative mb-12">
+        <AdSlot placement="home-primary" className="mb-12 h-[250px] w-full" fallbackDescription="Annonseplass på forsiden" />
+        <div className="hidden w-full bg-border/30 dark:bg-card/30 border border-border/60 rounded-lg flex flex-col items-center justify-center py-14 shadow-sm dark:shadow-none relative mb-12">
            <span className="absolute top-3 right-3 text-[10px] text-muted-foreground uppercase tracking-widest font-bold">ANNONSE</span>
            <span className="text-2xl text-muted-foreground/50 font-medium tracking-[0.1em]">REKLAMEPLASS</span>
            <span className="text-[11px] text-muted-foreground/70 mt-2 font-mono">970 × 250</span>

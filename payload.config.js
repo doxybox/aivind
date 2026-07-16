@@ -5,7 +5,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import path from "path";
 import { createHash } from "crypto";
-import { collections } from "./src/payload/collections/index.js";
+import { collections, globals } from "./src/payload/collections/index.js";
 import { createPayloadPreviewToken } from "./src/lib/server/payload-preview.js";
 
 const filename = fileURLToPath(import.meta.url);
@@ -100,6 +100,7 @@ export default buildConfig({
     },
   },
   collections,
+  globals,
   db: postgresAdapter({
     pool: {
       connectionString: payloadDatabaseUrl,

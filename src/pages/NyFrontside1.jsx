@@ -14,6 +14,7 @@ import ReelsSection from "@/components/aivind/ReelsSection";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 import BrandLogo from "@/components/aivind/BrandLogo";
 import HeaderAccountMenu from "@/components/aivind/HeaderAccountMenu";
+import AdSlot from "@/components/aivind/AdSlot";
 
 const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl" }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
@@ -420,8 +421,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
           </section>
         )}
 
-        {/* Google Ads Placeholder */}
-        <div className="w-full mx-auto h-[250px] bg-[#161a22] border border-[#ff6a00]/40 shadow-[0_0_15px_rgba(255,106,0,0.1)] rounded-xl mb-6 flex items-center justify-center relative overflow-hidden">
+        <AdSlot placement="home-primary" className="mx-auto mb-6 h-[250px] w-full" fallbackDescription="Annonseplass på forsiden" />
+        <div className="hidden w-full mx-auto h-[250px] bg-[#161a22] border border-[#ff6a00]/40 shadow-[0_0_15px_rgba(255,106,0,0.1)] rounded-xl mb-6 flex items-center justify-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-48 h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)', backgroundSize: '16px 16px', WebkitMaskImage: 'linear-gradient(to right, black, transparent)', maskImage: 'linear-gradient(to right, black, transparent)' }} />
           <div className="absolute top-0 right-0 w-48 h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)', backgroundSize: '16px 16px', WebkitMaskImage: 'linear-gradient(to left, black, transparent)', maskImage: 'linear-gradient(to left, black, transparent)' }} />
           
@@ -565,8 +566,8 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
           </>
         )}
 
-        {/* Google Ads Placeholder (Bunn) */}
-        <div className="w-full mx-auto h-[250px] bg-[#161a22] border border-[#ff6a00]/40 shadow-[0_0_15px_rgba(255,106,0,0.1)] rounded-xl mt-8 mb-6 flex items-center justify-center relative overflow-hidden">
+        <AdSlot placement="home-secondary" className="mx-auto mb-6 mt-8 h-[250px] w-full" fallbackDescription="Annonseplass i bunn av forsiden" />
+        <div className="hidden w-full mx-auto h-[250px] bg-[#161a22] border border-[#ff6a00]/40 shadow-[0_0_15px_rgba(255,106,0,0.1)] rounded-xl mt-8 mb-6 flex items-center justify-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-48 h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)', backgroundSize: '16px 16px', WebkitMaskImage: 'linear-gradient(to right, black, transparent)', maskImage: 'linear-gradient(to right, black, transparent)' }} />
           <div className="absolute top-0 right-0 w-48 h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)', backgroundSize: '16px 16px', WebkitMaskImage: 'linear-gradient(to left, black, transparent)', maskImage: 'linear-gradient(to left, black, transparent)' }} />
           

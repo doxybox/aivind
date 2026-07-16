@@ -65,6 +65,14 @@ export const enum_articles_access_level = pgEnum("enum_articles_access_level", [
   "members",
   "paid",
 ]);
+export const enum__articles_v_version_status = pgEnum(
+  "enum__articles_v_version_status",
+  ["draft", "review", "scheduled", "published", "archived"],
+);
+export const enum__articles_v_version_access_level = pgEnum(
+  "enum__articles_v_version_access_level",
+  ["public", "members", "paid"],
+);
 export const enum_article_comments_status = pgEnum(
   "enum_article_comments_status",
   ["pending", "published", "hidden", "rejected"],
@@ -242,6 +250,9 @@ export const categories = pgTable(
     name: varchar("name").notNull(),
     slug: varchar("slug").notNull(),
     description: varchar("description"),
+    heroMedia: integer("hero_media_id").references(() => media_assets.id, {
+      onDelete: "set null",
+    }),
     parent: integer("parent_id").references((): AnyPgColumn => categories.id, {
       onDelete: "set null",
     }),
@@ -267,6 +278,7 @@ export const categories = pgTable(
   },
   (columns) => [
     uniqueIndex("categories_slug_idx").on(columns.slug),
+    index("categories_hero_media_idx").on(columns.heroMedia),
     index("categories_parent_idx").on(columns.parent),
     index("categories_updated_at_idx").on(columns.updatedAt),
     index("categories_created_at_idx").on(columns.createdAt),
@@ -316,11 +328,11 @@ export const articles = pgTable(
   "articles",
   {
     id: serial("id").primaryKey(),
-    title: varchar("title").notNull(),
-    slug: varchar("slug").notNull(),
+    title: varchar("title"),
+    slug: varchar("slug"),
     excerpt: varchar("excerpt"),
     content: varchar("content"),
-    status: enum_articles_status("status").notNull().default("draft"),
+    status: enum_articles_status("status").default("draft"),
     publishedAt: timestamp("published_at", {
       mode: "string",
       withTimezone: true,
@@ -342,9 +354,7 @@ export const articles = pgTable(
     canonicalUrl: varchar("canonical_url"),
     isBreaking: boolean("is_breaking").default(false),
     isFeatured: boolean("is_featured").default(false),
-    accessLevel: enum_articles_access_level("access_level")
-      .notNull()
-      .default("public"),
+    accessLevel: enum_articles_access_level("access_level").default("public"),
     commentsEnabled: boolean("comments_enabled").default(true),
     newsletterEligible: boolean("newsletter_eligible").default(false),
     paywallEnabled: boolean("paywall_enabled").default(false),
@@ -362,6 +372,7 @@ export const articles = pgTable(
     })
       .defaultNow()
       .notNull(),
+    _status: enum_articles_status("_status").default("draft"),
   },
   (columns) => [
     uniqueIndex("articles_slug_idx").on(columns.slug),
@@ -369,6 +380,7 @@ export const articles = pgTable(
     index("articles_seo_image_idx").on(columns.seoImage),
     index("articles_updated_at_idx").on(columns.updatedAt),
     index("articles_created_at_idx").on(columns.createdAt),
+    index("articles__status_idx").on(columns._status),
   ],
 );
 
@@ -402,6 +414,142 @@ export const articles_rels = pgTable(
       columns: [columns["categoriesID"]],
       foreignColumns: [categories.id],
       name: "articles_rels_categories_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _articles_v = pgTable(
+  "_articles_v",
+  {
+    id: serial("id").primaryKey(),
+    parent: integer("parent_id").references(() => articles.id, {
+      onDelete: "set null",
+    }),
+    version_title: varchar("version_title"),
+    version_slug: varchar("version_slug"),
+    version_excerpt: varchar("version_excerpt"),
+    version_content: varchar("version_content"),
+    version_status:
+      enum__articles_v_version_status("version_status").default("draft"),
+    version_publishedAt: timestamp("version_published_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_scheduledAt: timestamp("version_scheduled_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_heroMedia: integer("version_hero_media_id").references(
+      () => media_assets.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_seoTitle: varchar("version_seo_title"),
+    version_seoDescription: varchar("version_seo_description"),
+    version_seoImage: integer("version_seo_image_id").references(
+      () => media_assets.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_canonicalUrl: varchar("version_canonical_url"),
+    version_isBreaking: boolean("version_is_breaking").default(false),
+    version_isFeatured: boolean("version_is_featured").default(false),
+    version_accessLevel: enum__articles_v_version_access_level(
+      "version_access_level",
+    ).default("public"),
+    version_commentsEnabled: boolean("version_comments_enabled").default(true),
+    version_newsletterEligible: boolean("version_newsletter_eligible").default(
+      false,
+    ),
+    version_paywallEnabled: boolean("version_paywall_enabled").default(false),
+    version_updatedAt: timestamp("version_updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_createdAt: timestamp("version_created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version__status:
+      enum__articles_v_version_status("version__status").default("draft"),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    latest: boolean("latest"),
+    autosave: boolean("autosave"),
+  },
+  (columns) => [
+    index("_articles_v_parent_idx").on(columns.parent),
+    index("_articles_v_version_version_slug_idx").on(columns.version_slug),
+    index("_articles_v_version_version_hero_media_idx").on(
+      columns.version_heroMedia,
+    ),
+    index("_articles_v_version_version_seo_image_idx").on(
+      columns.version_seoImage,
+    ),
+    index("_articles_v_version_version_updated_at_idx").on(
+      columns.version_updatedAt,
+    ),
+    index("_articles_v_version_version_created_at_idx").on(
+      columns.version_createdAt,
+    ),
+    index("_articles_v_version_version__status_idx").on(
+      columns.version__status,
+    ),
+    index("_articles_v_created_at_idx").on(columns.createdAt),
+    index("_articles_v_updated_at_idx").on(columns.updatedAt),
+    index("_articles_v_latest_idx").on(columns.latest),
+    index("_articles_v_autosave_idx").on(columns.autosave),
+  ],
+);
+
+export const _articles_v_rels = pgTable(
+  "_articles_v_rels",
+  {
+    id: serial("id").primaryKey(),
+    order: integer("order"),
+    parent: integer("parent_id").notNull(),
+    path: varchar("path").notNull(),
+    authorsID: integer("authors_id"),
+    categoriesID: integer("categories_id"),
+  },
+  (columns) => [
+    index("_articles_v_rels_order_idx").on(columns.order),
+    index("_articles_v_rels_parent_idx").on(columns.parent),
+    index("_articles_v_rels_path_idx").on(columns.path),
+    index("_articles_v_rels_authors_id_idx").on(columns.authorsID),
+    index("_articles_v_rels_categories_id_idx").on(columns.categoriesID),
+    foreignKey({
+      columns: [columns["parent"]],
+      foreignColumns: [_articles_v.id],
+      name: "_articles_v_rels_parent_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["authorsID"]],
+      foreignColumns: [authors.id],
+      name: "_articles_v_rels_authors_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["categoriesID"]],
+      foreignColumns: [categories.id],
+      name: "_articles_v_rels_categories_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -874,6 +1022,27 @@ export const payload_migrations = pgTable(
   ],
 );
 
+export const advertising_settings = pgTable("advertising_settings", {
+  id: serial("id").primaryKey(),
+  adsenseEnabled: boolean("adsense_enabled").default(false),
+  adsenseClient: varchar("adsense_client"),
+  slots_homePrimary: varchar("slots_home_primary"),
+  slots_homeSecondary: varchar("slots_home_secondary"),
+  slots_categoryBottom: varchar("slots_category_bottom"),
+  slots_articleSidebarTop: varchar("slots_article_sidebar_top"),
+  slots_articleSidebarBottom: varchar("slots_article_sidebar_bottom"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
 export const relations_payload_users_roles = relations(
   payload_users_roles,
   ({ one }) => ({
@@ -910,6 +1079,11 @@ export const relations_media_assets = relations(media_assets, ({ one }) => ({
   }),
 }));
 export const relations_categories = relations(categories, ({ one }) => ({
+  heroMedia: one(media_assets, {
+    fields: [categories.heroMedia],
+    references: [media_assets.id],
+    relationName: "heroMedia",
+  }),
   parent: one(categories, {
     fields: [categories.parent],
     references: [categories.id],
@@ -955,6 +1129,49 @@ export const relations_articles = relations(articles, ({ one, many }) => ({
     relationName: "_rels",
   }),
 }));
+export const relations__articles_v_rels = relations(
+  _articles_v_rels,
+  ({ one }) => ({
+    parent: one(_articles_v, {
+      fields: [_articles_v_rels.parent],
+      references: [_articles_v.id],
+      relationName: "_rels",
+    }),
+    authorsID: one(authors, {
+      fields: [_articles_v_rels.authorsID],
+      references: [authors.id],
+      relationName: "authors",
+    }),
+    categoriesID: one(categories, {
+      fields: [_articles_v_rels.categoriesID],
+      references: [categories.id],
+      relationName: "categories",
+    }),
+  }),
+);
+export const relations__articles_v = relations(
+  _articles_v,
+  ({ one, many }) => ({
+    parent: one(articles, {
+      fields: [_articles_v.parent],
+      references: [articles.id],
+      relationName: "parent",
+    }),
+    version_heroMedia: one(media_assets, {
+      fields: [_articles_v.version_heroMedia],
+      references: [media_assets.id],
+      relationName: "version_heroMedia",
+    }),
+    version_seoImage: one(media_assets, {
+      fields: [_articles_v.version_seoImage],
+      references: [media_assets.id],
+      relationName: "version_seoImage",
+    }),
+    _rels: many(_articles_v_rels, {
+      relationName: "_rels",
+    }),
+  }),
+);
 export const relations_article_comments = relations(
   article_comments,
   ({ one }) => ({
@@ -1115,6 +1332,10 @@ export const relations_payload_migrations = relations(
   payload_migrations,
   () => ({}),
 );
+export const relations_advertising_settings = relations(
+  advertising_settings,
+  () => ({}),
+);
 
 type DatabaseSchema = {
   enum_payload_users_roles: typeof enum_payload_users_roles;
@@ -1124,6 +1345,8 @@ type DatabaseSchema = {
   enum_categories_existing_route: typeof enum_categories_existing_route;
   enum_articles_status: typeof enum_articles_status;
   enum_articles_access_level: typeof enum_articles_access_level;
+  enum__articles_v_version_status: typeof enum__articles_v_version_status;
+  enum__articles_v_version_access_level: typeof enum__articles_v_version_access_level;
   enum_article_comments_status: typeof enum_article_comments_status;
   enum_frontpage_slots_slot: typeof enum_frontpage_slots_slot;
   enum_frontpage_slots_placement: typeof enum_frontpage_slots_placement;
@@ -1138,6 +1361,8 @@ type DatabaseSchema = {
   authors: typeof authors;
   articles: typeof articles;
   articles_rels: typeof articles_rels;
+  _articles_v: typeof _articles_v;
+  _articles_v_rels: typeof _articles_v_rels;
   article_comments: typeof article_comments;
   frontpage_slots: typeof frontpage_slots;
   reels: typeof reels;
@@ -1149,6 +1374,7 @@ type DatabaseSchema = {
   payload_preferences: typeof payload_preferences;
   payload_preferences_rels: typeof payload_preferences_rels;
   payload_migrations: typeof payload_migrations;
+  advertising_settings: typeof advertising_settings;
   relations_payload_users_roles: typeof relations_payload_users_roles;
   relations_payload_users_sessions: typeof relations_payload_users_sessions;
   relations_payload_users: typeof relations_payload_users;
@@ -1157,6 +1383,8 @@ type DatabaseSchema = {
   relations_authors: typeof relations_authors;
   relations_articles_rels: typeof relations_articles_rels;
   relations_articles: typeof relations_articles;
+  relations__articles_v_rels: typeof relations__articles_v_rels;
+  relations__articles_v: typeof relations__articles_v;
   relations_article_comments: typeof relations_article_comments;
   relations_frontpage_slots: typeof relations_frontpage_slots;
   relations_reels: typeof relations_reels;
@@ -1168,6 +1396,7 @@ type DatabaseSchema = {
   relations_payload_preferences_rels: typeof relations_payload_preferences_rels;
   relations_payload_preferences: typeof relations_payload_preferences;
   relations_payload_migrations: typeof relations_payload_migrations;
+  relations_advertising_settings: typeof relations_advertising_settings;
 };
 
 declare module "@payloadcms/db-postgres" {

@@ -103,8 +103,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'advertising-settings': AdvertisingSetting;
+  };
+  globalsSelect: {
+    'advertising-settings': AdvertisingSettingsSelect<false> | AdvertisingSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -760,6 +764,52 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Google AdSense for offentlige annonseflater. Direkte solgte kampanjer styres fortsatt i Annonsekampanjer.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "advertising-settings".
+ */
+export interface AdvertisingSetting {
+  id: number;
+  /**
+   * SlÃ¥ bare pÃ¥ etter at nettstedet er godkjent i AdSense, CMP/samtykke er pÃ¥ plass og ads.txt er publisert.
+   */
+  adsenseEnabled?: boolean | null;
+  /**
+   * Offentlig publisher-ID fra AdSense. Dette er ikke en API-nÃ¸kkel.
+   */
+  adsenseClient?: string | null;
+  slots?: {
+    homePrimary?: string | null;
+    homeSecondary?: string | null;
+    categoryBottom?: string | null;
+    articleSidebarTop?: string | null;
+    articleSidebarBottom?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "advertising-settings_select".
+ */
+export interface AdvertisingSettingsSelect<T extends boolean = true> {
+  adsenseEnabled?: T;
+  adsenseClient?: T;
+  slots?:
+    | T
+    | {
+        homePrimary?: T;
+        homeSecondary?: T;
+        categoryBottom?: T;
+        articleSidebarTop?: T;
+        articleSidebarBottom?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

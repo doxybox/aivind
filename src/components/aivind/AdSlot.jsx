@@ -1,23 +1,125 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-export default function AdSlot({ fallbackLabel }) {
-  const label = fallbackLabel || "Annonseplass";
+const SLOT_BY_PLACEMENT = {
+  "home-primary": "",
+  "home-secondary": "",
+  "category-bottom": "",
+  "article-sidebar-top": "",
+  "article-sidebar-bottom": "",
+};
+
+const disabledSettings = {
+  enabled: false,
+  client: "",
+  slots: SLOT_BY_PLACEMENT,
+};
+
+let payloadSettingsPromise;
+
+function getPayloadSettings() {
+  if (!payloadSettingsPromise) {
+    payloadSettingsPromise = fetch("/api/adsense/config")
+      .then((response) => (response.ok ? response.json() : null))
+      .catch(() => null);
+  }
+
+  return payloadSettingsPromise;
+}
+
+function useAdSenseSettings() {
+  const [settings, setSettings] = useState(disabledSettings);
+
+  useEffect(() => {
+    let active = true;
+
+    getPayloadSettings().then((payloadSettings) => {
+      if (active && payloadSettings) setSettings(payloadSettings);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return settings;
+}
+
+function getAdSenseScript() {
+  return document.querySelector('script[data-tekkno-adsense="true"]');
+}
+
+export default function AdSlot({
+  placement,
+  className = "",
+  fallbackDescription = "Annonseplassering",
+}) {
+  const adRef = useRef(null);
+  const requestedRef = useRef(false);
+  const settings = useAdSenseSettings();
+  const client = settings?.client || "";
+  const slot = settings?.slots?.[placement];
+  const canServeAds = Boolean(settings?.enabled && client && slot);
+
+  useEffect(() => {
+    if (!canServeAds || requestedRef.current || !adRef.current) return undefined;
+
+    const requestAd = () => {
+      if (requestedRef.current || !adRef.current || adRef.current.dataset.adsbygoogleStatus) return;
+
+      try {
+        window.adsbygoogle = window.adsbygoogle || [];
+        window.adsbygoogle.push({});
+        requestedRef.current = true;
+      } catch {
+        // Keep the reserved space when an ad blocker or Google rejects a request.
+      }
+    };
+
+    let script = getAdSenseScript();
+    if (!script) {
+      script = document.createElement("script");
+      script.async = true;
+      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(client)}`;
+      script.crossOrigin = "anonymous";
+      script.dataset.tekknoAdsense = "true";
+      script.addEventListener("load", requestAd, { once: true });
+      document.head.appendChild(script);
+      return undefined;
+    }
+
+    if (window.adsbygoogle) {
+      requestAd();
+      return undefined;
+    }
+
+    script.addEventListener("load", requestAd, { once: true });
+    return () => script.removeEventListener("load", requestAd);
+  }, [canServeAds, client]);
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <div className="bg-card border border-border rounded-lg border-dashed flex items-center justify-center py-6 px-4">
-        <div className="flex items-center gap-3 text-center">
-          <div className="w-9 h-9 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
-            <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-            </svg>
+    <section className={`relative overflow-hidden rounded-xl border border-[#ff6a00]/40 bg-[#161a22] shadow-[0_0_15px_rgba(255,106,0,0.1)] ${className}`} aria-label="Annonse">
+      {canServeAds ? (
+        <ins
+          ref={adRef}
+          className="adsbygoogle block h-full w-full"
+          data-ad-client={client}
+          data-ad-slot={slot}
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+      ) : (
+        <>
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-48 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)", backgroundSize: "16px 16px", WebkitMaskImage: "linear-gradient(to right, black, transparent)", maskImage: "linear-gradient(to right, black, transparent)" }} />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-48 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #ff6a00 1.5px, transparent 0)", backgroundSize: "16px 16px", WebkitMaskImage: "linear-gradient(to left, black, transparent)", maskImage: "linear-gradient(to left, black, transparent)" }} />
+          <div className="relative z-10 flex h-full items-center justify-center gap-4 px-6 text-center">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#ff6a00] text-xl font-black text-[#ff6a00]">A</div>
+            <div className="text-left">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#ff6a00]">Annonse</p>
+              <p className="mt-1 text-sm font-medium text-zinc-400">{fallbackDescription}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-[13px] font-semibold text-muted-foreground">{label}</p>
-            <p className="text-[11px] text-muted-foreground/70">Ledig plass - konfigurer via Payload admin</p>
-          </div>
-        </div>
-      </div>
-    </div>
+        </>
+      )}
+    </section>
   );
 }

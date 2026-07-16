@@ -4,6 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { CalendarDays, Clock3, Copy, Link2, Lock, Mail, MessageCircle, Share2 } from "lucide-react";
 import ArticleComments from "@/components/aivind/ArticleComments";
+import AdSlot from "@/components/aivind/AdSlot";
 import EditorialHeader from "@/components/aivind/EditorialHeader";
 import Footer from "@/components/aivind/Footer";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
@@ -145,14 +146,9 @@ function ShareActions({ title, canonicalUrl }) {
   );
 }
 
-function AdPlaceholder({ size }) {
+function AdPlaceholder({ placement, size }) {
   return (
-    <div className={`flex items-center justify-center rounded-xl bg-muted/35 px-4 text-center ${size === "300x600" ? "min-h-[370px]" : "min-h-[170px]"}`}>
-      <div>
-        <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Annonse</p>
-        <p className="mt-1 text-sm text-muted-foreground">{size}</p>
-      </div>
-    </div>
+    <AdSlot placement={placement} className={size === "300 x 600" ? "min-h-[370px]" : "min-h-[170px]"} fallbackDescription={size} />
   );
 }
 
@@ -302,8 +298,8 @@ export default function ArticlePage({ article: initialArticle, searchArticles = 
           </article>
 
           <aside className="space-y-8 lg:sticky lg:top-24">
-            <AdPlaceholder size="300 x 600" />
-            <AdPlaceholder size="300 x 250" />
+            <AdPlaceholder placement="article-sidebar-top" size="300 x 600" />
+            <AdPlaceholder placement="article-sidebar-bottom" size="300 x 250" />
           </aside>
         </div>
       </main>

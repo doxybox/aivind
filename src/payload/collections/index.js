@@ -8,6 +8,7 @@ import { MediaAssets } from "./MediaAssets.js";
 import { PayloadUsers } from "./PayloadUsers.js";
 import { Reels } from "./Reels.js";
 import { TipSubmissions } from "./TipSubmissions.js";
+import { AdvertisingSettings } from "../globals/AdvertisingSettings.js";
 
 export const collections = [
   PayloadUsers,
@@ -21,3 +22,5 @@ export const collections = [
   TipSubmissions,
   AdCampaigns,
 ];
+
+export const globals = [AdvertisingSettings];
