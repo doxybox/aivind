@@ -6,6 +6,7 @@ import { queryClientInstance } from "@/lib/query-client";
 import { AuthProvider, useAuth } from "@/lib/AuthContext";
 import UserNotRegisteredError from "@/components/UserNotRegisteredError";
 import ScrollToTop from "@/components/ScrollToTop";
+import AdblockGate from "@/components/aivind/AdblockGate";
 
 const LoadingScreen = () => (
   <div className="fixed inset-0 flex items-center justify-center">
@@ -45,6 +46,7 @@ export default function App({ Component, pageProps }) {
         <AuthGate>
           <Component {...pageProps} />
         </AuthGate>
+        <AdblockGate />
         <Toaster />
       </QueryClientProvider>
     </AuthProvider>
