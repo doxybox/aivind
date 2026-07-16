@@ -4,6 +4,7 @@ import { Menu, Moon, Search, X } from "lucide-react";
 import { GiFlashGrenade } from "react-icons/gi";
 import BrandLogo from "@/components/aivind/BrandLogo";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
+import HeaderAccountMenu from "@/components/aivind/HeaderAccountMenu";
 import { useTheme } from "@/hooks/useTheme";
 
 export default function EditorialHeader({ onSearchClick }) {
@@ -37,9 +38,7 @@ export default function EditorialHeader({ onSearchClick }) {
               </Link>
             ))}
             <div className="my-2 h-px w-full bg-zinc-200 dark:bg-white/10" />
-            <Link href="/login" className="text-sm font-bold uppercase tracking-wider text-[#ff6a00] transition-colors hover:text-[#ff8c33]">
-              LOGG INN
-            </Link>
+            <HeaderAccountMenu mobile onNavigate={() => setIsMenuOpen(false)} />
           </nav>
         </div>
       </div>
@@ -59,9 +58,7 @@ export default function EditorialHeader({ onSearchClick }) {
         </div>
 
         <div className="flex items-center gap-6">
-          <Link href="/login" className="hidden text-xs font-bold uppercase tracking-wider text-zinc-600 transition-colors hover:text-zinc-900 sm:block dark:text-zinc-300 dark:hover:text-white">
-            LOGG INN
-          </Link>
+          <HeaderAccountMenu />
           <div className="flex items-center gap-4 text-zinc-500 dark:text-zinc-400">
             <button type="button" onClick={toggleTheme} className="transition-colors hover:text-zinc-900 dark:hover:text-white" aria-label="Bytt tema">
               {theme === "dark" ? <GiFlashGrenade className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

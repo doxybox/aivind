@@ -6,6 +6,7 @@ import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import { useTheme } from "@/hooks/useTheme";
 import BrandLogo from "@/components/aivind/BrandLogo";
+import HeaderAccountMenu from "@/components/aivind/HeaderAccountMenu";
 
 export function InfoSection({ title, children }) {
   return (
@@ -41,9 +42,7 @@ export default function InfoPageLayout({ title, kicker, intro, description, chil
             </nav>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/login" className="hidden sm:inline-flex px-4 h-9 items-center text-[12px] font-bold text-muted-foreground hover:text-foreground transition-colors">
-              LOGG INN
-            </Link>
+            <HeaderAccountMenu />
             <button type="button" onClick={toggleTheme} className="w-9 h-9 inline-flex items-center justify-center border border-border rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors" aria-label="Bytt tema">
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>

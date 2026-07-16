@@ -13,6 +13,7 @@ import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 import BrandLogo from "@/components/aivind/BrandLogo";
+import HeaderAccountMenu from "@/components/aivind/HeaderAccountMenu";
 
 const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl" }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
@@ -271,9 +272,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
               </Link>
             ))}
             <div className="h-px bg-zinc-200 dark:bg-white/10 w-full my-2" />
-            <Link href="/login" className="text-sm font-bold uppercase tracking-wider text-[#ff6a00] hover:text-[#ff8c33] transition-colors">
-              LOGG INN
-            </Link>
+            <HeaderAccountMenu mobile onNavigate={() => setIsMenuOpen(false)} />
           </nav>
         </div>
       </div>
@@ -295,9 +294,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
         </div>
         
         <div className="flex items-center gap-6">
-          <Link href="/login" className="text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white transition-colors hidden sm:block">
-            LOGG INN
-          </Link>
+          <HeaderAccountMenu />
           <div className="flex items-center gap-4 text-zinc-500 dark:text-zinc-400">
             <button onClick={toggleTheme} className="hover:text-zinc-900 dark:hover:text-white transition-colors">
               {theme === 'dark' ? <GiFlashGrenade className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
