@@ -26,3 +26,10 @@ test("article page still renders its ingress and full body", () => {
   assert.match(articlePage, /article\.excerpt &&/);
   assert.match(articlePage, /paragraphs\.length > 0/);
 });
+
+test("the local article template preview stays out of production", () => {
+  const legacyArticleData = readProjectFile("src/lib/legacy-article-data.js");
+
+  assert.match(legacyArticleData, /process\.env\.NODE_ENV !== "production"/);
+  assert.match(legacyArticleData, /ARTICLE_TEMPLATE_PREVIEW_SLUG/);
+});

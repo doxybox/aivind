@@ -316,6 +316,7 @@ export default function ArticlePage({ article: initialArticle, searchArticles = 
 export async function getServerSideProps({ params, req }) {
   const slug = params?.slug || "";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+  const localPreviewArticle = getLegacyArticleBySlug(slug);
   const isEditorialPreview = verifyPayloadPreviewToken(slug, req.cookies?.payload_editorial_preview);
 
   if (isEditorialPreview) {
@@ -337,30 +338,50 @@ export async function getServerSideProps({ params, req }) {
     };
   }
 
+  if (localPreviewArticle?.isTemplatePreview) {
+    return {
+      props: {
+        article: {
+          ...localPreviewArticle,
+          body: localPreviewArticle.content || localPreviewArticle.excerpt || "",
+          content: localPreviewArticle.content || localPreviewArticle.excerpt || "",
+          restricted: false,
+          canReadFullBody: true,
+          heroImage: localPreviewArticle.image,
+          heroImageAlt: localPreviewArticle.title,
+          seoTitle: localPreviewArticle.title,
+          seoDescription: localPreviewArticle.excerpt || "",
+          seoImage: localPreviewArticle.image,
+        },
+        searchArticles: getLegacyArticles(),
+        canonicalUrl: "",
+      },
+    };
+  }
+
   if (isPayloadContentSource()) {
     const payloadArticle = await getArticleBySlug(slug);
 
     if (!payloadArticle) {
-      const legacyArticle = getLegacyArticleBySlug(slug);
-      if (!legacyArticle) return { notFound: true };
+      if (!localPreviewArticle) return { notFound: true };
 
       return {
         props: {
           article: {
-            ...legacyArticle,
-            body: legacyArticle.content || legacyArticle.excerpt || "",
-            content: legacyArticle.content || legacyArticle.excerpt || "",
+            ...localPreviewArticle,
+            body: localPreviewArticle.content || localPreviewArticle.excerpt || "",
+            content: localPreviewArticle.content || localPreviewArticle.excerpt || "",
             restricted: false,
             canReadFullBody: true,
-            heroImage: legacyArticle.image,
-            heroImageAlt: legacyArticle.title,
-            seoTitle: legacyArticle.title,
-            seoDescription: legacyArticle.excerpt || "",
-            seoImage: legacyArticle.image,
-            publishedAt: legacyArticle.publishedAt || "",
+            heroImage: localPreviewArticle.image,
+            heroImageAlt: localPreviewArticle.title,
+            seoTitle: localPreviewArticle.title,
+            seoDescription: localPreviewArticle.excerpt || "",
+            seoImage: localPreviewArticle.image,
+            publishedAt: localPreviewArticle.publishedAt || "",
           },
           searchArticles: getLegacyArticles(),
-          canonicalUrl: siteUrl ? `${siteUrl.replace(/\/$/, "")}/artikler/${legacyArticle.slug}` : "",
+          canonicalUrl: siteUrl ? `${siteUrl.replace(/\/$/, "")}/artikler/${localPreviewArticle.slug}` : "",
         },
       };
     }
@@ -382,15 +403,15 @@ export async function getServerSideProps({ params, req }) {
     };
   }
 
-  const legacyArticle = getLegacyArticleBySlug(slug);
+  const legacyArticle = localPreviewArticle;
   if (!legacyArticle) return { notFound: true };
 
   return {
     props: {
       article: {
         ...legacyArticle,
-        body: legacyArticle.excerpt || "",
-        content: legacyArticle.excerpt || "",
+        body: legacyArticle.content || legacyArticle.excerpt || "",
+        content: legacyArticle.content || legacyArticle.excerpt || "",
         restricted: false,
         canReadFullBody: true,
         heroImage: legacyArticle.image,
