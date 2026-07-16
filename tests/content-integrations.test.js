@@ -47,6 +47,7 @@ test("Payload-only CMS collections are active", () => {
     "categories",
     "authors",
     "articles",
+    "article-comments",
     "frontpage-slots",
     "reels",
     "tip-submissions",
@@ -66,6 +67,7 @@ test("articles, categories and authors are Payload-owned CMS models", () => {
   assert.ok(articles.fields.some((field) => field.name === "content"));
   assert.ok(articles.fields.some((field) => field.name === "status"));
   assert.ok(articles.fields.some((field) => field.name === "accessLevel"));
+  assert.ok(articles.fields.some((field) => field.name === "commentsEnabled"));
   assert.ok(articles.fields.some((field) => field.name === "authors" && field.relationTo === "authors"));
   assert.ok(articles.fields.some((field) => field.name === "categories" && field.relationTo === "categories"));
 
@@ -74,6 +76,17 @@ test("articles, categories and authors are Payload-owned CMS models", () => {
 
   assert.ok(authors.fields.some((field) => field.name === "profileImage" && field.relationTo === "media-assets"));
   assert.ok(authors.fields.some((field) => field.name === "isActive"));
+});
+
+test("Payload owns comment moderation and editorial replies", () => {
+  const articleComments = collections.find((collection) => collection.slug === "article-comments");
+
+  assert.ok(articleComments);
+  assert.ok(articleComments.fields.some((field) => field.name === "article" && field.relationTo === "articles"));
+  assert.ok(articleComments.fields.some((field) => field.name === "parentComment" && field.relationTo === "article-comments"));
+  assert.ok(articleComments.fields.some((field) => field.name === "status" && field.defaultValue === "pending"));
+  assert.ok(articleComments.fields.some((field) => field.name === "isEditorialReply"));
+  assert.ok(articleComments.fields.some((field) => field.name === "moderationNote"));
 });
 
 test("frontpage slots and reels point to Payload articles, not Ghost references", () => {

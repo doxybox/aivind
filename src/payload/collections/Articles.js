@@ -53,6 +53,15 @@ export const Articles = {
         { label: "Paid", value: "paid" },
       ],
     },
+    {
+      name: "commentsEnabled",
+      label: "Tillat kommentarer",
+      type: "checkbox",
+      defaultValue: true,
+      admin: {
+        description: "Når feltet er av, kan lesere ikke sende inn eller se kommentarer på artikkelen.",
+      },
+    },
     { name: "newsletterEligible", type: "checkbox", defaultValue: false },
     { name: "paywallEnabled", type: "checkbox", defaultValue: false },
   ],

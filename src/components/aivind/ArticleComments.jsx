@@ -22,6 +22,7 @@ export default function ArticleComments({ articleSlug, onCountChange }) {
   const [body, setBody] = useState("");
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
+  const [commentsEnabled, setCommentsEnabled] = useState(true);
   const [isEmojiMenuOpen, setIsEmojiMenuOpen] = useState(false);
   const textareaRef = useRef(null);
 
@@ -35,6 +36,7 @@ export default function ArticleComments({ articleSlug, onCountChange }) {
 
       const nextComments = Array.isArray(data.comments) ? data.comments : [];
       setComments(nextComments);
+      setCommentsEnabled(data.commentsEnabled !== false);
       onCountChange?.(Number(data.count) || nextComments.length);
       setStatus("ready");
     } catch (error) {
@@ -65,10 +67,10 @@ export default function ArticleComments({ articleSlug, onCountChange }) {
 
       const nextComments = Array.isArray(data.comments) ? data.comments : [];
       setComments(nextComments);
-      onCountChange?.(Number(data.count) || nextComments.length);
+      onCountChange?.(nextComments.length);
       setBody("");
       setStatus("ready");
-      setMessage("Kommentaren er publisert.");
+      setMessage(data.message || "Kommentaren er sendt til moderering.");
     } catch (error) {
       setStatus("error");
       setMessage(error.message || "Kunne ikke publisere kommentaren");
@@ -95,6 +97,10 @@ export default function ArticleComments({ articleSlug, onCountChange }) {
 
       {isLoadingAuth ? (
         <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Leser inn konto...</div>
+      ) : !commentsEnabled ? (
+        <div className="mt-6 rounded-xl border border-border bg-card px-4 py-4 text-sm text-muted-foreground">
+          Kommentarfeltet er stengt for denne artikkelen.
+        </div>
       ) : isAuthenticated ? (
         <form className="mt-6" onSubmit={submitComment}>
           <label htmlFor="article-comment" className="sr-only">Skriv en kommentar</label>
@@ -157,9 +163,12 @@ export default function ArticleComments({ articleSlug, onCountChange }) {
         {status === "loading" && <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Henter kommentarer...</div>}
         {status === "ready" && comments.length === 0 && <p className="text-sm text-muted-foreground">Ingen kommentarer ennå. Bli den første til å delta i samtalen.</p>}
         {comments.map((comment) => (
-          <article key={comment.id} className="rounded-xl border border-border bg-card p-4 sm:p-5">
+          <article key={comment.id} className={`rounded-xl border bg-card p-4 sm:p-5 ${comment.isEditorialReply ? "ml-4 border-[#ff6a00]/40 sm:ml-8" : "border-border"}`}>
             <div className="flex items-center justify-between gap-4">
-              <p className="font-bold text-foreground">{comment.authorName}</p>
+              <div>
+                <p className="font-bold text-foreground">{comment.authorName}</p>
+                {comment.isEditorialReply && <p className="mt-0.5 text-xs font-bold uppercase tracking-wider text-[#ff6a00]">Svar fra redaksjonen</p>}
+              </div>
               <time dateTime={comment.createdAt} className="shrink-0 text-xs text-muted-foreground">{formatCommentDate(comment.createdAt)}</time>
             </div>
             <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-foreground/90">{comment.body}</p>

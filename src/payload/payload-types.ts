@@ -72,6 +72,7 @@ export interface Config {
     categories: Category;
     authors: Author;
     articles: Article;
+    'article-comments': ArticleComment;
     'frontpage-slots': FrontpageSlot;
     reels: Reel;
     'tip-submissions': TipSubmission;
@@ -88,6 +89,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     authors: AuthorsSelect<false> | AuthorsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    'article-comments': ArticleCommentsSelect<false> | ArticleCommentsSelect<true>;
     'frontpage-slots': FrontpageSlotsSelect<false> | FrontpageSlotsSelect<true>;
     reels: ReelsSelect<false> | ReelsSelect<true>;
     'tip-submissions': TipSubmissionsSelect<false> | TipSubmissionsSelect<true>;
@@ -256,8 +258,46 @@ export interface Article {
   isBreaking?: boolean | null;
   isFeatured?: boolean | null;
   accessLevel: 'public' | 'members' | 'paid';
+  /**
+   * Når feltet er av, kan lesere ikke sende inn eller se kommentarer på artikkelen.
+   */
+  commentsEnabled?: boolean | null;
   newsletterEligible?: boolean | null;
   paywallEnabled?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Leserkommentarer kommer inn som Avventer. Publiser, skjul eller avvis dem her. For redaksjonssvar: opprett en ny kommentar, velg forelder og marker den som redaksjonssvar.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "article-comments".
+ */
+export interface ArticleComment {
+  id: number;
+  /**
+   * Velg artikkel når den finnes i Payload. Feltet gjør at kommentarer følger artikkelen ved slug-endring.
+   */
+  article?: (number | null) | Article;
+  /**
+   * Brukes for kommentarer til både Payload- og legacy-artikler.
+   */
+  articleSlug: string;
+  /**
+   * Settes server-side for leserkommentarer. Står tomt for redaksjonelle svar.
+   */
+  userId?: string | null;
+  authorName: string;
+  body: string;
+  status: 'pending' | 'published' | 'hidden' | 'rejected';
+  /**
+   * Velg kommentaren redaksjonen svarer på. La feltet stå tomt for en vanlig kommentar.
+   */
+  parentComment?: (number | null) | ArticleComment;
+  isEditorialReply?: boolean | null;
+  moderationNote?: string | null;
+  moderatedBy?: string | null;
+  moderatedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -389,6 +429,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'articles';
         value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'article-comments';
+        value: number | ArticleComment;
       } | null)
     | ({
         relationTo: 'frontpage-slots';
@@ -552,8 +596,28 @@ export interface ArticlesSelect<T extends boolean = true> {
   isBreaking?: T;
   isFeatured?: T;
   accessLevel?: T;
+  commentsEnabled?: T;
   newsletterEligible?: T;
   paywallEnabled?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "article-comments_select".
+ */
+export interface ArticleCommentsSelect<T extends boolean = true> {
+  article?: T;
+  articleSlug?: T;
+  userId?: T;
+  authorName?: T;
+  body?: T;
+  status?: T;
+  parentComment?: T;
+  isEditorialReply?: T;
+  moderationNote?: T;
+  moderatedBy?: T;
+  moderatedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

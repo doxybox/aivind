@@ -65,6 +65,17 @@ export const enum_articles_access_level = pgEnum("enum_articles_access_level", [
   "members",
   "paid",
 ]);
+export const enum_article_comments_status = pgEnum(
+  "enum_article_comments_status",
+  ["pending", "published", "hidden", "rejected"],
+);
+export const enum_frontpage_slots_slot = pgEnum("enum_frontpage_slots_slot", [
+  "hero-main",
+  "hero-secondary",
+  "latest",
+  "reels",
+  "editorial-block",
+]);
 export const enum_frontpage_slots_placement = pgEnum(
   "enum_frontpage_slots_placement",
   ["hero", "top_story", "section_feature", "opinion", "video", "ad"],
@@ -334,6 +345,7 @@ export const articles = pgTable(
     accessLevel: enum_articles_access_level("access_level")
       .notNull()
       .default("public"),
+    commentsEnabled: boolean("comments_enabled").default(true),
     newsletterEligible: boolean("newsletter_eligible").default(false),
     paywallEnabled: boolean("paywall_enabled").default(false),
     updatedAt: timestamp("updated_at", {
@@ -394,11 +406,64 @@ export const articles_rels = pgTable(
   ],
 );
 
+export const article_comments = pgTable(
+  "article_comments",
+  {
+    id: serial("id").primaryKey(),
+    article: integer("article_id").references(() => articles.id, {
+      onDelete: "set null",
+    }),
+    articleSlug: varchar("article_slug").notNull(),
+    userId: varchar("user_id"),
+    authorName: varchar("author_name").notNull(),
+    body: varchar("body").notNull(),
+    status: enum_article_comments_status("status").notNull().default("pending"),
+    parentComment: integer("parent_comment_id").references(
+      (): AnyPgColumn => article_comments.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    isEditorialReply: boolean("is_editorial_reply").default(false),
+    moderationNote: varchar("moderation_note"),
+    moderatedBy: varchar("moderated_by"),
+    moderatedAt: timestamp("moderated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (columns) => [
+    index("article_comments_article_idx").on(columns.article),
+    index("article_comments_article_slug_idx").on(columns.articleSlug),
+    index("article_comments_user_id_idx").on(columns.userId),
+    index("article_comments_parent_comment_idx").on(columns.parentComment),
+    index("article_comments_updated_at_idx").on(columns.updatedAt),
+    index("article_comments_created_at_idx").on(columns.createdAt),
+  ],
+);
+
 export const frontpage_slots = pgTable(
   "frontpage_slots",
   {
     id: serial("id").primaryKey(),
+    label: varchar("label").notNull().default("Frontpage slot"),
     slotName: varchar("slot_name").notNull(),
+    slot: enum_frontpage_slots_slot("slot").notNull().default("hero-main"),
     placement: enum_frontpage_slots_placement("placement").notNull(),
     article: integer("article_id").references(() => articles.id, {
       onDelete: "set null",
@@ -409,6 +474,7 @@ export const frontpage_slots = pgTable(
     manualTitleOverride: varchar("manual_title_override"),
     manualExcerptOverride: varchar("manual_excerpt_override"),
     priority: numeric("priority", { mode: "number" }).notNull().default(1),
+    position: numeric("position", { mode: "number" }).notNull().default(1),
     startsAt: timestamp("starts_at", {
       mode: "string",
       withTimezone: true,
@@ -630,6 +696,7 @@ export const payload_locked_documents_rels = pgTable(
     categoriesID: integer("categories_id"),
     authorsID: integer("authors_id"),
     articlesID: integer("articles_id"),
+    "article-commentsID": integer("article_comments_id"),
     "frontpage-slotsID": integer("frontpage_slots_id"),
     reelsID: integer("reels_id"),
     "tip-submissionsID": integer("tip_submissions_id"),
@@ -651,6 +718,9 @@ export const payload_locked_documents_rels = pgTable(
     index("payload_locked_documents_rels_authors_id_idx").on(columns.authorsID),
     index("payload_locked_documents_rels_articles_id_idx").on(
       columns.articlesID,
+    ),
+    index("payload_locked_documents_rels_article_comments_id_idx").on(
+      columns["article-commentsID"],
     ),
     index("payload_locked_documents_rels_frontpage_slots_id_idx").on(
       columns["frontpage-slotsID"],
@@ -691,6 +761,11 @@ export const payload_locked_documents_rels = pgTable(
       columns: [columns["articlesID"]],
       foreignColumns: [articles.id],
       name: "payload_locked_documents_rels_articles_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["article-commentsID"]],
+      foreignColumns: [article_comments.id],
+      name: "payload_locked_documents_rels_article_comments_fk",
     }).onDelete("cascade"),
     foreignKey({
       columns: [columns["frontpage-slotsID"]],
@@ -880,6 +955,21 @@ export const relations_articles = relations(articles, ({ one, many }) => ({
     relationName: "_rels",
   }),
 }));
+export const relations_article_comments = relations(
+  article_comments,
+  ({ one }) => ({
+    article: one(articles, {
+      fields: [article_comments.article],
+      references: [articles.id],
+      relationName: "article",
+    }),
+    parentComment: one(article_comments, {
+      fields: [article_comments.parentComment],
+      references: [article_comments.id],
+      relationName: "parentComment",
+    }),
+  }),
+);
 export const relations_frontpage_slots = relations(
   frontpage_slots,
   ({ one }) => ({
@@ -963,6 +1053,11 @@ export const relations_payload_locked_documents_rels = relations(
       references: [articles.id],
       relationName: "articles",
     }),
+    "article-commentsID": one(article_comments, {
+      fields: [payload_locked_documents_rels["article-commentsID"]],
+      references: [article_comments.id],
+      relationName: "article-comments",
+    }),
     "frontpage-slotsID": one(frontpage_slots, {
       fields: [payload_locked_documents_rels["frontpage-slotsID"]],
       references: [frontpage_slots.id],
@@ -1029,6 +1124,8 @@ type DatabaseSchema = {
   enum_categories_existing_route: typeof enum_categories_existing_route;
   enum_articles_status: typeof enum_articles_status;
   enum_articles_access_level: typeof enum_articles_access_level;
+  enum_article_comments_status: typeof enum_article_comments_status;
+  enum_frontpage_slots_slot: typeof enum_frontpage_slots_slot;
   enum_frontpage_slots_placement: typeof enum_frontpage_slots_placement;
   enum_reels_status: typeof enum_reels_status;
   enum_tip_submissions_status: typeof enum_tip_submissions_status;
@@ -1041,6 +1138,7 @@ type DatabaseSchema = {
   authors: typeof authors;
   articles: typeof articles;
   articles_rels: typeof articles_rels;
+  article_comments: typeof article_comments;
   frontpage_slots: typeof frontpage_slots;
   reels: typeof reels;
   tip_submissions: typeof tip_submissions;
@@ -1059,6 +1157,7 @@ type DatabaseSchema = {
   relations_authors: typeof relations_authors;
   relations_articles_rels: typeof relations_articles_rels;
   relations_articles: typeof relations_articles;
+  relations_article_comments: typeof relations_article_comments;
   relations_frontpage_slots: typeof relations_frontpage_slots;
   relations_reels: typeof relations_reels;
   relations_tip_submissions: typeof relations_tip_submissions;

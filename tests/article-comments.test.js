@@ -27,16 +27,22 @@ test("comment policy validates article slugs and comment bodies", () => {
 test("article comment API uses the authenticated session and applies rate limits", () => {
   const api = readProjectFile("src/pages/api/articles/[slug]/comments.js");
   const schema = readProjectFile("src/db/schema.js");
+  const moderationMigration = readProjectFile("src/migrations/20260716_040000_article_comments_moderation.ts");
 
   assert.match(api, /requireAuth\(req\)/);
   assert.match(api, /validateArticleCommentInput/);
   assert.match(api, /validateArticleCommentSlug/);
   assert.match(api, /requireCommentAccess/);
   assert.match(api, /enforceRateLimit/);
+  assert.match(api, /collection: "article-comments"/);
+  assert.match(api, /status: "pending"/);
+  assert.match(api, /commentsEnabled/);
   assert.doesNotMatch(api, /req\.body\.userId/);
   assert.match(schema, /export const articleComment = pgTable\(/);
   assert.match(schema, /"article_comment"/);
   assert.match(schema, /article_comment_article_slug_created_at_idx/);
+  assert.match(moderationMigration, /CREATE TABLE IF NOT EXISTS "article_comments"/);
+  assert.match(moderationMigration, /comments_enabled/);
 });
 
 test("public article surfaces no longer render emoji reactions", () => {
