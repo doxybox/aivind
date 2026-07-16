@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
@@ -12,12 +12,67 @@ import { getLegacyArticleBySlug, getLegacyArticles } from "@/lib/legacy-article-
 import { isPayloadContentSource } from "@/lib/server/content-source";
 import {
   getArticleBySlug,
+  getArticlePreviewBySlug,
   getPublishedArticles,
   mapPayloadArticleToLegacyArticle,
   mapPayloadArticleToPageData,
 } from "@/lib/server/payload-public-data";
 import { getArticleAccessForUser } from "@/lib/server/article-access";
 import { getCurrentUser } from "@/lib/server/auth-helpers";
+import { verifyPayloadPreviewToken } from "@/lib/server/payload-preview";
+import { useLivePreview } from "@payloadcms/live-preview-react";
+
+function mapPayloadPreviewArticle(payloadArticle, initialArticle) {
+  if (!payloadArticle) return initialArticle;
+
+  const categories = Array.isArray(payloadArticle.categories)
+    ? payloadArticle.categories.filter((category) => category && typeof category === "object")
+    : [];
+  const authors = Array.isArray(payloadArticle.authors)
+    ? payloadArticle.authors.filter((author) => author && typeof author === "object")
+    : [];
+  const primaryCategory = categories[0] || null;
+  const primaryAuthor = authors[0] || null;
+  const heroMedia = payloadArticle.heroMedia && typeof payloadArticle.heroMedia === "object"
+    ? payloadArticle.heroMedia
+    : payloadArticle.seoImage && typeof payloadArticle.seoImage === "object"
+      ? payloadArticle.seoImage
+      : null;
+
+  return {
+    ...initialArticle,
+    title: payloadArticle.title || initialArticle.title,
+    slug: payloadArticle.slug || initialArticle.slug,
+    excerpt: payloadArticle.excerpt || "",
+    content: payloadArticle.content || "",
+    body: payloadArticle.content || "",
+    categories: categories.map((category) => ({ name: category.name, slug: category.slug })),
+    category: primaryCategory?.name || initialArticle.category,
+    categorySlug: primaryCategory?.slug || initialArticle.categorySlug,
+    author: primaryAuthor?.name || initialArticle.author,
+    authorName: primaryAuthor?.name || initialArticle.authorName,
+    heroImage: heroMedia?.deliveryUrl || heroMedia?.thumbnailUrl || initialArticle.heroImage,
+    heroImageAlt: heroMedia?.alt || heroMedia?.title || payloadArticle.title || initialArticle.heroImageAlt,
+    seoTitle: payloadArticle.seoTitle || payloadArticle.title || initialArticle.seoTitle,
+    seoDescription: payloadArticle.seoDescription || payloadArticle.excerpt || initialArticle.seoDescription,
+    seoImage: payloadArticle.seoImage?.deliveryUrl || payloadArticle.seoImage?.thumbnailUrl || initialArticle.seoImage,
+    canonicalUrl: payloadArticle.canonicalUrl || initialArticle.canonicalUrl,
+    publishedAt: payloadArticle.publishedAt || initialArticle.publishedAt,
+    updatedAt: payloadArticle.updatedAt || initialArticle.updatedAt,
+    restricted: false,
+    canReadFullBody: true,
+  };
+}
+
+function EditorialPreviewSync({ initialData, serverURL, onUpdate }) {
+  const { data } = useLivePreview({ initialData, serverURL, depth: 2 });
+
+  useEffect(() => {
+    if (data) onUpdate(data);
+  }, [data, onUpdate]);
+
+  return null;
+}
 
 function renderArticleBlocks(body = "", fallback = "") {
   const blocks = String(body || fallback || "")
@@ -120,9 +175,14 @@ function RelatedArticleCard({ article }) {
   );
 }
 
-export default function ArticlePage({ article, searchArticles = [], canonicalUrl = "" }) {
+export default function ArticlePage({ article: initialArticle, searchArticles = [], canonicalUrl = "", isEditorialPreview = false, livePreviewInitialData = null, payloadServerUrl = "" }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
+  const [livePayloadArticle, setLivePayloadArticle] = useState(livePreviewInitialData);
+  const article = useMemo(
+    () => isEditorialPreview ? mapPayloadPreviewArticle(livePayloadArticle, initialArticle) : initialArticle,
+    [initialArticle, isEditorialPreview, livePayloadArticle],
+  );
   const paragraphs = useMemo(() => renderArticleBlocks(article.content || article.body || "", article.excerpt || ""), [article]);
   const publishedLabel = formatPublishedDate(article.publishedAt);
   const showPaywall = article.restricted && !article.canReadFullBody;
@@ -157,7 +217,16 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
       <SearchOverlay open={isSearchOpen} onClose={() => setIsSearchOpen(false)} articles={searchArticles} />
       <EditorialHeader onSearchClick={() => setIsSearchOpen(true)} />
 
+      {isEditorialPreview && livePreviewInitialData && payloadServerUrl && (
+        <EditorialPreviewSync initialData={livePreviewInitialData} serverURL={payloadServerUrl} onUpdate={setLivePayloadArticle} />
+      )}
+
       <main className="mx-auto max-w-[1280px] px-4 py-10 sm:px-6 lg:px-8">
+        {isEditorialPreview && (
+          <div className="mb-6 rounded-lg border border-[#ff6a00]/45 bg-[#ff6a00]/10 px-4 py-3 text-sm font-semibold text-foreground">
+            Redaksjonell forhåndsvisning. Dette utkastet er ikke synlig for lesere.
+          </div>
+        )}
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start xl:grid-cols-[minmax(0,1fr)_320px]">
           <article className="min-w-0">
             <header className="max-w-4xl">
@@ -247,6 +316,26 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
 export async function getServerSideProps({ params, req }) {
   const slug = params?.slug || "";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+  const isEditorialPreview = verifyPayloadPreviewToken(slug, req.cookies?.payload_editorial_preview);
+
+  if (isEditorialPreview) {
+    const payloadArticle = await getArticlePreviewBySlug(slug);
+    if (!payloadArticle) return { notFound: true };
+
+    const article = mapPayloadArticleToPageData(payloadArticle, { canReadFullBody: true });
+    const searchArticles = (await getPublishedArticles({ limit: 50 })).map(mapPayloadArticleToLegacyArticle);
+
+    return {
+      props: {
+        article,
+        searchArticles,
+        canonicalUrl: "",
+        isEditorialPreview: true,
+        livePreviewInitialData: payloadArticle,
+        payloadServerUrl: process.env.PAYLOAD_PUBLIC_SERVER_URL || "",
+      },
+    };
+  }
 
   if (isPayloadContentSource()) {
     const payloadArticle = await getArticleBySlug(slug);

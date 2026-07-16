@@ -295,6 +295,36 @@ export async function getArticleBySlug(slug, { now = new Date() } = {}) {
   });
 }
 
+export async function getArticlePreviewBySlug(slug) {
+  if (!slug) return null;
+
+  return withPayloadFallback("getArticlePreviewBySlug", null, async () => {
+    const payload = await getPayloadClient();
+    const result = await payload.find({
+      collection: "articles",
+      depth: 2,
+      draft: true,
+      limit: 1,
+      overrideAccess: true,
+      where: { slug: { equals: slug } },
+    });
+
+    if (result.docs?.[0]) return result.docs[0];
+
+    // Older published documents predate native Payload drafts. They have no
+    // version row yet, but remain safe to preview for an editor with a signed link.
+    const current = await payload.find({
+      collection: "articles",
+      depth: 2,
+      limit: 1,
+      overrideAccess: true,
+      where: { slug: { equals: slug } },
+    });
+
+    return current.docs?.[0] || null;
+  });
+}
+
 export async function getArticleById(id, { now = new Date() } = {}) {
   if (!id) return null;
 

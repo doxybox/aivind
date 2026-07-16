@@ -243,15 +243,36 @@ export interface Article {
   id: number;
   title: string;
   slug: string;
+  /**
+   * Påkrevd når artikkelen publiseres.
+   */
   excerpt?: string | null;
+  /**
+   * Påkrevd når artikkelen publiseres.
+   */
   content?: string | null;
+  /**
+   * Bruk Status for redaksjonell flyt. Planlagt publisering krever en konfigurert jobbkjører og er ikke aktivert ennå.
+   */
   status: 'draft' | 'review' | 'scheduled' | 'published' | 'archived';
   publishedAt?: string | null;
   scheduledAt?: string | null;
+  /**
+   * Påkrevd når artikkelen publiseres.
+   */
   authors?: (number | Author)[] | null;
+  /**
+   * Påkrevd når artikkelen publiseres.
+   */
   categories?: (number | Category)[] | null;
   heroMedia?: (number | null) | MediaAsset;
+  /**
+   * Påkrevd når artikkelen publiseres. Hold den kort og beskrivende.
+   */
   seoTitle?: string | null;
+  /**
+   * Påkrevd når artikkelen publiseres.
+   */
   seoDescription?: string | null;
   seoImage?: (number | null) | MediaAsset;
   canonicalUrl?: string | null;
@@ -266,6 +287,7 @@ export interface Article {
   paywallEnabled?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Leserkommentarer kommer inn som Avventer. Publiser, skjul eller avvis dem her. For redaksjonssvar: opprett en ny kommentar, velg forelder og marker den som redaksjonssvar.
@@ -601,6 +623,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   paywallEnabled?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

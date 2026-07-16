@@ -70,6 +70,8 @@ test("articles, categories and authors are Payload-owned CMS models", () => {
   assert.ok(articles.fields.some((field) => field.name === "commentsEnabled"));
   assert.ok(articles.fields.some((field) => field.name === "authors" && field.relationTo === "authors"));
   assert.ok(articles.fields.some((field) => field.name === "categories" && field.relationTo === "categories"));
+  assert.ok(articles.versions?.drafts?.autosave);
+  assert.equal(articles.versions?.drafts?.schedulePublish, undefined);
 
   assert.ok(categories.fields.some((field) => field.name === "parent" && field.relationTo === "categories"));
   assert.ok(categories.fields.some((field) => field.name === "existingRoute"));

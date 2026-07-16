@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { createHash } from "crypto";
 import { collections } from "./src/payload/collections/index.js";
+import { createPayloadPreviewToken } from "./src/lib/server/payload-preview.js";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -37,6 +38,7 @@ loadEnvFile(".env");
 
 const payloadDatabaseUrl = process.env.PAYLOAD_DATABASE_URL || process.env.DATABASE_URI || process.env.DATABASE_URL;
 const payloadSecret = process.env.PAYLOAD_SECRET;
+const publicSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/, "");
 const expectedDatabaseFingerprint = process.env.PAYLOAD_DATABASE_FINGERPRINT_EXPECTED;
 const isVercelServerless = process.env.VERCEL === "1";
 const defaultPayloadPoolMax = process.env.NODE_ENV === "production" ? 1 : 3;
@@ -74,6 +76,23 @@ if (expectedDatabaseFingerprint) {
 export default buildConfig({
   admin: {
     user: "payload-users",
+    livePreview: {
+      collections: ["articles"],
+      url: ({ data }) => {
+        if (!publicSiteUrl || !data?.slug) return null;
+        const token = createPayloadPreviewToken(data.slug);
+        if (!token) return null;
+        return `${publicSiteUrl}/api/payload-preview?slug=${encodeURIComponent(data.slug)}&token=${encodeURIComponent(token)}`;
+      },
+      breakpoints: [
+        { label: "Mobil", name: "mobile", width: 390, height: 844 },
+        { label: "Nettbrett", name: "tablet", width: 768, height: 1024 },
+        { label: "Desktop", name: "desktop", width: 1440, height: 960 },
+      ],
+    },
+    components: {
+      beforeDashboard: ["./src/payload/components/EditorialDashboard.jsx"],
+    },
     importMap: {
       autoGenerate: false,
       baseDir: dirname,
