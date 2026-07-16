@@ -19,6 +19,9 @@ test("AdSense slots stay disabled until explicit public configuration is present
   assert.doesNotMatch(envExample, /NEXT_PUBLIC_ADSENSE_ENABLED/);
   assert.match(payloadSettings, /slug: "advertising-settings"/);
   assert.match(payloadSettings, /adsenseEnabled/);
+  assert.match(payloadSettings, /Slå bare på etter at nettstedet er godkjent/);
+  assert.match(payloadSettings, /API-nøkkel/);
+  assert.doesNotMatch(payloadSettings, /Ã|â|�/);
 });
 
 test("public ad placements share the configured AdSense slot component", () => {

@@ -22,12 +22,12 @@ function validateEnabledSettings({ data }) {
   if (!data?.adsenseEnabled) return data;
 
   if (!data.adsenseClient) {
-    throw new Error("Legg inn Publisher ID fÃ¸r AdSense aktiveres.");
+    throw new Error("Legg inn Publisher ID før AdSense aktiveres.");
   }
 
   const slots = data.slots || {};
   if (!SLOT_FIELDS.some((field) => slots[field])) {
-    throw new Error("Legg inn minst Ã©n AdSense slot-ID fÃ¸r annonser aktiveres.");
+    throw new Error("Legg inn minst én AdSense slot-ID før annonser aktiveres.");
   }
 
   return data;
@@ -54,7 +54,7 @@ export const AdvertisingSettings = {
       type: "checkbox",
       defaultValue: false,
       admin: {
-        description: "SlÃ¥ bare pÃ¥ etter at nettstedet er godkjent i AdSense, CMP/samtykke er pÃ¥ plass og ads.txt er publisert.",
+        description: "Slå bare på etter at nettstedet er godkjent i AdSense, CMP/samtykke er på plass og ads.txt er publisert.",
       },
     },
     {
@@ -64,7 +64,7 @@ export const AdvertisingSettings = {
       validate: validatePublisherId,
       admin: {
         placeholder: "ca-pub-1234567890123456",
-        description: "Offentlig publisher-ID fra AdSense. Dette er ikke en API-nÃ¸kkel.",
+        description: "Offentlig publisher-ID fra AdSense. Dette er ikke en API-nøkkel.",
       },
     },
     {

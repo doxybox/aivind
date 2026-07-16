@@ -865,11 +865,11 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface AdvertisingSetting {
   id: number;
   /**
-   * SlÃ¥ bare pÃ¥ etter at nettstedet er godkjent i AdSense, CMP/samtykke er pÃ¥ plass og ads.txt er publisert.
+   * Slå bare på etter at nettstedet er godkjent i AdSense, CMP/samtykke er på plass og ads.txt er publisert.
    */
   adsenseEnabled?: boolean | null;
   /**
-   * Offentlig publisher-ID fra AdSense. Dette er ikke en API-nÃ¸kkel.
+   * Offentlig publisher-ID fra AdSense. Dette er ikke en API-nøkkel.
    */
   adsenseClient?: string | null;
   slots?: {
