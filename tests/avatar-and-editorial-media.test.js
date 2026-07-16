@@ -58,20 +58,27 @@ test("avatar API derives the owner from Better Auth and has rate limiting", () =
   assert.doesNotMatch(route, /CLOUDFLARE_IMAGES_API_TOKEN/);
 });
 
-test("Payload requires author profile images and exposes a staff-only Cloudflare uploader", () => {
+test("Payload requires author profile images and exposes staff-only image and video uploaders", () => {
   const profileImage = Authors.fields.find((field) => field.name === "profileImage");
   const articleAuthors = Articles.fields.find((field) => field.name === "authors");
   assert.equal(profileImage.required, true);
   assert.equal(articleAuthors.required, true);
   assert.equal(MediaAssets.admin.components.beforeList.includes("./src/payload/components/MediaAssetUploader.jsx"), true);
   assert.equal(MediaAssets.endpoints.some((endpoint) => endpoint.path === "/cloudflare-direct-upload"), true);
+  assert.equal(MediaAssets.endpoints.some((endpoint) => endpoint.path === "/cloudflare-stream-direct-upload"), true);
 
   const endpoint = readProjectFile("src/payload/endpoints/media-assets-cloudflare.js");
   const component = readProjectFile("src/payload/components/MediaAssetUploader.jsx");
   assert.match(endpoint, /hasPayloadRole/);
   assert.match(endpoint, /createImageDirectUpload/);
+  assert.match(endpoint, /createStreamDirectUpload/);
   assert.match(endpoint, /createMediaAssetForImageDirectUpload/);
+  assert.match(endpoint, /createMediaAssetForStreamDirectUpload/);
+  assert.match(endpoint, /validateStreamDirectUploadInput/);
   assert.doesNotMatch(endpoint, /CLOUDFLARE_IMAGES_API_TOKEN/);
+  assert.doesNotMatch(endpoint, /CLOUDFLARE_STREAM_API_TOKEN/);
   assert.match(component, /cloudflare-direct-upload/);
+  assert.match(component, /cloudflare-stream-direct-upload/);
+  assert.match(component, /application\/offset\+octet-stream/);
   assert.match(component, /FormData/);
 });

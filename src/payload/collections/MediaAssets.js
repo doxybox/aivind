@@ -1,5 +1,8 @@
 import { editorsOnly, staffOnly } from "../access/roles.js";
-import { createPayloadMediaAssetDirectUpload } from "../endpoints/media-assets-cloudflare.js";
+import {
+  createPayloadMediaAssetDirectUpload,
+  createPayloadMediaAssetStreamDirectUpload,
+} from "../endpoints/media-assets-cloudflare.js";
 
 export const MediaAssets = {
   slug: "media-assets",
@@ -21,6 +24,11 @@ export const MediaAssets = {
       path: "/cloudflare-direct-upload",
       method: "post",
       handler: createPayloadMediaAssetDirectUpload,
+    },
+    {
+      path: "/cloudflare-stream-direct-upload",
+      method: "post",
+      handler: createPayloadMediaAssetStreamDirectUpload,
     },
   ],
   fields: [
