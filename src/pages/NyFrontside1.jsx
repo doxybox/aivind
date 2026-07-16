@@ -11,7 +11,6 @@ import { withArticleHref } from "@/lib/article-slugs";
 import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
-import ArticleReactions from "@/components/aivind/ArticleReactions";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 import BrandLogo from "@/components/aivind/BrandLogo";
 
@@ -29,7 +28,6 @@ const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href =
       <h3 className={`font-bold text-white leading-[1.2] ${titleClass}`}>
         {title}
       </h3>
-      <ArticleReactions article={{ tag, type, href }} className="mt-3" />
     </div>
   </Link>
 );

@@ -3,9 +3,9 @@ import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
 import { CalendarDays, Clock3, Copy, Link2, Lock, Mail, MessageCircle, Share2 } from "lucide-react";
+import ArticleComments from "@/components/aivind/ArticleComments";
 import EditorialHeader from "@/components/aivind/EditorialHeader";
 import Footer from "@/components/aivind/Footer";
-import ArticleReactions from "@/components/aivind/ArticleReactions";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 import SearchOverlay from "@/components/aivind/SearchOverlay";
 import { getLegacyArticleBySlug, getLegacyArticles } from "@/lib/legacy-article-data";
@@ -90,54 +90,6 @@ function ShareActions({ title, canonicalUrl }) {
   );
 }
 
-function ArticleNewsletter() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("idle");
-  const [message, setMessage] = useState("");
-
-  const subscribe = async (event) => {
-    event.preventDefault();
-    setStatus("loading");
-    setMessage("");
-
-    try {
-      const response = await fetch("/api/newsletter/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || "Kunne ikke registrere interessen din.");
-
-      setEmail("");
-      setStatus("success");
-      setMessage("Takk! Vi har registrert interessen din.");
-    } catch (error) {
-      setStatus("error");
-      setMessage(error.message || "Kunne ikke registrere interessen din.");
-    }
-  };
-
-  return (
-    <section className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
-      <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 text-[#ff6a00]">
-        <Mail className="h-5 w-5" />
-      </div>
-      <h2 className="text-xl font-black leading-tight text-foreground">Meld interesse for TEKKNOs nyhetsbrev</h2>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">Vi lagrer interessen din og gir beskjed når utsendingene åpner.</p>
-      <form className="mt-5" onSubmit={subscribe} noValidate>
-        <label htmlFor="article-newsletter-email" className="sr-only">E-postadresse</label>
-        <input id="article-newsletter-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Din e-postadresse" autoComplete="email" required disabled={status === "loading"} className="w-full rounded-lg border border-border bg-background px-3 py-3 text-sm text-foreground outline-none transition focus:border-[#ff6a00] disabled:opacity-60" />
-        <button type="submit" disabled={status === "loading" || !email.trim()} className="mt-3 w-full rounded-lg bg-[#ff6a00] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-[#ea5f00] disabled:cursor-not-allowed disabled:opacity-60">
-          {status === "loading" ? "Registrerer..." : "Meld interesse"}
-        </button>
-      </form>
-      <p className="mt-4 text-[11px] leading-5 text-muted-foreground">Vi lagrer e-postadressen sikkert. Ingen utsendinger sendes før nyhetsbrevet åpner.</p>
-      {message && <p className={`mt-3 text-xs font-medium ${status === "success" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`} role="status">{message}</p>}
-    </section>
-  );
-}
-
 function AdPlaceholder({ size }) {
   return (
     <div className={`flex items-center justify-center rounded-xl bg-muted/35 px-4 text-center ${size === "300x600" ? "min-h-[370px]" : "min-h-[170px]"}`}>
@@ -170,6 +122,7 @@ function RelatedArticleCard({ article }) {
 
 export default function ArticlePage({ article, searchArticles = [], canonicalUrl = "" }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
   const paragraphs = useMemo(() => renderArticleBlocks(article.content || article.body || "", article.excerpt || ""), [article]);
   const publishedLabel = formatPublishedDate(article.publishedAt);
   const showPaywall = article.restricted && !article.canReadFullBody;
@@ -228,7 +181,7 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
                   {publishedLabel && <><span className="hidden h-1 w-1 rounded-full bg-[#ff6a00] sm:inline" /><span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" />{publishedLabel}</span></>}
                   {article.readTime && <><span className="hidden h-1 w-1 rounded-full bg-[#ff6a00] sm:inline" /><span className="inline-flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5" />{article.readTime} lesetid</span></>}
                   <span className="hidden h-1 w-1 rounded-full bg-[#ff6a00] sm:inline" />
-                  <span className="inline-flex items-center gap-1.5"><MessageCircle className="h-3.5 w-3.5" />{article.comments || 0} kommentarer</span>
+                  <span className="inline-flex items-center gap-1.5"><MessageCircle className="h-3.5 w-3.5" />{commentCount} kommentarer</span>
                 </div>
                 <ShareActions title={article.title} canonicalUrl={canonical} />
               </div>
@@ -239,8 +192,6 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
                 <Image src={article.heroImage} alt={article.heroImageAlt || article.title} width={1600} height={900} unoptimized priority className="aspect-[16/9] w-full object-cover" />
               </figure>
             )}
-
-            <ArticleReactions article={article} className="mt-6" interactive />
 
             <div className="mt-8 max-w-3xl">
               {paragraphs.length > 0 ? paragraphs : <p className="text-[16px] leading-8 text-foreground/90 md:text-[17px]">{article.excerpt}</p>}
@@ -261,6 +212,8 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
                 </div>
               </section>
             )}
+
+            {!showPaywall && <ArticleComments articleSlug={article.slug} onCountChange={setCommentCount} />}
 
             {categories.length > 0 && (
               <section className="mt-10 max-w-3xl border-t border-border pt-6">
@@ -291,7 +244,6 @@ export default function ArticlePage({ article, searchArticles = [], canonicalUrl
 
           <aside className="space-y-8 lg:sticky lg:top-24">
             <AdPlaceholder size="300 x 600" />
-            <ArticleNewsletter />
             <AdPlaceholder size="300 x 250" />
           </aside>
         </div>

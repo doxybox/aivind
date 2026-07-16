@@ -8,7 +8,6 @@ import SearchOverlay from "@/components/aivind/SearchOverlay";
 import Footer from "@/components/aivind/Footer";
 import { categoryNavItems } from "@/components/aivind/categoryNav";
 import ReelsSection from "@/components/aivind/ReelsSection";
-import ArticleReactions from "@/components/aivind/ArticleReactions";
 import PremiumArticleBadge from "@/components/aivind/PremiumArticleBadge";
 import BrandLogo from "@/components/aivind/BrandLogo";
 import { allArticles } from "@/lib/articles";
@@ -290,7 +289,6 @@ function ArticleCard({ story, large = false, className = "" }) {
         <h2 className={`font-bold text-white leading-[1.2] ${large ? "text-3xl md:text-5xl lg:text-[56px] font-black tracking-tight" : "text-xl md:text-2xl line-clamp-2"}`}>
           {story.title}
         </h2>
-        <ArticleReactions article={story} count={story.reactions} className="mt-3" />
       </div>
     </>
   );
@@ -319,7 +317,6 @@ function SmallArticle({ story }) {
       <PremiumArticleBadge article={story} compact corner />
       <div className="absolute inset-x-0 bottom-0 z-10 p-4 flex max-h-[78%] flex-col items-start">
         <h3 className="text-[17px] md:text-[18px] font-bold text-white leading-[1.18] line-clamp-2">{story.title}</h3>
-        <ArticleReactions article={story} count={story.reactions} className="mt-3" />
       </div>
     </>
   );

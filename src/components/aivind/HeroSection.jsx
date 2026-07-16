@@ -2,7 +2,6 @@ import React from "react";
 import Image from "next/image";
 import { Clock } from "lucide-react";
 import HeroArticleCard from "./HeroArticleCard";
-import ArticleReactions from "./ArticleReactions";
 
 export default function HeroSection({ heroImage, articles = [] }) {
   return (
@@ -50,7 +49,6 @@ export default function HeroSection({ heroImage, articles = [] }) {
                       <span>4 min lesetid</span>
                     </div>
                   </div>
-                  <ArticleReactions count={142} className="mt-3" />
                 </div>
               </div>
             </div>

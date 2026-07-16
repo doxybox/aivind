@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Clock, ExternalLink, PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
-import ArticleReactions from "./ArticleReactions";
 import PremiumArticleBadge from "./PremiumArticleBadge";
 
 export default function ArticleCard({ article }) {
@@ -87,7 +86,6 @@ export default function ArticleCard({ article }) {
                 )}
             </div>
           </div>
-          <ArticleReactions article={article} />
         </div>
       </div>
     </Link>

@@ -132,6 +132,24 @@ export const savedArticle = pgTable(
   }),
 );
 
+export const articleComment = pgTable(
+  "article_comment",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    articleSlug: text("article_slug").notNull(),
+    userId: text("user_id").notNull(),
+    authorName: text("author_name").notNull(),
+    body: text("body").notNull(),
+    status: text("status").notNull().default("published"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    articleCreatedAtIdx: index("article_comment_article_slug_created_at_idx").on(table.articleSlug, table.createdAt),
+    userIdIdx: index("article_comment_user_id_idx").on(table.userId),
+  }),
+);
+
 export const articleReaction = pgTable(
   "article_reaction",
   {

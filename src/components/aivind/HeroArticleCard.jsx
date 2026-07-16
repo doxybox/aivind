@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { PlayCircle } from "lucide-react";
 import { withArticleHref } from "@/lib/article-slugs";
-import ArticleReactions from "./ArticleReactions";
 import PremiumArticleBadge from "./PremiumArticleBadge";
 
 export default function HeroArticleCard({ article }) {
@@ -58,7 +57,6 @@ export default function HeroArticleCard({ article }) {
             <span className="w-1 h-1 rounded-full bg-border" />
             <span>{article.time || "Nylig"}</span>
           </div>
-          {!isSponsored && <ArticleReactions article={article} className="mt-0" />}
         </div>
       </div>
     </Link>
