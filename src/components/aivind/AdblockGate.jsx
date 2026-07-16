@@ -3,7 +3,7 @@ import { RefreshCw, ShieldAlert } from "lucide-react";
 
 const isGateEnabled = () => process.env.NEXT_PUBLIC_ADBLOCK_GATE_ENABLED !== "false";
 
-function detectAdblock() {
+function detectBaitBlock() {
   return new Promise((resolve) => {
     const bait = document.createElement("div");
     bait.className = "adsbox ad-banner ad-unit ad-container ad-placement";
@@ -23,6 +23,33 @@ function detectAdblock() {
       resolve(isBlocked);
     }, 150);
   });
+}
+
+async function detectNetworkBlock() {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 1800);
+
+  try {
+    await fetch("https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js", {
+      mode: "no-cors",
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    return false;
+  } catch (error) {
+    return error?.name !== "AbortError";
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+async function detectAdblock() {
+  const [baitBlocked, networkBlocked] = await Promise.all([
+    detectBaitBlock(),
+    detectNetworkBlock(),
+  ]);
+
+  return baitBlocked || networkBlocked;
 }
 
 export default function AdblockGate() {

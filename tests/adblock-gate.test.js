@@ -12,6 +12,9 @@ test("adblock gate is global, blocking, and can be disabled only through configu
 
   assert.match(gate, /NEXT_PUBLIC_ADBLOCK_GATE_ENABLED !== "false"/);
   assert.match(gate, /adsbox ad-banner ad-unit ad-container ad-placement/);
+  assert.match(gate, /pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/);
+  assert.match(gate, /detectBaitBlock\(\)/);
+  assert.match(gate, /detectNetworkBlock\(\)/);
   assert.match(gate, /role="alertdialog"/);
   assert.match(gate, /backdrop-blur-xl/);
   assert.match(gate, /if \(!hasChecked\)/);
