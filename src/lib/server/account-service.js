@@ -3,6 +3,7 @@ import { db } from "@/db/client";
 import { newsletterPreference, savedArticle, subscription, userProfile } from "@/db/schema";
 import { getUserEntitlements, userHasActiveSubscription } from "@/lib/server/auth-helpers";
 import { hasPremiumAccountAccess, stripForbiddenProfileFields } from "@/lib/server/account-policy";
+import { isTrustedAvatarUrl } from "@/lib/server/avatar-upload-policy";
 import {
   NEWSLETTER_DEFAULTS,
   validateNewsletterPreferencesInput,
@@ -118,6 +119,7 @@ export function serializeSubscription(row) {
     user_id: row.userId,
     plan_type: row.planType || "free",
     plan_key: row.planKey || row.planType || "free",
+    plan_name: row.metadata?.planSnapshot?.displayName || row.planType || "",
     entitlement_key: row.entitlementKey || "",
     provider: row.provider,
     status: row.status,
@@ -293,6 +295,9 @@ export function validateProfileInput(input = {}) {
   }
   if (clean.preferred_language && !["no", "en"].includes(clean.preferred_language)) {
     errors.preferred_language = "Ugyldig språk";
+  }
+  if (clean.avatar_url && !isTrustedAvatarUrl(clean.avatar_url)) {
+    errors.avatar_url = "Profilbildet må komme fra den godkjente bildeopplastingen";
   }
 
   clean.country = clean.country || "Norge";

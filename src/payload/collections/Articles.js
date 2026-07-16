@@ -80,7 +80,7 @@ export const Articles = {
     },
     { name: "publishedAt", type: "date" },
     { name: "scheduledAt", type: "date" },
-    { name: "authors", type: "relationship", relationTo: "authors", hasMany: true, admin: { description: "Påkrevd når artikkelen publiseres." } },
+    { name: "authors", type: "relationship", relationTo: "authors", hasMany: true, required: true, admin: { description: "Påkrevd. Velg en forfatter med et redaksjonelt profilbilde." } },
     { name: "categories", type: "relationship", relationTo: "categories", hasMany: true, admin: { description: "Påkrevd når artikkelen publiseres." } },
     { name: "heroMedia", type: "relationship", relationTo: "media-assets" },
     { name: "seoTitle", label: "SEO-tittel", type: "text", admin: { description: "Påkrevd når artikkelen publiseres. Hold den kort og beskrivende." } },

@@ -77,6 +77,7 @@ export interface Config {
     reels: Reel;
     'tip-submissions': TipSubmission;
     'ad-campaigns': AdCampaign;
+    'subscription-plans': SubscriptionPlan;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,6 +95,7 @@ export interface Config {
     reels: ReelsSelect<false> | ReelsSelect<true>;
     'tip-submissions': TipSubmissionsSelect<false> | TipSubmissionsSelect<true>;
     'ad-campaigns': AdCampaignsSelect<false> | AdCampaignsSelect<true>;
+    'subscription-plans': SubscriptionPlansSelect<false> | SubscriptionPlansSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -234,7 +236,10 @@ export interface Author {
   name: string;
   slug: string;
   bio?: string | null;
-  profileImage?: (number | null) | MediaAsset;
+  /**
+   * Forfattere må ha et redaksjonelt profilbilde før de kan brukes i publiserte saker.
+   */
+  profileImage: number | MediaAsset;
   email?: string | null;
   title?: string | null;
   isActive?: boolean | null;
@@ -266,9 +271,9 @@ export interface Article {
   publishedAt?: string | null;
   scheduledAt?: string | null;
   /**
-   * Påkrevd når artikkelen publiseres.
+   * Påkrevd. Velg en forfatter med et redaksjonelt profilbilde.
    */
-  authors?: (number | Author)[] | null;
+  authors: (number | Author)[];
   /**
    * Påkrevd når artikkelen publiseres.
    */
@@ -417,6 +422,55 @@ export interface AdCampaign {
   createdAt: string;
 }
 /**
+ * Styr priser, fordeler og synlighet for nye abonnement. Eksisterende abonnement beholder sine lagrede vilkar.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscription-plans".
+ */
+export interface SubscriptionPlan {
+  id: number;
+  /**
+   * Teknisk nokkel brukt av betaling og tilgang. Kan ikke endres etter opprettelse.
+   */
+  planKey: string;
+  /**
+   * Planer med samme gruppe vises som ett kort med manedlig og arlig valg.
+   */
+  displayGroup: 'free' | 'pluss' | 'premium' | 'familie' | 'bedrift';
+  displayName: string;
+  description?: string | null;
+  price: number;
+  currency: 'NOK';
+  /**
+   * Kan ikke endres etter opprettelse. Opprett en ny plan hvis perioden ma endres.
+   */
+  interval: 'free' | 'monthly' | 'yearly';
+  /**
+   * F.eks. premium. Styrer tilgang for nye, bekreftede abonnement. Eksisterende abonnement beholder sin lagrede tilgang.
+   */
+  entitlementKey?: string | null;
+  /**
+   * Betaling startes bare for planer med Checkout. La den sta som Ikke tilgjengelig mens betaling er parkert.
+   */
+  checkoutMode: 'checkout' | 'contact' | 'unavailable';
+  features?:
+    | {
+        feature: string;
+        id?: string | null;
+      }[]
+    | null;
+  ctaText?: string | null;
+  isPopular?: boolean | null;
+  isActive?: boolean | null;
+  sortOrder?: number | null;
+  provider?: {
+    vippsProductId?: string | null;
+    vippsAgreementProductName?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -479,6 +533,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'ad-campaigns';
         value: number | AdCampaign;
+      } | null)
+    | ({
+        relationTo: 'subscription-plans';
+        value: number | SubscriptionPlan;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -722,6 +780,39 @@ export interface AdCampaignsSelect<T extends boolean = true> {
   startsAt?: T;
   endsAt?: T;
   isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscription-plans_select".
+ */
+export interface SubscriptionPlansSelect<T extends boolean = true> {
+  planKey?: T;
+  displayGroup?: T;
+  displayName?: T;
+  description?: T;
+  price?: T;
+  currency?: T;
+  interval?: T;
+  entitlementKey?: T;
+  checkoutMode?: T;
+  features?:
+    | T
+    | {
+        feature?: T;
+        id?: T;
+      };
+  ctaText?: T;
+  isPopular?: T;
+  isActive?: T;
+  sortOrder?: T;
+  provider?:
+    | T
+    | {
+        vippsProductId?: T;
+        vippsAgreementProductName?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

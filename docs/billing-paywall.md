@@ -36,7 +36,8 @@ Authentication says who the user is. Subscription and entitlement rows decide wh
 
 The provider-neutral billing layer is split into:
 
-- `src/lib/billing-plans.js`: plan catalog.
+- `subscription-plans` in Payload: the editable catalog for prices, benefits, CTA text and availability for new subscriptions.
+- `src/lib/server/billing/subscription-plan-catalog.js`: server-side Payload catalog reader and safe public display mapping.
 - `src/lib/server/billing/billing-core.js`: validation and pure billing rules.
 - `src/lib/server/billing/billing-service.js`: subscription and entitlement writes.
 - `POST /api/billing/checkout`: provider-neutral checkout start.
@@ -55,10 +56,17 @@ The server builds full merchant URLs from trusted environment origin values. Arb
 
 `POST /api/billing/checkout` also performs a minimal same-origin check for state-changing browser requests. Full CSRF coverage for every app API is still a production hardening item.
 
-Current plan keys:
+Payload is the source of truth for the subscription catalog. Editors may change price, description, features, CTA text, active state and checkout availability in Payload Admin. `planKey` and billing interval are stable identifiers and cannot be changed after creation.
 
-- `premium_monthly`
-- `premium_yearly`
+Subscription rows keep a snapshot of the selected plan's price, interval, name and entitlement. This means an edit in Payload only affects future checkout attempts; it never rewrites an existing customer's price or access.
+
+Seed the initial catalog after the Payload migration:
+
+```bash
+npm run payload:seed-subscription-plans
+```
+
+Keep `checkoutMode` set to `unavailable` while payment is parked. A plan must be active, have `checkoutMode=checkout`, and include an entitlement key before the server will create a checkout subscription.
 
 ## Dev/Test Entitlement
 

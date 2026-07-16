@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { Check, Loader2 } from "lucide-react";
-import { getActiveBillingPlans } from "@/lib/billing-plans";
 import { getBillingCheckoutStatus } from "@/lib/server/billing/billing-core";
+import { getActiveSubscriptionPlans } from "@/lib/server/billing/subscription-plan-catalog";
 
 export default function AbonnementPage({ plans, checkoutStatus }) {
   const [busyPlan, setBusyPlan] = useState("");
@@ -103,16 +103,31 @@ export default function AbonnementPage({ plans, checkoutStatus }) {
             </article>
           ))}
         </section>
+        {plans.length === 0 && (
+          <p className="mt-8 rounded-xl border border-white/10 bg-[#0b1016] p-5 text-sm text-zinc-400">
+            Abonnementsplanene er ikke publisert ennÃ¥. Kontakt redaksjonen hvis du trenger hjelp.
+          </p>
+        )}
       </div>
     </main>
   );
 }
 
-export function getServerSideProps() {
-  return {
-    props: {
-      plans: getActiveBillingPlans(),
-      checkoutStatus: getBillingCheckoutStatus(),
-    },
-  };
+export async function getServerSideProps() {
+  try {
+    return {
+      props: {
+        plans: await getActiveSubscriptionPlans(),
+        checkoutStatus: getBillingCheckoutStatus(),
+      },
+    };
+  } catch (error) {
+    console.error("[abonnement]", { message: error?.message || "Failed to load subscription plans" });
+    return {
+      props: {
+        plans: [],
+        checkoutStatus: getBillingCheckoutStatus(),
+      },
+    };
+  }
 }

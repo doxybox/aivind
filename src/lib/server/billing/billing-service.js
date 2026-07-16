@@ -1,7 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { billingEvent, entitlement, subscription } from "@/db/schema";
-import { getBillingPlan } from "@/lib/billing-plans";
+import { getSubscriptionPlan } from "./subscription-plan-catalog.js";
 import {
   buildEntitlementSource,
   getSubscriptionEntitlementKey,
@@ -17,9 +17,9 @@ function addInterval(start, interval) {
   return end;
 }
 
-function assertPlan(planKey) {
-  const plan = getBillingPlan(planKey);
-  if (!plan || plan.planKey === "free" || !plan.entitlementKey) {
+async function assertPlan(planKey, { requireCheckout = false } = {}) {
+  const plan = await getSubscriptionPlan(planKey);
+  if (!plan || plan.planKey === "free" || !plan.entitlementKey || (requireCheckout && plan.checkoutMode !== "checkout")) {
     const error = new Error("Invalid billing plan");
     error.status = 400;
     throw error;
@@ -128,7 +128,7 @@ export async function createPendingSubscription({
     throw error;
   }
 
-  const plan = assertPlan(planKey);
+  const plan = await assertPlan(planKey, { requireCheckout: true });
   const cleanProvider = assertProvider(provider);
   const existing = await findSubscriptionByProviderId(cleanProvider, providerSubscriptionId);
   if (existing) return existing;
@@ -154,6 +154,14 @@ export async function createPendingSubscription({
       currentPeriodEnd: null,
       metadata: {
         ...metadata,
+        planSnapshot: {
+          displayName: plan.displayName,
+          description: plan.description,
+          features: plan.features,
+          currency: plan.currency,
+          price: plan.price,
+          interval: plan.interval,
+        },
         returnUrl,
         cancelUrl,
       },
@@ -226,13 +234,24 @@ export async function activateSubscriptionFromProviderEvent({
   currentPeriodEnd = null,
   metadata = {},
 } = {}) {
-  const plan = assertPlan(planKey);
   const cleanProvider = assertProvider(provider);
+  const existing = await findSubscriptionByProviderId(cleanProvider, providerSubscriptionId);
+  const plan = existing
+    ? {
+        planKey: existing.planKey || existing.planType,
+        entitlementKey: existing.entitlementKey,
+        price: existing.price,
+        interval: existing.billingPeriod || "monthly",
+        currency: existing.metadata?.planSnapshot?.currency || "NOK",
+        displayName: existing.metadata?.planSnapshot?.displayName || existing.planKey || existing.planType,
+        description: existing.metadata?.planSnapshot?.description || "",
+        features: existing.metadata?.planSnapshot?.features || [],
+      }
+    : await assertPlan(planKey, { requireCheckout: true });
   const periodStart = currentPeriodStart instanceof Date ? currentPeriodStart : new Date(currentPeriodStart);
   const periodEnd = currentPeriodEnd
     ? currentPeriodEnd instanceof Date ? currentPeriodEnd : new Date(currentPeriodEnd)
     : addInterval(periodStart, plan.interval);
-  const existing = await findSubscriptionByProviderId(cleanProvider, providerSubscriptionId);
   if (!existing && !userId) {
     const error = new Error("userId is required for new subscription activation");
     error.status = 400;
@@ -255,7 +274,18 @@ export async function activateSubscriptionFromProviderEvent({
     cancelAtPeriodEnd: false,
     currentPeriodStart: periodStart,
     currentPeriodEnd: periodEnd,
-    metadata,
+    metadata: {
+      ...(existing?.metadata || {}),
+      ...metadata,
+      planSnapshot: {
+        displayName: plan.displayName,
+        description: plan.description,
+        features: plan.features,
+        currency: plan.currency,
+        price: plan.price,
+        interval: plan.interval,
+      },
+    },
     updatedAt: now,
   };
 

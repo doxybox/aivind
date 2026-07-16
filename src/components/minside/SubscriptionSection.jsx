@@ -4,7 +4,6 @@ import { toast } from "@/components/ui/use-toast";
 import { CreditCard, ArrowUpCircle, XCircle, RotateCcw, CheckCircle2, AlertCircle } from "lucide-react";
 import SectionSkeleton from "./SectionSkeleton";
 import UpgradeModal from "./UpgradeModal";
-import { getPlanBySlug } from "@/lib/subscriptionPlans";
 
 export default function SubscriptionSection({ paymentStatus, upgradeOpen, onCloseUpgrade }) {
   const [sub, setSub] = useState(null);
@@ -44,8 +43,7 @@ export default function SubscriptionSection({ paymentStatus, upgradeOpen, onClos
   }, [paymentStatus]);
 
   const planSlug = sub?.plan_type || "free";
-  const currentPlan = getPlanBySlug(planSlug);
-  const planLabel = currentPlan?.name || "Gratis";
+  const planLabel = sub?.plan_name || (planSlug === "free" ? "Gratis" : planSlug);
   const isFree = !sub || sub.status === "free" || sub.plan_type === "free";
   const isCancelled = sub?.status === "cancelled" && !isFree;
   const isActive = sub?.status === "active" && !isFree;

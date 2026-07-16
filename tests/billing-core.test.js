@@ -3,10 +3,9 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import {
-  billingPlans,
-  getActiveBillingPlans,
-  getBillingPlan,
-} from "../src/lib/billing-plans.js";
+  buildSubscriptionPlanCards,
+  serializeSubscriptionPlan,
+} from "../src/lib/server/billing/subscription-plan-catalog.js";
 import {
   buildEntitlementSource,
   cleanCheckoutPath,
@@ -45,27 +44,71 @@ function readProjectFile(filePath) {
   return readFileSync(path.join(rootDir, filePath), "utf8");
 }
 
-test("billing plan catalog exposes provider-neutral premium plans", () => {
-  const monthly = getBillingPlan("premium_monthly");
-  const yearly = getBillingPlan("premium_yearly");
+const premiumMonthlyPlan = {
+  planKey: "premium_monthly",
+  displayGroup: "premium",
+  displayName: "TEKKNO Premium",
+  description: "For ekspertene",
+  price: 299,
+  currency: "NOK",
+  interval: "monthly",
+  entitlementKey: "premium",
+  checkoutMode: "checkout",
+  features: ["Premium-artikler"],
+  provider: {
+    vippsProductId: "tekkno-premium-monthly",
+    vippsAgreementProductName: "TEKKNO Premium manedlig",
+  },
+  isActive: true,
+};
+
+const premiumYearlyPlan = {
+  ...premiumMonthlyPlan,
+  planKey: "premium_yearly",
+  price: 2990,
+  interval: "yearly",
+  provider: {
+    vippsProductId: "tekkno-premium-yearly",
+    vippsAgreementProductName: "TEKKNO Premium arlig",
+  },
+};
+
+async function resolveTestPlan(planKey) {
+  if (planKey === premiumMonthlyPlan.planKey) return premiumMonthlyPlan;
+  if (planKey === premiumYearlyPlan.planKey) return premiumYearlyPlan;
+  return null;
+}
+
+test("subscription plan catalog normalizes Payload plans and groups billing intervals", () => {
+  const monthly = serializeSubscriptionPlan(premiumMonthlyPlan);
+  const yearly = serializeSubscriptionPlan(premiumYearlyPlan);
+  const [premium] = buildSubscriptionPlanCards([monthly, yearly]);
 
   assert.equal(monthly.entitlementKey, "premium");
   assert.equal(monthly.currency, "NOK");
   assert.equal(monthly.interval, "monthly");
   assert.equal(yearly.interval, "yearly");
-  assert.equal(billingPlans.some((plan) => plan.vipps?.productId), true);
-  assert.equal(getActiveBillingPlans().length >= 2, true);
+  assert.equal(premium.monthlyPrice, 299);
+  assert.equal(premium.yearlyPrice, 2990);
+  assert.equal(premium.monthlyPlanKey, "premium_monthly");
+  assert.equal(premium.yearlyPlanKey, "premium_yearly");
 });
 
-test("checkout input rejects invalid planKey and only allows internal checkout paths", () => {
-  assert.throws(() => validateCheckoutInput({ planKey: "free" }), /Invalid planKey/);
-  assert.throws(() => validateCheckoutInput({ planKey: "does-not-exist" }), /Invalid planKey/);
+test("checkout input rejects invalid planKey and only allows internal checkout paths", async () => {
+  await assert.rejects(
+    () => validateCheckoutInput({ planKey: "free" }, { resolvePlan: resolveTestPlan }),
+    /Invalid planKey/,
+  );
+  await assert.rejects(
+    () => validateCheckoutInput({ planKey: "does-not-exist" }, { resolvePlan: resolveTestPlan }),
+    /Invalid planKey/,
+  );
 
-  const clean = validateCheckoutInput({
+  const clean = await validateCheckoutInput({
     planKey: "premium_monthly",
     returnUrl: "/abonnement/status?subscription=ok",
     cancelUrl: "javascript:alert(1)",
-  });
+  }, { resolvePlan: resolveTestPlan });
 
   assert.equal(clean.plan.planKey, "premium_monthly");
   assert.equal(clean.returnUrl, "/abonnement/status?subscription=ok");
@@ -156,7 +199,7 @@ test("Vipps access token exchange sends required headers", async () => {
 test("Vipps agreement creation builds agreement payload and returns confirmation URL", async () => {
   resetVippsAccessTokenCacheForTests();
   const calls = [];
-  const plan = getBillingPlan("premium_monthly");
+  const plan = premiumMonthlyPlan;
   const subscription = { id: "local-subscription-id" };
   const result = await createAgreement({
     env: vippsEnv,
@@ -202,7 +245,7 @@ test("Vipps agreement creation builds agreement payload and returns confirmation
 test("Vipps agreement payload maps yearly interval", () => {
   const payload = buildVippsAgreementPayload({
     user: {},
-    plan: getBillingPlan("premium_yearly"),
+    plan: premiumYearlyPlan,
     subscription: { id: "sub-year" },
     config: getVippsRecurringConfig(vippsEnv),
   });
@@ -258,6 +301,7 @@ test("checkout endpoint creates pending Vipps subscription before agreement and 
 
   assert.match(source, /requireAuth\(req\)/);
   assert.match(source, /session\.user\.id/);
+  assert.match(source, /await validateCheckoutInput/);
   assert.doesNotMatch(source, /req\.body\.userId|user_id/);
   assert.match(source, /createPendingSubscription/);
   assert.match(source, /createVippsRecurringAgreement/);

@@ -10,6 +10,7 @@ import {
   VippsRecurringNotConfiguredError,
 } from "@/lib/server/billing/providers/vipps-recurring";
 import { assertSameOriginRequest } from "@/lib/server/csrf";
+import { getSubscriptionPlan } from "@/lib/server/billing/subscription-plan-catalog";
 
 function sendError(res, error) {
   const status = error instanceof AuthRequiredError ? 401 : error?.status || 500;
@@ -29,7 +30,9 @@ export default async function handler(req, res) {
   try {
     assertSameOriginRequest(req);
     const session = await requireAuth(req);
-    const { plan, returnUrl, cancelUrl } = validateCheckoutInput(req.body || {});
+    const { plan, returnUrl, cancelUrl } = await validateCheckoutInput(req.body || {}, {
+      resolvePlan: (planKey) => getSubscriptionPlan(planKey),
+    });
     const checkoutStatus = getBillingCheckoutStatus();
     const provider = checkoutStatus.provider;
 

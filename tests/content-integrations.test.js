@@ -52,6 +52,7 @@ test("Payload-only CMS collections are active", () => {
     "reels",
     "tip-submissions",
     "ad-campaigns",
+    "subscription-plans",
   ]);
 
   assert.equal(slugs.includes("ghost-post-references"), false);
@@ -197,7 +198,7 @@ test("Payload mappers return legacy-safe frontend shapes", () => {
     slug: "payload-sak",
     excerpt: "Ingress",
     publishedAt: "2026-06-28T10:00:00.000Z",
-    authors: [{ name: "Redaksjonen", slug: "redaksjonen" }],
+    authors: [{ name: "Redaksjonen", slug: "redaksjonen", profileImage: { deliveryUrl: "https://images.example/author.jpg", alt: "Redaksjonen" } }],
     categories: [{ name: "AI", slug: "ai" }],
     heroMedia: { deliveryUrl: "https://images.example/hero.jpg", alt: "Hero" },
   });
@@ -206,6 +207,7 @@ test("Payload mappers return legacy-safe frontend shapes", () => {
   assert.equal(mappedArticle.href, "/artikler/payload-sak");
   assert.equal(mappedArticle.category, "AI");
   assert.equal(mappedArticle.author, "Redaksjonen");
+  assert.equal(mappedArticle.authorImage, "https://images.example/author.jpg");
   assert.equal(mappedArticle.image, "https://images.example/hero.jpg");
 });
 

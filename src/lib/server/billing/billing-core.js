@@ -1,4 +1,3 @@
-import { getBillingPlan } from "../../billing-plans.js";
 import { isSubscriptionActive } from "../authz-core.js";
 
 export const BILLING_PROVIDERS = ["manual", "test", "vipps", "stripe"];
@@ -15,11 +14,11 @@ export function normalizeBillingStatus(value = "") {
   return BILLING_STATUSES.includes(status) ? status : "";
 }
 
-export function validateCheckoutInput(input = {}) {
+export async function validateCheckoutInput(input = {}, { resolvePlan } = {}) {
   const planKey = typeof input.planKey === "string" ? input.planKey.trim() : "";
-  const plan = getBillingPlan(planKey);
+  const plan = typeof resolvePlan === "function" ? await resolvePlan(planKey) : null;
 
-  if (!plan || plan.planKey === "free" || !plan.entitlementKey) {
+  if (!plan || plan.planKey === "free" || !plan.entitlementKey || plan.checkoutMode !== "checkout") {
     const error = new Error("Invalid planKey");
     error.status = 400;
     throw error;
@@ -138,8 +137,7 @@ export function getSubscriptionPlanKey(row = {}) {
 }
 
 export function getSubscriptionEntitlementKey(row = {}) {
-  const plan = getBillingPlan(getSubscriptionPlanKey(row));
-  return row.entitlementKey || row.entitlement_key || plan?.entitlementKey || null;
+  return row.entitlementKey || row.entitlement_key || null;
 }
 
 export function isSubscriptionEntitling(row, now = new Date()) {

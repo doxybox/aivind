@@ -1,4 +1,3 @@
-import { getBillingPlan } from "@/lib/billing-plans";
 import {
   activateSubscriptionFromProviderEvent,
   cancelSubscriptionFromProviderEvent,
@@ -38,8 +37,11 @@ export async function syncVippsAgreementStatusToSubscription(subscription, agree
     throw error;
   }
 
-  const plan = getBillingPlan(subscription.planKey || subscription.planType);
-  if (!plan) {
+  const plan = {
+    planKey: subscription.planKey || subscription.planType,
+    interval: subscription.billingPeriod || "monthly",
+  };
+  if (!plan.planKey) {
     const error = new Error("Invalid subscription plan");
     error.status = 400;
     throw error;

@@ -34,8 +34,19 @@ export function updateProfile(input) {
   });
 }
 
+export function createAvatarDirectUpload(input) {
+  return requestJson("/api/account/avatar/direct-upload", {
+    method: "POST",
+    body: JSON.stringify(input || {}),
+  });
+}
+
 export function getSubscription() {
   return requestJson("/api/account/subscription");
+}
+
+export function getSubscriptionPlans() {
+  return requestJson("/api/billing/plans");
 }
 
 export function getNewsletterPreferences() {

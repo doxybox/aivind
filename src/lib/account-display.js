@@ -1,5 +1,3 @@
-import { getPlanBySlug } from "@/lib/subscriptionPlans";
-
 export function isActivePaidSubscription(subscription) {
   return Boolean(
     subscription &&
@@ -12,7 +10,7 @@ export function isActivePaidSubscription(subscription) {
 export function getAccountPlanLabel({ subscription, premiumAccess, loadFailed } = {}) {
   if (loadFailed) return "Kunne ikke hente abonnement";
   if (isActivePaidSubscription(subscription)) {
-    return getPlanBySlug(subscription.plan_type)?.name || subscription.plan_type;
+    return subscription?.plan_name || subscription?.plan_type || "Abonnement";
   }
   if (premiumAccess) return "Premium tilgang";
   return "Gratis";

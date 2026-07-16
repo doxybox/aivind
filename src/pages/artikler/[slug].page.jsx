@@ -52,6 +52,8 @@ function mapPayloadPreviewArticle(payloadArticle, initialArticle) {
     categorySlug: primaryCategory?.slug || initialArticle.categorySlug,
     author: primaryAuthor?.name || initialArticle.author,
     authorName: primaryAuthor?.name || initialArticle.authorName,
+    authorImage: primaryAuthor?.profileImage?.deliveryUrl || primaryAuthor?.profileImage?.thumbnailUrl || initialArticle.authorImage || "",
+    authorImageAlt: primaryAuthor?.profileImage?.alt || primaryAuthor?.profileImage?.title || primaryAuthor?.name || initialArticle.authorImageAlt || "",
     heroImage: heroMedia?.deliveryUrl || heroMedia?.thumbnailUrl || initialArticle.heroImage,
     heroImageAlt: heroMedia?.alt || heroMedia?.title || payloadArticle.title || initialArticle.heroImageAlt,
     seoTitle: payloadArticle.seoTitle || payloadArticle.title || initialArticle.seoTitle,
@@ -190,6 +192,7 @@ export default function ArticlePage({ article: initialArticle, searchArticles = 
   const categories = article.categories?.length ? article.categories : article.category ? [{ name: article.category, slug: article.categorySlug }] : [];
   const authorName = article.authorName || article.author || "TEKKNO";
   const authorInitial = authorName.charAt(0).toUpperCase();
+  const authorImage = article.authorImage || "";
   const relatedArticles = useMemo(() => {
     const others = searchArticles.filter((candidate) => candidate?.slug && candidate.slug !== article.slug);
     const categoryMatches = others.filter((candidate) => candidate.categorySlug && candidate.categorySlug === article.categorySlug);
@@ -247,7 +250,9 @@ export default function ArticlePage({ article: initialArticle, searchArticles = 
 
               <div className="mt-7 flex flex-col justify-between gap-5 border-y border-border py-4 sm:flex-row sm:items-center">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] text-muted-foreground">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-black text-foreground">{authorInitial}</span>
+                  <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-black text-foreground">
+                    {authorImage ? <Image src={authorImage} alt={article.authorImageAlt || authorName} width={36} height={36} unoptimized className="h-full w-full object-cover" /> : authorInitial}
+                  </span>
                   <span className="font-bold text-foreground">{authorName}</span>
                   {publishedLabel && <><span className="hidden h-1 w-1 rounded-full bg-[#ff6a00] sm:inline" /><span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" />{publishedLabel}</span></>}
                   {article.readTime && <><span className="hidden h-1 w-1 rounded-full bg-[#ff6a00] sm:inline" /><span className="inline-flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5" />{article.readTime} lesetid</span></>}

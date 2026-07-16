@@ -1,10 +1,14 @@
 import { editorsOnly, staffOnly } from "../access/roles.js";
+import { createPayloadMediaAssetDirectUpload } from "../endpoints/media-assets-cloudflare.js";
 
 export const MediaAssets = {
   slug: "media-assets",
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "provider", "type", "status", "updatedAt"],
+    components: {
+      beforeList: ["./src/payload/components/MediaAssetUploader.jsx"],
+    },
   },
   access: {
     read: () => true,
@@ -12,6 +16,13 @@ export const MediaAssets = {
     update: staffOnly,
     delete: editorsOnly,
   },
+  endpoints: [
+    {
+      path: "/cloudflare-direct-upload",
+      method: "post",
+      handler: createPayloadMediaAssetDirectUpload,
+    },
+  ],
   fields: [
     { name: "title", type: "text", required: true },
     {

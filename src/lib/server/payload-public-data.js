@@ -134,6 +134,7 @@ export function mapPayloadArticleToLegacyArticle(article = {}) {
   const authors = getRelationshipDocs(article.authors);
   const primaryCategory = categories[0] || {};
   const primaryAuthor = authors[0] || {};
+  const primaryAuthorImage = mapPayloadMediaToImage(primaryAuthor.profileImage);
   const media = mapPayloadMediaToImage(article.heroMedia || article.seoImage);
   const publishedAt = article.publishedAt || article.createdAt || null;
   const categoryName = primaryCategory.name || "Nyheter";
@@ -150,6 +151,8 @@ export function mapPayloadArticleToLegacyArticle(article = {}) {
     author: primaryAuthor.name || DEFAULT_AUTHOR,
     authorName: primaryAuthor.name || DEFAULT_AUTHOR,
     authorSlug: primaryAuthor.slug || "",
+    authorImage: primaryAuthorImage.imageUrl || "",
+    authorImageAlt: primaryAuthorImage.imageAlt || primaryAuthor.name || DEFAULT_AUTHOR,
     publishedAt,
     published_at: publishedAt,
     time: formatRelativeDate(publishedAt),
@@ -185,6 +188,8 @@ export function mapPayloadArticleToPageData(article = {}, { canReadFullBody = fa
     name: author.name || DEFAULT_AUTHOR,
     slug: author.slug || "",
     title: author.title || "",
+    image: mapPayloadMediaToImage(author.profileImage).imageUrl || "",
+    imageAlt: mapPayloadMediaToImage(author.profileImage).imageAlt || author.name || DEFAULT_AUTHOR,
   }));
   const heroMedia = mapPayloadMediaToImage(article.heroMedia || article.seoImage);
   const seoMedia = mapPayloadMediaToImage(article.seoImage || article.heroMedia);

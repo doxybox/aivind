@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Check, X } from "lucide-react";
-import { subscriptionPlans } from "@/lib/subscriptionPlans";
+import { getSubscriptionPlans } from "@/lib/account-client";
 import VippsCheckout from "@/components/minside/VippsCheckout";
 
 export default function UpgradeModal({ open, onClose, currentPlanSlug, billingInterval }) {
   const [interval, setIntervalState] = useState(billingInterval || "monthly");
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [plans, setPlans] = useState([]);
+  const [plansError, setPlansError] = useState("");
+  const [plansLoading, setPlansLoading] = useState(false);
 
   useEffect(() => {
     if (billingInterval) setIntervalState(billingInterval);
@@ -25,10 +28,38 @@ export default function UpgradeModal({ open, onClose, currentPlanSlug, billingIn
     };
   }, [open, onClose]);
 
+  useEffect(() => {
+    if (!open) return;
+    let ignore = false;
+    setPlansLoading(true);
+    setPlansError("");
+
+    getSubscriptionPlans()
+      .then((data) => {
+        if (!ignore) setPlans(Array.isArray(data?.plans) ? data.plans : []);
+      })
+      .catch(() => {
+        if (!ignore) {
+          setPlans([]);
+          setPlansError("Kunne ikke hente abonnementsplanene akkurat na.");
+        }
+      })
+      .finally(() => {
+        if (!ignore) setPlansLoading(false);
+      });
+
+    return () => { ignore = true; };
+  }, [open]);
+
   if (!open || typeof document === "undefined") return null;
 
   const handleSelect = (plan) => {
-    if (plan.slug === currentPlanSlug || plan.slug === "free") return;
+    const isCurrent = [plan.planKey, plan.monthlyPlanKey, plan.yearlyPlanKey].includes(currentPlanSlug);
+    if (isCurrent || plan.slug === "free" || plan.checkoutMode === "unavailable") return;
+    if (plan.checkoutMode === "contact") {
+      window.location.href = `mailto:salg@tekkno.no?subject=${encodeURIComponent(`Foresporsel om ${plan.name}`)}`;
+      return;
+    }
     setSelectedPlan(plan);
   };
 
@@ -104,10 +135,13 @@ export default function UpgradeModal({ open, onClose, currentPlanSlug, billingIn
           ) : (
             <>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {subscriptionPlans.map((plan) => {
-                  const isCurrent = plan.slug === currentPlanSlug;
+                {plans.map((plan) => {
+                  const isCurrent = [plan.planKey, plan.monthlyPlanKey, plan.yearlyPlanKey].includes(currentPlanSlug);
                   const isBedrift = plan.slug === "bedrift";
-                  const price = interval === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
+                  const price = interval === "yearly"
+                    ? plan.yearlyPrice || plan.monthlyPrice
+                    : plan.monthlyPrice || plan.yearlyPrice;
+                  const canSelect = !isCurrent && plan.slug !== "free" && plan.checkoutMode !== "unavailable";
 
                   return (
                     <div
@@ -168,22 +202,32 @@ export default function UpgradeModal({ open, onClose, currentPlanSlug, billingIn
                       </ul>
 
                       <button
-                        disabled={isCurrent || plan.slug === "free"}
+                        disabled={!canSelect}
                         onClick={() => handleSelect(plan)}
                         className={`w-full rounded-lg py-2.5 text-[13px] font-semibold transition-all duration-300 ${
-                          isCurrent || plan.slug === "free"
+                          !canSelect
                             ? "cursor-not-allowed bg-white/10 text-zinc-400"
                             : plan.isPopular
                               ? "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-[0_0_24px_rgba(249,115,22,0.45)]"
                               : "border border-white/10 text-white hover:border-orange-500/60 hover:bg-orange-500 hover:shadow-[0_0_24px_rgba(249,115,22,0.35)]"
                         }`}
                       >
-                        {isCurrent ? "Nåværende plan" : plan.ctaText}
+                        {isCurrent ? "Nåværende plan" : plan.checkoutMode === "unavailable" ? "Ikke tilgjengelig" : plan.ctaText}
                       </button>
                     </div>
                   );
                 })}
               </div>
+
+              {plansLoading && (
+                <p className="py-8 text-center text-sm text-zinc-400">Henter abonnementsplaner...</p>
+              )}
+              {!plansLoading && plansError && (
+                <p className="py-8 text-center text-sm text-rose-300">{plansError}</p>
+              )}
+              {!plansLoading && !plansError && plans.length === 0 && (
+                <p className="py-8 text-center text-sm text-zinc-400">Ingen abonnementsplaner er publisert ennå.</p>
+              )}
 
               <p className="mt-5 text-center text-[11px] text-zinc-500">
                 Betaling er parkert i dette miljøet. Abonnement oppdateres først etter bekreftet betalingsstatus.
