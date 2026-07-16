@@ -257,7 +257,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
       <SearchOverlay open={isSearchOpen} onClose={() => setIsSearchOpen(false)} articles={searchArticles} />
       
       {/* Mobile Menu */}
-      <div className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setIsMenuOpen(false)}>
+      <div className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setIsMenuOpen(false)}>
         <div className={`absolute top-0 right-0 bottom-0 w-64 bg-white dark:bg-[#161a22] border-l border-zinc-200 dark:border-white/10 p-6 flex flex-col transition-transform duration-300 ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`} onClick={e => e.stopPropagation()}>
           <div className="flex justify-between items-center mb-8">
             <span className="text-zinc-900 dark:text-white font-black text-xl tracking-tighter uppercase">MENY</span>
@@ -300,7 +300,7 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
               {theme === 'dark' ? <GiFlashGrenade className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
             <button onClick={() => setIsSearchOpen(true)} className="hover:text-zinc-900 dark:hover:text-white transition-colors"><Search className="w-5 h-5" /></button>
-            <button onClick={() => setIsMenuOpen(true)} className="hover:text-zinc-900 dark:hover:text-white transition-colors"><Menu className="w-6 h-6" /></button>
+            <button onClick={() => setIsMenuOpen(true)} className="hover:text-zinc-900 dark:hover:text-white transition-colors lg:hidden"><Menu className="w-6 h-6" /></button>
           </div>
         </div>
       </header>

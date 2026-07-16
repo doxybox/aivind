@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2, MessageCircle, Send } from "lucide-react";
+import { Loader2, MessageCircle, Send, SmilePlus } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
+
+const COMMENT_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "🔥", "👏", "🤔", "🎮", "🤖"];
 
 function formatCommentDate(value) {
   const date = new Date(value);
@@ -20,6 +22,8 @@ export default function ArticleComments({ articleSlug, onCountChange }) {
   const [body, setBody] = useState("");
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
+  const [isEmojiMenuOpen, setIsEmojiMenuOpen] = useState(false);
+  const textareaRef = useRef(null);
 
   const loadComments = useCallback(async () => {
     if (!articleSlug) return;
@@ -71,6 +75,12 @@ export default function ArticleComments({ articleSlug, onCountChange }) {
     }
   };
 
+  const addEmoji = (emoji) => {
+    setBody((currentBody) => `${currentBody}${emoji}`.slice(0, 2000));
+    setIsEmojiMenuOpen(false);
+    textareaRef.current?.focus();
+  };
+
   return (
     <section className="mt-12 max-w-3xl border-t border-border pt-8" aria-labelledby="comments-heading">
       <div className="flex items-center gap-3">
@@ -90,6 +100,7 @@ export default function ArticleComments({ articleSlug, onCountChange }) {
           <label htmlFor="article-comment" className="sr-only">Skriv en kommentar</label>
           <textarea
             id="article-comment"
+            ref={textareaRef}
             value={body}
             onChange={(event) => setBody(event.target.value)}
             maxLength={2000}
@@ -98,8 +109,36 @@ export default function ArticleComments({ articleSlug, onCountChange }) {
             disabled={status === "submitting"}
             className="w-full resize-y rounded-xl border border-border bg-card px-4 py-3 text-sm leading-6 text-foreground outline-none transition focus:border-[#ff6a00] disabled:opacity-60"
           />
-          <div className="mt-3 flex items-center justify-between gap-4">
-            <span className="text-xs text-muted-foreground">{body.trim().length}/2000</span>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsEmojiMenuOpen((open) => !open)}
+                disabled={status === "submitting"}
+                aria-expanded={isEmojiMenuOpen}
+                aria-controls="comment-emoji-menu"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-bold text-muted-foreground transition-colors hover:border-[#ff6a00]/60 hover:text-[#ff6a00] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <SmilePlus className="h-4 w-4" /> Emoji
+              </button>
+              {isEmojiMenuOpen && (
+                <div id="comment-emoji-menu" className="absolute bottom-full left-0 z-10 mb-2 grid w-64 grid-cols-5 gap-1 rounded-xl border border-border bg-card p-2 shadow-xl" role="menu" aria-label="Velg emoji">
+                  {COMMENT_EMOJIS.map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      role="menuitem"
+                      onClick={() => addEmoji(emoji)}
+                      className="flex h-10 items-center justify-center rounded-lg text-xl transition-colors hover:bg-muted"
+                      aria-label={`Legg til ${emoji}`}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <span className="ml-auto text-xs text-muted-foreground">{body.trim().length}/2000</span>
             <button type="submit" disabled={status === "submitting" || body.trim().length < 2} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a00] px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#ea5f00] disabled:cursor-not-allowed disabled:opacity-60">
               {status === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               Publiser kommentar

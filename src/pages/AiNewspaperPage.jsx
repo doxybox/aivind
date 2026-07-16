@@ -355,7 +355,7 @@ function AiHeader({ activeSlug, onSearchClick }) {
   return (
     <>
       <div
-        className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
           isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setIsMenuOpen(false)}
@@ -421,7 +421,7 @@ function AiHeader({ activeSlug, onSearchClick }) {
             <button onClick={onSearchClick} className="hover:text-zinc-900 dark:hover:text-white transition-colors">
               <Search className="w-5 h-5" />
             </button>
-            <button onClick={() => setIsMenuOpen(true)} className="hover:text-zinc-900 dark:hover:text-white transition-colors">
+            <button onClick={() => setIsMenuOpen(true)} className="hover:text-zinc-900 dark:hover:text-white transition-colors lg:hidden">
               <Menu className="w-6 h-6" />
             </button>
           </div>

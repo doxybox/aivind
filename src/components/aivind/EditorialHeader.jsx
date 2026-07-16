@@ -14,7 +14,7 @@ export default function EditorialHeader({ onSearchClick }) {
   return (
     <>
       <div
-        className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
           isMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={() => setIsMenuOpen(false)}
@@ -66,7 +66,7 @@ export default function EditorialHeader({ onSearchClick }) {
             <button type="button" onClick={onSearchClick} className="transition-colors hover:text-zinc-900 dark:hover:text-white" aria-label="Søk">
               <Search className="h-5 w-5" />
             </button>
-            <button type="button" onClick={() => setIsMenuOpen(true)} className="transition-colors hover:text-zinc-900 dark:hover:text-white" aria-label="Åpne meny">
+            <button type="button" onClick={() => setIsMenuOpen(true)} className="transition-colors hover:text-zinc-900 dark:hover:text-white lg:hidden" aria-label="Åpne meny">
               <Menu className="h-6 w-6" />
             </button>
           </div>
