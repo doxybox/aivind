@@ -6,6 +6,7 @@ import {
   updateMediaAssetFromCloudflareImage,
 } from "@/lib/server/media-assets-service";
 import { enforceRateLimit, RateLimitError } from "@/lib/server/rate-limit";
+import { assertSameOriginRequest } from "@/lib/server/csrf";
 
 function sendError(res, error) {
   const status = error instanceof AuthRequiredError || error instanceof ForbiddenError || error instanceof RateLimitError
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    if (req.method === "DELETE") assertSameOriginRequest(req);
     const { session } = await requireAnyRole(req, ["journalist", "editor", "admin"]);
     await enforceRateLimit(req, res, {
       scope: "cloudflare-images:image",

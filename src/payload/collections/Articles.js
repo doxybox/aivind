@@ -1,4 +1,4 @@
-import { canReadPublishedOrStaff, editorsOnly, staffOnly } from "../access/roles.js";
+import { editorsOnly, staffOnly } from "../access/roles.js";
 
 function hasEditorialValue(value) {
   return Array.isArray(value) ? value.length > 0 : Boolean(value && String(value).trim());
@@ -51,7 +51,9 @@ export const Articles = {
     maxPerDoc: 50,
   },
   access: {
-    read: canReadPublishedOrStaff,
+    // Public pages use server-side Payload loaders with explicit publish and
+    // entitlement checks. Raw CMS API access must never bypass the paywall.
+    read: staffOnly,
     create: staffOnly,
     update: staffOnly,
     delete: editorsOnly,

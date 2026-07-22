@@ -1,4 +1,4 @@
-import { canReadPublishedOrStaff, editorsOnly, staffOnly } from "../access/roles.js";
+import { editorsOnly, staffOnly } from "../access/roles.js";
 
 export const Reels = {
   slug: "reels",
@@ -7,7 +7,7 @@ export const Reels = {
     defaultColumns: ["title", "status", "isActive", "publishedAt"],
   },
   access: {
-    read: canReadPublishedOrStaff,
+    read: staffOnly,
     create: staffOnly,
     update: staffOnly,
     delete: editorsOnly,

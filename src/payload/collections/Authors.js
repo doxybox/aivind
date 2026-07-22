@@ -8,7 +8,7 @@ export const Authors = {
     description: "Payload-owned public author and journalist profiles.",
   },
   access: {
-    read: () => true,
+    read: staffOnly,
     create: staffOnly,
     update: staffOnly,
     delete: editorsOnly,

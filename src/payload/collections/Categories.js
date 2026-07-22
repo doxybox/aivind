@@ -18,7 +18,7 @@ export const Categories = {
     description: "Payload-owned sections and categories for the newspaper.",
   },
   access: {
-    read: () => true,
+    read: staffOnly,
     create: staffOnly,
     update: staffOnly,
     delete: editorsOnly,

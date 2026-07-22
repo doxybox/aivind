@@ -14,7 +14,9 @@ export const MediaAssets = {
     },
   },
   access: {
-    read: () => true,
+    // Media inventory and upload metadata are internal editorial data. Public
+    // delivery happens through sanitized server-side content loaders instead.
+    read: staffOnly,
     create: staffOnly,
     update: staffOnly,
     delete: editorsOnly,

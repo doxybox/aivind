@@ -1,4 +1,5 @@
 import { AuthRequiredError, requireAuth } from "@/lib/server/auth-helpers";
+import { assertSameOriginRequest } from "@/lib/server/csrf";
 import {
   deleteSavedArticleForUser,
   getSavedArticlesForUser,
@@ -21,6 +22,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    if (req.method !== "GET") assertSameOriginRequest(req);
     const session = await requireAuth(req);
     const userId = session.user.id;
 

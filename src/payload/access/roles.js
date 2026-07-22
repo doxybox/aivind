@@ -3,16 +3,6 @@ export function hasPayloadRole(user, roles = []) {
   return roles.some((role) => userRoles.includes(role));
 }
 
-export function canReadPublishedOrStaff({ req }) {
-  if (hasPayloadRole(req.user, ["journalist", "editor", "admin", "desk", "moderator", "ad_manager"])) return true;
-
-  return {
-    status: {
-      equals: "published",
-    },
-  };
-}
-
 export function staffOnly({ req }) {
   return hasPayloadRole(req.user, ["journalist", "editor", "admin", "desk", "moderator"]);
 }

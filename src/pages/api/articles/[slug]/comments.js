@@ -10,6 +10,7 @@ import {
   validateArticleCommentSlug,
 } from "@/lib/server/article-comments-policy";
 import { enforceRateLimit, RateLimitError } from "@/lib/server/rate-limit";
+import { assertSameOriginRequest } from "@/lib/server/csrf";
 
 function firstQueryValue(value) {
   return Array.isArray(value) ? value[0] : value;
@@ -128,6 +129,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    if (req.method === "POST") assertSameOriginRequest(req);
     const articleSlug = validateArticleCommentSlug(firstQueryValue(req.query.slug));
     const commentAccess = await requireCommentAccess(req, articleSlug);
 

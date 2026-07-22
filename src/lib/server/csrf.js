@@ -31,12 +31,18 @@ function allowedOriginsFromEnv(env = process.env) {
     .filter(Boolean);
 }
 
-export function assertSameOriginRequest(req, { env = process.env } = {}) {
+export function assertSameOriginRequest(req, { env = process.env, requireSource = true } = {}) {
   const method = String(req?.method || "GET").toUpperCase();
   if (["GET", "HEAD", "OPTIONS"].includes(method)) return true;
 
   const source = headerValue(req, "origin") || headerValue(req, "referer");
-  if (!source) return true;
+  if (!source) {
+    if (!requireSource) return true;
+
+    const error = new Error("Missing request origin");
+    error.status = 403;
+    throw error;
+  }
 
   let origin = "";
   try {

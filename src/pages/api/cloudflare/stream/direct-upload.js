@@ -4,6 +4,7 @@ import { validateStreamDirectUploadInput } from "@/lib/server/cloudflare-stream-
 import { logMediaUploadAttempt } from "@/lib/server/media-upload-audit";
 import { createMediaAssetForStreamDirectUpload } from "@/lib/server/media-assets-service";
 import { enforceRateLimit, RateLimitError } from "@/lib/server/rate-limit";
+import { assertSameOriginRequest } from "@/lib/server/csrf";
 
 function sendError(req, res, error) {
   const status = error instanceof AuthRequiredError || error instanceof ForbiddenError || error instanceof RateLimitError
@@ -41,6 +42,7 @@ export default async function handler(req, res) {
 
   let phase = "auth";
   try {
+    assertSameOriginRequest(req);
     const { session } = await requireAnyRole(req, ["journalist", "editor", "admin"]);
     phase = "validate";
     const input = validateStreamDirectUploadInput(req.body || {});

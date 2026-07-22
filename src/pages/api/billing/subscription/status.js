@@ -5,6 +5,7 @@ import {
   VippsRecurringNotConfiguredError,
 } from "@/lib/server/billing/providers/vipps-recurring";
 import { syncVippsAgreementStatusToSubscription } from "@/lib/server/billing/vipps-status-sync";
+import { assertSameOriginRequest } from "@/lib/server/csrf";
 
 function serializeSubscription(row) {
   if (!row) return null;
@@ -34,6 +35,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    assertSameOriginRequest(req);
     const session = await requireAuth(req);
     const subscription = await getCurrentUserSubscription(session.user.id);
 

@@ -1,5 +1,6 @@
 import { getProfileByUser, upsertProfileForUser } from "@/lib/server/account-service";
 import { AuthRequiredError, requireAuth } from "@/lib/server/auth-helpers";
+import { assertSameOriginRequest } from "@/lib/server/csrf";
 
 function sendError(res, error) {
   const status = error instanceof AuthRequiredError || error?.status === 401 ? 401 : error?.status || 500;
@@ -20,6 +21,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    if (req.method === "PUT") assertSameOriginRequest(req);
     const session = await requireAuth(req);
 
     if (req.method === "GET") {

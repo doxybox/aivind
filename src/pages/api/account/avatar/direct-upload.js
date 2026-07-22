@@ -3,6 +3,7 @@ import { AuthRequiredError, requireAuth } from "@/lib/server/auth-helpers";
 import { validateAvatarDirectUploadInput } from "@/lib/server/avatar-upload-policy";
 import { logMediaUploadAttempt } from "@/lib/server/media-upload-audit";
 import { enforceRateLimit, RateLimitError } from "@/lib/server/rate-limit";
+import { assertSameOriginRequest } from "@/lib/server/csrf";
 
 function sendError(req, res, error) {
   const status = error instanceof AuthRequiredError || error instanceof RateLimitError ? error.status : error?.status || 500;
@@ -24,6 +25,7 @@ export default async function handler(req, res) {
 
   let phase = "auth";
   try {
+    assertSameOriginRequest(req);
     const session = await requireAuth(req);
     phase = "validate";
     const input = validateAvatarDirectUploadInput(req.body || {});
