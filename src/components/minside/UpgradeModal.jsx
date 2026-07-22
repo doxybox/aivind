@@ -4,7 +4,7 @@ import { Check, X } from "lucide-react";
 import { getSubscriptionPlans } from "@/lib/account-client";
 import VippsCheckout from "@/components/minside/VippsCheckout";
 
-export default function UpgradeModal({ open, onClose, currentPlanSlug, billingInterval }) {
+export default function UpgradeModal({ open, onClose, currentPlanSlug, billingInterval, onSelect }) {
   const [interval, setIntervalState] = useState(billingInterval || "monthly");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [plans, setPlans] = useState([]);
@@ -58,6 +58,10 @@ export default function UpgradeModal({ open, onClose, currentPlanSlug, billingIn
     if (isCurrent || plan.slug === "free" || plan.checkoutMode === "unavailable") return;
     if (plan.checkoutMode === "contact") {
       window.location.href = `mailto:salg@tekkno.no?subject=${encodeURIComponent(`Foresporsel om ${plan.name}`)}`;
+      return;
+    }
+    if (typeof onSelect === "function") {
+      onSelect(plan, interval);
       return;
     }
     setSelectedPlan(plan);
@@ -230,7 +234,7 @@ export default function UpgradeModal({ open, onClose, currentPlanSlug, billingIn
               )}
 
               <p className="mt-5 text-center text-[11px] text-zinc-500">
-                Betaling er parkert i dette miljøet. Abonnement oppdateres først etter bekreftet betalingsstatus.
+                Abonnement oppdateres først etter bekreftet betalingsstatus.
               </p>
             </>
           )}

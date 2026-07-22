@@ -144,6 +144,14 @@ export const SubscriptionPlans = {
       fields: [
         { name: "vippsProductId", label: "Vipps produkt-ID", type: "text" },
         { name: "vippsAgreementProductName", label: "Vipps avtalenavn", type: "text" },
+        {
+          name: "stripePriceId",
+          label: "Stripe Price ID",
+          type: "text",
+          admin: {
+            description: "Serveren bruker bare denne Stripe Price ID-en for denne planen. Eksempel: price_...",
+          },
+        },
       ],
     },
   ],

@@ -74,7 +74,7 @@ export default function VippsCheckout({ plan, interval, onBack }) {
 
         <div className="border-t border-border pt-4">
           <p className="text-[12px] text-muted-foreground mb-4">
-            Betaling er parkert til valgt leverandor er ferdig konfigurert. Premiumtilgang gis forst etter bekreftet betalingsstatus.
+            Premiumtilgang gis ikke fra redirect alene, men først etter at betalingsleverandoren har bekreftet betalingen.
           </p>
           <button
             onClick={handleCheckout}
@@ -82,13 +82,13 @@ export default function VippsCheckout({ plan, interval, onBack }) {
             className="w-full px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold text-[13px] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {loading ? "Sjekker..." : "Sjekk betaling"}
+            {loading ? "Sender deg videre..." : "Fortsett til sikker betaling"}
           </button>
         </div>
       </div>
 
       <p className="text-[11px] text-muted-foreground/70 text-center">
-        Premiumtilgang gis ikke fra redirect alene, kun etter bekreftet betaling.
+        Betalingskort og fakturaer behandles av den sikre betalingsleverandoren.
       </p>
     </div>
   );

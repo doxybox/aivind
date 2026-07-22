@@ -21,7 +21,7 @@ The current app tables are provider-neutral:
 - `subscription.providerCustomerId`: external customer id.
 - `subscription.providerSubscriptionId`: external subscription id, Vipps agreement id, or Stripe subscription id.
 - `subscription.providerChargeId`: external charge/payment id when relevant.
-- `subscription.status`: `active`, `trialing`, `past_due`, `cancelled`, `expired`.
+- `subscription.status`: `active`, `trialing`, `past_due`, `unpaid`, `canceled`, `incomplete`, `incomplete_expired`, `paused`, `cancelled` or `expired`.
 - `subscription.currentPeriodStart` / `subscription.currentPeriodEnd`: active access window.
 - `subscription.planKey`: canonical plan key, for example `premium_monthly`.
 - `subscription.entitlementKey`: entitlement derived from the plan, for example `premium`.
@@ -122,6 +122,21 @@ Current status mapping target:
 - payment problem -> `subscription.status=past_due`
 
 The production Vipps environment is intentionally blocked until the customer-owned setup is ready.
+
+## Stripe Billing
+
+Stripe is implemented as a server-side provider. Keep `BILLING_PROVIDER` empty until all Stripe
+environment variables, Dashboard settings and webhook QA are complete. When `BILLING_PROVIDER=stripe`,
+the browser can submit only a `planKey`; the server resolves the Price ID from the matching Payload
+subscription plan (`provider.stripePriceId`) or the interval-specific environment fallback.
+
+- `POST /api/stripe/create-checkout-session` creates a Stripe Customer and Checkout Session.
+- `POST /api/stripe/create-portal-session` creates a Customer Portal session for the signed-in owner.
+- `POST /api/stripe/webhook` verifies the raw Stripe signature before any database write.
+- `invoice.paid` is the event that grants subscription-derived entitlement. Redirects never grant access.
+- `invoice.payment_failed`, cancellation and deletion remove or withhold subscription-derived access.
+
+See [Stripe billing runbook](./stripe-billing.md) before enabling the provider.
 
 ## Future Stripe Billing
 

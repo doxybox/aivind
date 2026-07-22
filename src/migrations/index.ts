@@ -9,6 +9,7 @@ import * as migration_20260716_054000_add_article_version_autosave from './20260
 import * as migration_20260716_060000_add_category_hero_media from './20260716_060000_add_category_hero_media';
 import * as migration_20260716_064500_add_advertising_settings_global from './20260716_064500_add_advertising_settings_global';
 import * as migration_20260716_071500_add_subscription_plans from './20260716_071500_add_subscription_plans';
+import * as migration_20260722_120000_add_stripe_subscription_plan_price from './20260722_120000_add_stripe_subscription_plan_price';
 
 export const migrations = [
   {
@@ -65,5 +66,10 @@ export const migrations = [
     up: migration_20260716_071500_add_subscription_plans.up,
     down: migration_20260716_071500_add_subscription_plans.down,
     name: '20260716_071500_add_subscription_plans'
+  },
+  {
+    up: migration_20260722_120000_add_stripe_subscription_plan_price.up,
+    down: migration_20260722_120000_add_stripe_subscription_plan_price.down,
+    name: '20260722_120000_add_stripe_subscription_plan_price'
   },
 ];

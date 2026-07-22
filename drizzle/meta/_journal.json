@@ -78,6 +78,13 @@
       "when": 1784161038359,
       "tag": "0010_fresh_karen_page",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1784700000000,
+      "tag": "0011_stripe_billing_sync",
+      "breakpoints": true
     }
   ]
 }

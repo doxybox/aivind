@@ -11,6 +11,7 @@ import {
 } from "@/lib/server/billing/providers/vipps-recurring";
 import { assertSameOriginRequest } from "@/lib/server/csrf";
 import { getSubscriptionPlan } from "@/lib/server/billing/subscription-plan-catalog";
+import { createStripeCheckoutSession } from "@/lib/server/billing/stripe-checkout";
 
 function sendError(res, error) {
   const status = error instanceof AuthRequiredError ? 401 : error?.status || 500;
@@ -100,6 +101,23 @@ export default async function handler(req, res) {
         vippsAgreementId: agreement.agreementId,
         checkoutUrl: agreement.confirmationUrl,
         vippsConfirmationUrl: agreement.confirmationUrl,
+      });
+    }
+
+    if (provider === "stripe") {
+      const checkout = await createStripeCheckoutSession({
+        user: session.user,
+        plan,
+        returnUrl,
+        cancelUrl,
+      });
+
+      return res.status(201).json({
+        provider: "stripe",
+        status: "pending",
+        subscriptionId: checkout.subscription.id,
+        checkoutSessionId: checkout.sessionId,
+        checkoutUrl: checkout.checkoutUrl,
       });
     }
 

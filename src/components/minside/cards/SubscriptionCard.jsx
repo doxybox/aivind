@@ -54,6 +54,25 @@ export default function SubscriptionCard({ upgradeOpen = false, onCloseUpgrade =
     : "-";
   const paymentMethod = sub?.payment_method || "Ikke registrert";
 
+  const openBillingPortal = async () => {
+    if (sub?.provider !== "stripe") {
+      setModalOpen(true);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/stripe/create-portal-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.url) throw new Error(data.error || "Kunne ikke åpne betalingsportalen.");
+      window.location.assign(data.url);
+    } catch {
+      setModalOpen(true);
+    }
+  };
+
   return (
     <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)] min-h-[600px] flex flex-col lg:flex-row gap-12">
       
@@ -83,12 +102,12 @@ export default function SubscriptionCard({ upgradeOpen = false, onCloseUpgrade =
         <div className="space-y-3">
           <button
             type="button"
-            onClick={() => setModalOpen(true)}
+            onClick={openBillingPortal}
             className="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(249,115,22,0.3)]"
           >
             Administrer abonnement
           </button>
-          <button className="w-full py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-xl transition-all">
+          <button type="button" onClick={openBillingPortal} className="w-full py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-xl transition-all">
             Endre betalingsmetode
           </button>
         </div>

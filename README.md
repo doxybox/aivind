@@ -1,77 +1,47 @@
-# Base44 Project
+# TEKKNO
 
-Use this repository to run and edit the app locally, then publish changes back through Base44.
+TEKKNO is a Norwegian technology news platform built with Next.js Pages Router. Public content is
+managed in Payload CMS, user sessions use Better Auth, and application data is stored in Supabase
+Postgres through Drizzle.
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+## Stack
 
-## Prerequisites
+- Next.js Pages Router and JavaScript/JSX
+- Better Auth for users and sessions
+- Supabase Postgres and Drizzle for private application data
+- Payload CMS for articles, categories, authors, media, frontpage slots and editorial workflows
+- Stripe Billing provider support for subscriptions (disabled until configured)
+- Cloudflare media integration (enabled only when explicitly configured)
 
-1. Clone the repository using the project's Git URL.
-2. Navigate to the project directory.
-3. Install dependencies: `npm install`.
-4. Install the Base44 CLI: `npm install -g base44@latest`.
+## Local setup
 
-See the [Base44 CLI docs](https://docs.base44.com/developers/references/cli/get-started/overview) if you want to run Base44 commands directly.
+1. Copy `.env.example` to `.env` and fill in the required database, Better Auth and Payload values.
+2. Install dependencies with `npm install`.
+3. Apply the approved database migrations with `npm run db:migrate`.
+4. Run the public app with `npm run dev`.
+5. Run Payload Admin separately with `npm run payload-admin:dev` when editorial access is needed.
 
-## Run Locally
+Never commit `.env`, `.env.local`, Stripe secrets or database credentials.
 
-Run the full local development environment from the project root:
-
-```bash
-base44 dev
-```
-
-`base44 dev` starts the local Base44 development backend and, when this app is configured for it, also starts the frontend dev server for you. Use the frontend URL printed by the command.
-
-For example, when the Base44 project config includes a `serveCommand`, `base44 dev` can launch the frontend too:
-
-```json5
-{
-  "site": {
-    "serveCommand": "npm run dev"
-  }
-}
-```
-
-In a Base44 project this lives in `base44/config.jsonc`.
-
-## Run Only The Frontend
-
-If you only want to work on the frontend against the hosted Base44 backend, run:
+## Common checks
 
 ```bash
-npm run dev
+npm run test:auth
+npm run typecheck
+npm run lint
+npm run build
+npm run payload-admin:build
 ```
 
-Open the local URL printed by Next.js.
+## Billing
 
-## Use The Hosted Backend
+Billing is disabled unless `BILLING_PROVIDER=stripe` and the required Stripe configuration is set.
+Stripe Checkout and Customer Portal keep card details, invoices, receipts, refunds and cancellations in
+Stripe. Subscription access changes only after verified Stripe webhooks. Read
+[docs/stripe-billing.md](docs/stripe-billing.md) before enabling it.
 
-For frontend-only development, create or update `.env.local` in the project root:
+## Content source and rollback
 
-```bash
-NEXT_PUBLIC_BASE44_APP_ID=your_app_id
-NEXT_PUBLIC_BASE44_APP_BASE_URL=https://your-app.base44.app
-```
-
-`NEXT_PUBLIC_BASE44_APP_ID` identifies the Base44 app.
-
-`NEXT_PUBLIC_BASE44_APP_BASE_URL` tells Next.js where to proxy local `/api` requests. Point it at your deployed Base44 app URL when you want the local frontend to use the hosted backend.
-
-When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
-
-## Publish Your Changes
-
-After pushing your changes to git, open the Base44 dashboard and publish the app:
-
-```bash
-base44 dashboard open
-```
-
-## Docs & Support
-
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Base44 CLI command reference: [https://docs.base44.com/developers/references/cli/commands/introduction](https://docs.base44.com/developers/references/cli/commands/introduction)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+`CONTENT_SOURCE=legacy` remains the safe fallback. Payload public rendering can be enabled by setting
+`CONTENT_SOURCE=payload`. See the production cutover and staging runbooks in `docs/` before changing
+the production setting.

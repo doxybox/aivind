@@ -1,7 +1,19 @@
 import { isSubscriptionActive } from "../authz-core.js";
 
 export const BILLING_PROVIDERS = ["manual", "test", "vipps", "stripe"];
-export const BILLING_STATUSES = ["pending", "active", "trialing", "past_due", "cancelled", "expired"];
+export const BILLING_STATUSES = [
+  "pending",
+  "active",
+  "trialing",
+  "past_due",
+  "unpaid",
+  "canceled",
+  "cancelled",
+  "incomplete",
+  "incomplete_expired",
+  "paused",
+  "expired",
+];
 export const CHECKOUT_PATH_ALLOWLIST = ["/abonnement/status", "/abonnement", "/min-side"];
 
 export function normalizeBillingProvider(value = "") {
@@ -120,6 +132,18 @@ export function getBillingCheckoutStatus(env = process.env) {
       provider,
       code: missing.length === 0 ? "BILLING_READY" : "VIPPS_NOT_CONFIGURED",
       message: missing.length === 0 ? "Vipps checkout er konfigurert." : "Betaling er ikke aktivert i dette miljøet.",
+      missing,
+    };
+  }
+
+  if (provider === "stripe") {
+    const required = ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"];
+    const missing = required.filter((key) => !env[key]);
+    return {
+      enabled: missing.length === 0,
+      provider,
+      code: missing.length === 0 ? "BILLING_READY" : "STRIPE_NOT_CONFIGURED",
+      message: missing.length === 0 ? "Stripe Checkout er konfigurert." : "Betaling er ikke aktivert i dette miljoet.",
       missing,
     };
   }

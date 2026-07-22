@@ -105,6 +105,7 @@ export function serializeSubscription(row) {
       status: "free",
       current_period_start: "",
       current_period_end: "",
+      canceled_at: "",
       price: 0,
       billing_period: "monthly",
       payment_method: "",
@@ -125,6 +126,7 @@ export function serializeSubscription(row) {
     status: row.status,
     current_period_start: iso(row.currentPeriodStart),
     current_period_end: iso(row.currentPeriodEnd),
+    canceled_at: iso(row.canceledAt),
     price: row.price || 0,
     billing_period: row.billingPeriod || "monthly",
     payment_method: row.paymentMethod || "",
@@ -132,6 +134,7 @@ export function serializeSubscription(row) {
     external_customer_id: row.providerCustomerId || "",
     external_subscription_id: row.providerSubscriptionId || "",
     provider_charge_id: row.providerChargeId || "",
+    stripe_price_id: row.stripePriceId || "",
     created_date: iso(row.createdAt),
     updated_date: iso(row.updatedAt),
   };

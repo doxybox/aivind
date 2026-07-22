@@ -61,6 +61,7 @@ export const subscription = pgTable(
     providerCustomerId: text("provider_customer_id"),
     providerSubscriptionId: text("provider_subscription_id"),
     providerChargeId: text("provider_charge_id"),
+    stripePriceId: text("stripe_price_id"),
     status: text("status").notNull(),
     price: integer("price").notNull().default(0),
     billingPeriod: text("billing_period").notNull().default("monthly"),
@@ -68,6 +69,7 @@ export const subscription = pgTable(
     cancelAtPeriodEnd: boolean("cancel_at_period_end").notNull().default(false),
     currentPeriodStart: timestamp("current_period_start", { withTimezone: true }),
     currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
+    canceledAt: timestamp("canceled_at", { withTimezone: true }),
     metadata: jsonb("metadata"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
@@ -75,6 +77,8 @@ export const subscription = pgTable(
   (table) => ({
     userIdIdx: index("subscription_user_id_idx").on(table.userId),
     providerSubIdx: index("subscription_provider_subscription_id_idx").on(table.providerSubscriptionId),
+    providerCustomerIdx: index("subscription_provider_customer_id_idx").on(table.providerCustomerId),
+    stripePriceIdx: index("subscription_stripe_price_id_idx").on(table.stripePriceId),
   }),
 );
 
@@ -107,6 +111,8 @@ export const billingEvent = pgTable(
     eventType: text("event_type"),
     status: text("status"),
     payloadHash: text("payload_hash"),
+    eventCreatedAt: timestamp("event_created_at", { withTimezone: true }),
+    failureCode: text("failure_code"),
     processedAt: timestamp("processed_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },

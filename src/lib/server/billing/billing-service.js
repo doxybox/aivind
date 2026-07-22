@@ -1,7 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { billingEvent, entitlement, subscription } from "@/db/schema";
-import { getSubscriptionPlan } from "./subscription-plan-catalog.js";
+import { getSubscriptionPlan, getSubscriptionPlanByStripePriceId } from "./subscription-plan-catalog.js";
 import {
   buildEntitlementSource,
   getSubscriptionEntitlementKey,
@@ -54,7 +54,7 @@ export async function getCurrentUserSubscription(userId) {
     .select()
     .from(subscription)
     .where(eq(subscription.userId, userId))
-    .orderBy(desc(subscription.createdAt))
+    .orderBy(desc(subscription.updatedAt))
     .limit(1);
 
   return rows[0] || null;
@@ -72,6 +72,37 @@ export async function findSubscriptionByProviderId(provider, providerSubscriptio
         eq(subscription.providerSubscriptionId, providerSubscriptionId),
       ),
     )
+    .limit(1);
+
+  return rows[0] || null;
+}
+
+export async function findSubscriptionByProviderCustomerId(provider, providerCustomerId) {
+  if (!provider || !providerCustomerId) return null;
+
+  const rows = await db
+    .select()
+    .from(subscription)
+    .where(
+      and(
+        eq(subscription.provider, provider),
+        eq(subscription.providerCustomerId, providerCustomerId),
+      ),
+    )
+    .orderBy(desc(subscription.updatedAt))
+    .limit(1);
+
+  return rows[0] || null;
+}
+
+export async function findLatestProviderSubscriptionForUser(userId, provider) {
+  if (!userId || !provider) return null;
+
+  const rows = await db
+    .select()
+    .from(subscription)
+    .where(and(eq(subscription.userId, userId), eq(subscription.provider, provider)))
+    .orderBy(desc(subscription.updatedAt))
     .limit(1);
 
   return rows[0] || null;
@@ -109,6 +140,110 @@ export async function updateSubscriptionProviderReference(subscriptionId, {
     .returning();
 
   return rows[0] || null;
+}
+
+export async function syncStripeSubscription({
+  stripeSubscription,
+  userId = null,
+  planKey = null,
+  metadata = {},
+} = {}) {
+  const providerSubscriptionId = typeof stripeSubscription?.id === "string" ? stripeSubscription.id : "";
+  if (!providerSubscriptionId) {
+    const error = new Error("Stripe subscription id is required");
+    error.status = 400;
+    throw error;
+  }
+
+  const existing = await findSubscriptionByProviderId("stripe", providerSubscriptionId);
+  const stripePriceId = String(stripeSubscription?.items?.data?.[0]?.price?.id || "").trim() || null;
+  const resolvedPlan = planKey
+    ? await getSubscriptionPlan(planKey, { includeInactive: true })
+    : stripePriceId
+      ? await getSubscriptionPlanByStripePriceId(stripePriceId, { includeInactive: true })
+      : null;
+  const effectiveUserId = userId || existing?.userId || null;
+
+  if (!effectiveUserId) {
+    const error = new Error("Stripe subscription is not linked to an application user");
+    error.status = 422;
+    error.code = "STRIPE_USER_LINK_MISSING";
+    throw error;
+  }
+
+  const now = new Date();
+  const currentPeriodStart = stripeSubscription.current_period_start
+    ? new Date(stripeSubscription.current_period_start * 1000)
+    : existing?.currentPeriodStart || null;
+  const currentPeriodEnd = stripeSubscription.current_period_end
+    ? new Date(stripeSubscription.current_period_end * 1000)
+    : existing?.currentPeriodEnd || null;
+  const canceledAt = stripeSubscription.canceled_at
+    ? new Date(stripeSubscription.canceled_at * 1000)
+    : existing?.canceledAt || null;
+  const plan = resolvedPlan || {
+    planKey: existing?.planKey || existing?.planType || "",
+    entitlementKey: existing?.entitlementKey || null,
+    price: existing?.price || 0,
+    interval: existing?.billingPeriod || "monthly",
+    currency: existing?.metadata?.planSnapshot?.currency || "NOK",
+    displayName: existing?.metadata?.planSnapshot?.displayName || existing?.planKey || "",
+    description: existing?.metadata?.planSnapshot?.description || "",
+    features: existing?.metadata?.planSnapshot?.features || [],
+  };
+
+  if (!plan.planKey || !plan.entitlementKey) {
+    const error = new Error("Stripe price is not mapped to a subscription plan");
+    error.status = 422;
+    error.code = "STRIPE_PLAN_MAPPING_MISSING";
+    throw error;
+  }
+
+  const data = {
+    userId: effectiveUserId,
+    planType: plan.planKey,
+    planKey: plan.planKey,
+    entitlementKey: plan.entitlementKey,
+    provider: "stripe",
+    providerCustomerId: typeof stripeSubscription.customer === "string"
+      ? stripeSubscription.customer
+      : stripeSubscription.customer?.id || existing?.providerCustomerId || null,
+    providerSubscriptionId,
+    providerChargeId: typeof stripeSubscription.latest_invoice?.charge === "string"
+      ? stripeSubscription.latest_invoice.charge
+      : existing?.providerChargeId || null,
+    stripePriceId,
+    status: String(stripeSubscription.status || "pending").toLowerCase(),
+    price: plan.price,
+    billingPeriod: plan.interval,
+    paymentMethod: "stripe",
+    cancelAtPeriodEnd: Boolean(stripeSubscription.cancel_at_period_end),
+    currentPeriodStart,
+    currentPeriodEnd,
+    canceledAt,
+    metadata: {
+      ...(existing?.metadata || {}),
+      ...metadata,
+      stripeStatus: stripeSubscription.status || "pending",
+      stripePriceId,
+      planSnapshot: {
+        displayName: plan.displayName,
+        description: plan.description,
+        features: plan.features,
+        currency: plan.currency,
+        price: plan.price,
+        interval: plan.interval,
+      },
+    },
+    updatedAt: now,
+  };
+
+  const rows = existing
+    ? await db.update(subscription).set(data).where(eq(subscription.id, existing.id)).returning()
+    : await db.insert(subscription).values({ ...data, createdAt: now }).returning();
+
+  await syncEntitlementFromSubscription(rows[0], now);
+  return rows[0];
 }
 
 export async function createPendingSubscription({
@@ -401,4 +536,83 @@ export async function recordBillingEvent({
     inserted: rows.length > 0,
     event: rows[0] || null,
   };
+}
+
+export async function claimBillingEvent({
+  provider,
+  eventId,
+  providerSubscriptionId = null,
+  eventType = "",
+  status = "received",
+  payloadHash = "",
+  eventCreatedAt = null,
+} = {}) {
+  if (!provider || !eventId) {
+    const error = new Error("Invalid billing event");
+    error.status = 400;
+    throw error;
+  }
+
+  const now = new Date();
+  const rows = await db
+    .insert(billingEvent)
+    .values({
+      provider,
+      eventId,
+      providerSubscriptionId,
+      eventType,
+      status,
+      payloadHash,
+      eventCreatedAt: eventCreatedAt ? new Date(eventCreatedAt) : null,
+      processedAt: null,
+      createdAt: now,
+    })
+    .onConflictDoNothing()
+    .returning();
+
+  if (rows.length === 0) {
+    const existingRows = await db
+      .select()
+      .from(billingEvent)
+      .where(and(eq(billingEvent.provider, provider), eq(billingEvent.eventId, eventId)))
+      .limit(1);
+    const existing = existingRows[0];
+
+    // A failed delivery has no processedAt timestamp. Stripe may retry it safely.
+    if (existing && !existing.processedAt && existing.status === "failed") {
+      const reclaimed = await db
+        .update(billingEvent)
+        .set({ status: "received", failureCode: null })
+        .where(eq(billingEvent.id, existing.id))
+        .returning();
+      return { claimed: reclaimed.length > 0, event: reclaimed[0] || existing };
+    }
+  }
+
+  return {
+    claimed: rows.length > 0,
+    event: rows[0] || null,
+  };
+}
+
+export async function completeBillingEvent(provider, eventId, status = "processed") {
+  if (!provider || !eventId) return null;
+
+  const rows = await db
+    .update(billingEvent)
+    .set({ status, processedAt: new Date(), failureCode: null })
+    .where(and(eq(billingEvent.provider, provider), eq(billingEvent.eventId, eventId)))
+    .returning();
+  return rows[0] || null;
+}
+
+export async function failBillingEvent(provider, eventId, failureCode = "processing_failed") {
+  if (!provider || !eventId) return null;
+
+  const rows = await db
+    .update(billingEvent)
+    .set({ status: "failed", failureCode: String(failureCode || "processing_failed").slice(0, 120) })
+    .where(and(eq(billingEvent.provider, provider), eq(billingEvent.eventId, eventId)))
+    .returning();
+  return rows[0] || null;
 }

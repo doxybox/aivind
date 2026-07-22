@@ -45,8 +45,8 @@ export default function SubscriptionSection({ paymentStatus, upgradeOpen, onClos
   const planSlug = sub?.plan_type || "free";
   const planLabel = sub?.plan_name || (planSlug === "free" ? "Gratis" : planSlug);
   const isFree = !sub || sub.status === "free" || sub.plan_type === "free";
-  const isCancelled = sub?.status === "cancelled" && !isFree;
-  const isActive = sub?.status === "active" && !isFree;
+  const isCancelled = ["cancelled", "canceled"].includes(sub?.status) && !isFree;
+  const isActive = ["active", "trialing"].includes(sub?.status) && !isFree;
   const billingInterval = sub?.billing_period || "monthly";
 
   const handleCheckout = async (plan, _interval) => {
@@ -60,34 +60,39 @@ export default function SubscriptionSection({ paymentStatus, upgradeOpen, onClos
       onCloseUpgrade?.();
       return;
     }
-    // Checkout not yet configured — payment integration pending
-    toast({
-      title: "Snart tilgjengelig",
-      description: "Sikker betaling via Stripe/Vipps vil snart være klar for oppgradering.",
-      variant: "warning",
-    });
-    setModalOpen(false);
-    onCloseUpgrade?.();
+    const planKey = _interval === "yearly" ? plan.yearlyPlanKey || plan.planKey : plan.monthlyPlanKey || plan.planKey;
+    try {
+      const response = await fetch("/api/billing/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planKey, returnUrl: "/abonnement/status", cancelUrl: "/min-side?payment=cancelled" }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Kunne ikke starte betaling.");
+      if (data.checkoutUrl) return window.location.assign(data.checkoutUrl);
+      throw new Error("Betalingsleverandoren returnerte ingen checkout-lenke.");
+    } catch (error) {
+      toast({ title: "Kunne ikke starte betaling", description: error.message, variant: "warning" });
+    }
   };
 
-  const handleCancel = () => {
-    toast({
-      title: "Snart tilgjengelig",
-      description: "Kansellering vil være tilgjengelig via sikker betalingsportal.",
-      variant: "warning",
-    });
-  };
+  const openBillingPortal = async () => {
+    if (sub?.provider !== "stripe") {
+      setModalOpen(true);
+      return;
+    }
 
-  const handleResume = () => {
-    toast({
-      title: "Snart tilgjengelig",
-      description: "Gjenopptakelse vil være tilgjengelig via sikker betaling.",
-      variant: "warning",
-    });
-  };
-
-  const handleChange = () => {
-    setModalOpen(true);
+    try {
+      const response = await fetch("/api/stripe/create-portal-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.url) throw new Error(data.error || "Kunne ikke åpne betalingsportalen.");
+      window.location.assign(data.url);
+    } catch (error) {
+      toast({ title: "Kunne ikke åpne betalingsportalen", description: error.message, variant: "warning" });
+    }
   };
 
   const closeModal = () => {
@@ -226,7 +231,7 @@ export default function SubscriptionSection({ paymentStatus, upgradeOpen, onClos
         </button>
         {!isFree && !isCancelled && (
           <button
-            onClick={handleChange}
+            onClick={openBillingPortal}
             className="inline-flex items-center gap-2 px-4 py-2.5 border border-border rounded-lg text-[13px] font-semibold text-foreground hover:border-orange-500/40 transition-colors"
           >
             <CreditCard className="w-4 h-4" /> Endre abonnement
@@ -234,7 +239,7 @@ export default function SubscriptionSection({ paymentStatus, upgradeOpen, onClos
         )}
         {!isFree && !isCancelled && (
           <button
-            onClick={handleCancel}
+            onClick={openBillingPortal}
             className="inline-flex items-center gap-2 px-4 py-2.5 border border-border rounded-lg text-[13px] font-semibold text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors"
           >
             <XCircle className="w-4 h-4" /> Kanseller abonnement
@@ -242,7 +247,7 @@ export default function SubscriptionSection({ paymentStatus, upgradeOpen, onClos
         )}
         {isCancelled && (
           <button
-            onClick={handleResume}
+            onClick={openBillingPortal}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-[13px] font-semibold transition-colors"
           >
             <RotateCcw className="w-4 h-4" /> Gjenoppta abonnement

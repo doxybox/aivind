@@ -1,4 +1,4 @@
-import { and, eq, gt, inArray, isNull, lte, or } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull, lte, or } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/db/client";
 import { entitlement, subscription, userRole } from "@/db/schema";
@@ -128,10 +128,41 @@ export async function userHasActiveSubscription(userId) {
   return rows.length > 0;
 }
 
+export async function getUserEntitlementSummary(userId) {
+  if (!userId) {
+    return {
+      isSubscriber: false,
+      canReadPremium: false,
+      subscriptionStatus: null,
+      currentPeriodEnd: null,
+    };
+  }
+
+  const [activeEntitlements, rows] = await Promise.all([
+    getUserEntitlements(userId),
+    db
+      .select()
+      .from(subscription)
+      .where(eq(subscription.userId, userId))
+      .orderBy(desc(subscription.updatedAt))
+      .limit(1),
+  ]);
+  const latestSubscription = rows[0] || null;
+  const isSubscriber = await userHasActiveSubscription(userId);
+
+  return {
+    isSubscriber,
+    canReadPremium: isSubscriber || hasActiveEntitlement(activeEntitlements, ["premium", "premium_articles"]),
+    subscriptionStatus: latestSubscription?.status || null,
+    currentPeriodEnd: latestSubscription?.currentPeriodEnd || null,
+  };
+}
+
 export async function canAccessPremiumArticle(userId, articleId) {
   if (!userId) return false;
 
-  if (await userHasActiveSubscription(userId)) {
+  const summary = await getUserEntitlementSummary(userId);
+  if (summary.isSubscriber) {
     return true;
   }
 

@@ -36,6 +36,9 @@ export function serializeSubscriptionPlan(doc = {}) {
       productId: String(doc.provider?.vippsProductId || "").trim() || null,
       agreementProductName: String(doc.provider?.vippsAgreementProductName || "").trim() || null,
     },
+    stripe: {
+      priceId: String(doc.provider?.stripePriceId || "").trim() || null,
+    },
   };
 }
 
@@ -66,6 +69,33 @@ export async function getSubscriptionPlan(planKey, { includeInactive = false } =
   });
   const plan = serializeSubscriptionPlan(result.docs?.[0]);
   return isUsablePlan(plan, { includeInactive }) ? plan : null;
+}
+
+export async function getSubscriptionPlanByStripePriceId(stripePriceId, { includeInactive = true } = {}) {
+  const cleanPriceId = String(stripePriceId || "").trim();
+  if (!cleanPriceId) return null;
+
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "subscription-plans",
+    where: {
+      "provider.stripePriceId": { equals: cleanPriceId },
+    },
+    limit: 1,
+    pagination: false,
+    depth: 0,
+    overrideAccess: true,
+  });
+  const plan = serializeSubscriptionPlan(result.docs?.[0]);
+  if (isUsablePlan(plan, { includeInactive })) return plan;
+
+  // The interval-specific environment Price IDs are safe server-side fallbacks for
+  // legacy plans and Stripe Dashboard-created subscriptions without app metadata.
+  const fallbackPlans = await getActiveSubscriptionPlans();
+  return fallbackPlans.find((candidate) => (
+    (candidate.interval === "monthly" && process.env.STRIPE_MONTHLY_PRICE_ID === cleanPriceId)
+    || (candidate.interval === "yearly" && process.env.STRIPE_YEARLY_PRICE_ID === cleanPriceId)
+  )) || null;
 }
 
 export async function getActiveSubscriptionPlans() {
