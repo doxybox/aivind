@@ -4,6 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Search, Menu, TrendingUp, TrendingDown, Moon, X, Loader2 } from "lucide-react";
 import { GiFlashGrenade } from "react-icons/gi";
+import { FaMicrosoft } from "react-icons/fa";
+import { SiApple, SiNvidia, SiTesla } from "react-icons/si";
 import { useTheme } from "@/hooks/useTheme";
 import SearchOverlay from "@/components/aivind/SearchOverlay";
 import { allArticles } from "@/lib/articles";
@@ -37,6 +39,22 @@ const GridCard = ({ image, type, accessLevel, paywallEnabled, title, href = "#",
 const StockLogo = ({ stock }) => {
   const [failed, setFailed] = useState(false);
   const fallbackLabel = (stock.id || stock.name || "?").slice(0, 2).toUpperCase();
+  const brandLogos = {
+    nvda: { Icon: SiNvidia, className: "text-[#76b900]" },
+    msft: { Icon: FaMicrosoft, className: "text-[#00a4ef]" },
+    tsla: { Icon: SiTesla, className: "text-[#e82127]" },
+    aapl: { Icon: SiApple, className: "text-zinc-900 dark:text-white" },
+  };
+  const brandLogo = brandLogos[stock.id];
+
+  if (brandLogo) {
+    const { Icon, className } = brandLogo;
+    return (
+      <span className={`w-full h-full rounded-md bg-zinc-100 dark:bg-white/10 flex items-center justify-center ${className}`} aria-hidden="true">
+        <Icon className="w-4 h-4" />
+      </span>
+    );
+  }
 
   if (!stock.logo || failed) {
     return (
@@ -65,11 +83,12 @@ const LiveStockWidget = () => {
   const [error, setError] = useState("");
   const [asOf, setAsOf] = useState(null);
   const [marketOpen, setMarketOpen] = useState(false);
+  const [delayedMinutes, setDelayedMinutes] = useState(15);
 
   const fetchStocks = async () => {
     setError("");
     try {
-      const response = await fetch("/api/market-data");
+      const response = await fetch("/api/market/quotes");
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !Array.isArray(data.stocks)) {
         throw new Error(data.error || "Kunne ikke hente kurser");
@@ -78,6 +97,7 @@ const LiveStockWidget = () => {
       setStocks([...data.stocks].sort((a, b) => b.price - a.price));
       setAsOf(data.asOf || null);
       setMarketOpen(data.marketOpen === true);
+      setDelayedMinutes(Number(data.delayedMinutes) || 15);
     } catch (e) {
       setStocks([]);
       setError(e.message || "Kunne ikke hente kurser");
@@ -91,7 +111,7 @@ const LiveStockWidget = () => {
     const refreshWhenVisible = () => {
       if (document.visibilityState === "visible") fetchStocks();
     };
-    const interval = setInterval(refreshWhenVisible, 15 * 1000);
+    const interval = setInterval(refreshWhenVisible, 2 * 60 * 1000);
     document.addEventListener("visibilitychange", refreshWhenVisible);
 
     return () => {
@@ -122,7 +142,8 @@ const LiveStockWidget = () => {
   return (
     <div className="flex flex-col flex-1 relative">
       {stocks.map((stock) => {
-        const isPositive = stock.change >= 0;
+        const changePercent = Number(stock.changePercent ?? stock.change ?? 0);
+        const isPositive = changePercent >= 0;
         
         return (
           <motion.div 
@@ -147,16 +168,16 @@ const LiveStockWidget = () => {
               </span>
               <div className={`flex items-center gap-1 text-xs font-bold transition-colors duration-300 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
                 {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                <span>{isPositive ? '+' : ''}{stock.change.toFixed(2)}%</span>
+                <span>{isPositive ? '+' : ''}{changePercent.toFixed(2)}%</span>
               </div>
             </div>
           </motion.div>
         );
       })}
       <p className="mt-4 text-[10px] leading-4 text-zinc-500 dark:text-zinc-400">
-        {marketOpen ? "Forsinkede kurser" : "Markedet er stengt"}
+        {marketOpen ? "" : "Markedet er stengt. "}Kurser kan være forsinket med minst {delayedMinutes} minutter.
         {asOf
-          ? ` · ${marketOpen ? "oppdatert" : "siste kurs"} ${new Date(asOf).toLocaleString("nb-NO", {
+          ? ` Sist oppdatert ${new Date(asOf).toLocaleString("nb-NO", {
               weekday: marketOpen ? undefined : "short",
               day: marketOpen ? undefined : "numeric",
               month: marketOpen ? undefined : "short",

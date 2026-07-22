@@ -1,3 +1,5 @@
+import { createYahooFinanceProvider } from "./market-providers/yahoo-finance.js";
+
 const QUOTE_SYMBOLS = [
   { id: "nvda", symbol: "NVDA", name: "NVIDIA" },
   { id: "msft", symbol: "MSFT", name: "Microsoft" },
@@ -6,8 +8,10 @@ const QUOTE_SYMBOLS = [
 ];
 
 const FX_SYMBOL = "NOK=X";
-const CACHE_TTL_MS = 15 * 1000;
-const MARKET_OPEN_FRESHNESS_MS = 45 * 60 * 1000;
+const CACHE_TTL_MS = 2 * 60 * 1000;
+const DELAYED_MINUTES = 15;
+const MARKET_OPEN_FRESHNESS_MS = 25 * 60 * 1000;
+const US_MARKET_TIME_ZONE = "America/New_York";
 
 let memoryCache = null;
 
@@ -27,46 +31,29 @@ export function calculatePercentChange(price, previousClose) {
   return ((price - previousClose) / previousClose) * 100;
 }
 
-function chartUrl(symbol) {
-  return `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1m`;
-}
-
-async function fetchChartMeta(symbol, fetchImpl) {
-  const response = await fetchImpl(chartUrl(symbol), {
-    headers: {
-      Accept: "application/json",
-      "User-Agent": "TEKKNO market widget/1.0",
-    },
-    signal: AbortSignal.timeout(8000),
-  });
-
-  if (!response.ok) {
-    throw new MarketDataError(`Quote provider returned ${response.status}`);
-  }
-
-  const body = await response.json();
-  const meta = body?.chart?.result?.[0]?.meta;
-  if (!meta) {
-    throw new MarketDataError("Quote provider returned an invalid response");
-  }
-
-  return meta;
-}
-
-export function mapQuoteToNok(definition, meta, usdNokRate) {
+export function mapQuoteToNok(definition, meta, usdNokRate, previousUsdNokRate = usdNokRate) {
   const priceUsd = Number(meta.regularMarketPrice);
   const previousCloseUsd = Number(meta.chartPreviousClose ?? meta.previousClose);
 
-  if (!Number.isFinite(usdNokRate) || usdNokRate <= 0) {
+  if (
+    !Number.isFinite(usdNokRate) ||
+    usdNokRate <= 0 ||
+    !Number.isFinite(previousUsdNokRate) ||
+    previousUsdNokRate <= 0
+  ) {
     throw new MarketDataError("Invalid USD/NOK rate");
   }
+
+  const priceNok = priceUsd * usdNokRate;
+  const previousCloseNok = previousCloseUsd * previousUsdNokRate;
 
   return {
     id: definition.id,
     symbol: definition.symbol,
     name: definition.name,
-    price: Number((priceUsd * usdNokRate).toFixed(2)),
-    change: Number(calculatePercentChange(priceUsd, previousCloseUsd).toFixed(2)),
+    price: Number(priceNok.toFixed(2)),
+    change: Number((priceNok - previousCloseNok).toFixed(2)),
+    changePercent: Number(calculatePercentChange(priceNok, previousCloseNok).toFixed(2)),
     currency: "NOK",
     marketTime: Number(meta.regularMarketTime) || null,
   };
@@ -78,29 +65,70 @@ export function isMarketOpenFromQuoteTime(marketTime, now = Date.now()) {
   return quoteAge >= 0 && quoteAge <= MARKET_OPEN_FRESHNESS_MS;
 }
 
-export async function getMarketData({ fetchImpl = fetch, now = Date.now(), force = false } = {}) {
+export function isUsRegularMarketHours(now = Date.now()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: US_MARKET_TIME_ZONE,
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(now));
+  const part = (type) => parts.find((item) => item.type === type)?.value;
+  const weekday = part("weekday");
+  const hours = Number(part("hour"));
+  const minutes = Number(part("minute"));
+  const minutesSinceMidnight = hours * 60 + minutes;
+
+  return ["Mon", "Tue", "Wed", "Thu", "Fri"].includes(weekday) &&
+    minutesSinceMidnight >= 9 * 60 + 30 &&
+    minutesSinceMidnight < 16 * 60;
+}
+
+export function isRegularMarketOpen(marketTime, now = Date.now()) {
+  return isMarketOpenFromQuoteTime(marketTime, now) && isUsRegularMarketHours(now);
+}
+
+export async function getMarketData({ fetchImpl = fetch, now = Date.now(), force = false, provider } = {}) {
   if (!force && memoryCache && memoryCache.expiresAt > now) {
     return memoryCache.value;
   }
 
-  const [fxMeta, ...quoteMeta] = await Promise.all([
-    fetchChartMeta(FX_SYMBOL, fetchImpl),
-    ...QUOTE_SYMBOLS.map((quote) => fetchChartMeta(quote.symbol, fetchImpl)),
-  ]);
+  const activeProvider = provider || createYahooFinanceProvider({ fetchImpl });
+
+  let fxMeta;
+  let quoteMeta;
+  try {
+    [fxMeta, ...quoteMeta] = await Promise.all([
+      activeProvider.getQuote(FX_SYMBOL, { now, delayedMinutes: DELAYED_MINUTES }),
+      ...QUOTE_SYMBOLS.map((quote) => activeProvider.getQuote(quote.symbol, { now, delayedMinutes: DELAYED_MINUTES })),
+    ]);
+  } catch (error) {
+    throw new MarketDataError(error instanceof Error ? error.message : undefined);
+  }
 
   const usdNokRate = Number(fxMeta.regularMarketPrice);
-  const stocks = QUOTE_SYMBOLS.map((definition, index) =>
-    mapQuoteToNok(definition, quoteMeta[index], usdNokRate),
-  );
-  const latestMarketTime = Math.max(...stocks.map((stock) => stock.marketTime || 0));
+  const previousUsdNokRate = Number(fxMeta.chartPreviousClose ?? fxMeta.previousClose ?? usdNokRate);
+  const latestMarketTime = Math.max(...quoteMeta.map((quote) => Number(quote.regularMarketTime) || 0));
+  const marketOpen = isRegularMarketOpen(latestMarketTime, now);
+  const updatedAt = latestMarketTime > 0 ? new Date(latestMarketTime * 1000).toISOString() : new Date(now).toISOString();
+  const stocks = QUOTE_SYMBOLS.map((definition, index) => ({
+    ...mapQuoteToNok(definition, quoteMeta[index], usdNokRate, previousUsdNokRate),
+    marketState: marketOpen ? "OPEN" : "CLOSED",
+    delayedMinutes: DELAYED_MINUTES,
+    source: activeProvider.name,
+    updatedAt,
+  }));
 
   const value = {
     stocks,
     currency: "NOK",
     delayed: true,
-    marketOpen: isMarketOpenFromQuoteTime(latestMarketTime, now),
-    provider: "yahoo-finance",
-    asOf: latestMarketTime > 0 ? new Date(latestMarketTime * 1000).toISOString() : new Date(now).toISOString(),
+    delayedMinutes: DELAYED_MINUTES,
+    marketOpen,
+    marketState: marketOpen ? "OPEN" : "CLOSED",
+    provider: activeProvider.name,
+    updatedAt,
+    asOf: updatedAt,
   };
 
   memoryCache = {

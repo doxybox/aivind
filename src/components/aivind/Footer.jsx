@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, ChevronDown, ChevronRight, Instagram, Linkedin, Loader2, Moon, Rss, ShieldCheck, Sun, Youtube } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronRight, Loader2, Moon, ShieldCheck, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import BrandLogo from "@/components/aivind/BrandLogo";
 import { openCookiePreferences } from "@/lib/cookie-consent";
@@ -13,6 +13,29 @@ const footerLinks = [
   { label: "Personvern", href: "/personvern" },
   { label: "Informasjonskapsler", href: "/informasjonskapsler" },
   { label: "Vilkår", href: "/vilkar" },
+];
+
+const socialChannels = [
+  {
+    label: "Instagram",
+    markClass: "bg-[radial-gradient(circle_at_72%_76%,#ffbd18_0_8%,transparent_9%),linear-gradient(135deg,#7b2cbf_5%,#d62976_47%,#f77737_76%,#feda75_100%)]",
+  },
+  {
+    label: "TikTok",
+    markClass: "bg-zinc-950 ring-1 ring-cyan-400/80 shadow-[2px_0_0_#ff0050,-2px_0_0_#00f2ea]",
+  },
+  {
+    label: "Facebook",
+    markClass: "bg-[#1877f2]",
+  },
+  {
+    label: "YouTube",
+    markClass: "bg-[#ff0000]",
+  },
+  {
+    label: "Snapchat",
+    markClass: "bg-[#fffc00] text-zinc-950",
+  },
 ];
 
 export default function Footer() {
@@ -61,22 +84,20 @@ export default function Footer() {
               Vi dekker fremtiden i sanntid.
             </p>
 
-            <div className="flex items-center gap-2 mb-6">
-              {[
-                { icon: <span className="font-bold font-mono text-[13px]">X</span>, label: "X" },
-                { icon: <Instagram className="w-3.5 h-3.5" />, label: "Instagram" },
-                { icon: <Youtube className="w-3.5 h-3.5" />, label: "YouTube" },
-                { icon: <Linkedin className="w-3.5 h-3.5" />, label: "LinkedIn" },
-                { icon: <Rss className="w-3.5 h-3.5" />, label: "RSS" },
-              ].map((social) => (
-                <span
-                  key={social.label}
-                  className="w-8 h-8 rounded-lg bg-muted/20 border border-border flex items-center justify-center text-muted-foreground"
-                  aria-label={`${social.label} kommer senere`}
-                  title={`${social.label} kommer senere`}
-                >
-                  {social.icon}
-                </span>
+            <div className="flex flex-wrap items-start gap-3 sm:gap-4 mb-6" aria-label="TEKKNO på sosiale medier">
+              {socialChannels.map((social) => (
+                <div key={social.label} className="flex w-11 flex-col items-center gap-1.5" title={`${social.label} kommer senere`}>
+                  <span
+                    className={`relative flex h-11 w-11 items-center justify-center rounded-full text-white shadow-[0_5px_14px_rgba(0,0,0,0.22)] ${social.markClass}`}
+                    aria-label={`${social.label} kommer senere`}
+                  >
+                    <span className="relative text-[25px] font-black leading-none tracking-[-0.08em]">T</span>
+                    <span aria-hidden="true" className="absolute bottom-2 left-1/2 h-0.5 w-2.5 -translate-x-1/2 rounded-full bg-orange-500" />
+                  </span>
+                  <span className="text-center text-[8px] font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                    {social.label}
+                  </span>
+                </div>
               ))}
             </div>
 

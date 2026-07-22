@@ -466,6 +466,10 @@ export interface SubscriptionPlan {
   provider?: {
     vippsProductId?: string | null;
     vippsAgreementProductName?: string | null;
+    /**
+     * Serveren bruker bare denne Stripe Price ID-en for denne planen. Eksempel: price_...
+     */
+    stripePriceId?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -812,6 +816,7 @@ export interface SubscriptionPlansSelect<T extends boolean = true> {
     | {
         vippsProductId?: T;
         vippsAgreementProductName?: T;
+        stripePriceId?: T;
       };
   updatedAt?: T;
   createdAt?: T;

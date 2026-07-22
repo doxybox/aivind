@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     });
 
     const data = await getMarketData();
-    res.setHeader("Cache-Control", "public, s-maxage=15, stale-while-revalidate=30");
+    res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=60");
     return res.status(200).json(data);
   } catch (error) {
     const knownError = error instanceof MarketDataError || error instanceof RateLimitError;
