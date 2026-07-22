@@ -5,7 +5,7 @@ const rows = [
   ["Better Auth-sesjon", "TEKKNO / Better Auth", "Nødvendig", "Holder innloggede brukere innlogget og beskytter kontoer.", "Sesjonsvarighet"],
   ["payload_editorial_preview", "TEKKNO / Payload", "Nødvendig", "Gir redaksjonen en kortvarig forhåndsvisning av innhold.", "Kortvarig"],
   ["sidebar_state", "TEKKNO", "Nødvendig", "Husker valgt visning i interne brukerflater.", "7 dager"],
-  ["tekkno-cookie-consent", "TEKKNO", "Nødvendig", "Lagrer valget ditt for annonser og måling i nettleseren.", "Til du endrer eller sletter nettleserdata"],
+  ["tekkno_consent", "TEKKNO", "Nødvendig", "Lagrer valget ditt for analyse, annonser og personalisering i nettleseren.", "180 dager"],
   ["Google AdSense", "Google", "Annonser og måling", "Viser og måler annonser. Lastes kun ved samtykke og bare når annonser er aktivert av TEKKNO.", "Se Googles dokumentasjon"],
 ];
 

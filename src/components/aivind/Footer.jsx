@@ -192,7 +192,7 @@ export default function Footer() {
               onClick={openCookiePreferences}
               className="h-8 rounded-lg border border-border bg-muted/10 px-3 text-[12px] font-medium text-foreground transition-colors hover:bg-muted/30"
             >
-              Administrer cookies
+              Personvernvalg
             </button>
             <button
               type="button"

@@ -1,113 +1,131 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  COOKIE_CONSENT_CHANGE_EVENT,
-  COOKIE_CONSENT_MANAGE_EVENT,
-  defaultCookieConsent,
-  readCookieConsent,
-  saveCookieConsent,
-} from "@/lib/cookie-consent";
+import { X } from "lucide-react";
+import { useCookieConsent } from "@/components/aivind/ConsentProvider";
 
-export function useCookieConsent() {
-  const [consent, setConsent] = useState(defaultCookieConsent);
+function getFocusableElements(dialog) {
+  return dialog ? [...dialog.querySelectorAll('a[href], button:not([disabled]), input:not([disabled])')] : [];
+}
 
-  useEffect(() => {
-    const sync = (event) => setConsent(event?.detail || readCookieConsent());
-    sync();
-    window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, sync);
-    return () => window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, sync);
-  }, []);
-
-  return consent;
+function PreferenceRow({ title, description, checked = false, disabled = false, onChange }) {
+  return (
+    <label className="flex cursor-pointer items-start justify-between gap-5 border-t border-border pt-3 first:border-t-0 first:pt-0">
+      <span>
+        <span className="block font-semibold text-foreground">{title}</span>
+        <span className="mt-1 block text-xs leading-5 text-muted-foreground">{description}</span>
+      </span>
+      {disabled ? (
+        <span className="mt-1 text-xs font-semibold text-muted-foreground">Alltid på</span>
+      ) : (
+        <input type="checkbox" checked={checked} onChange={onChange} className="mt-1 h-4 w-4 accent-orange-500" aria-label={`Tillat ${title.toLowerCase()}`} />
+      )}
+    </label>
+  );
 }
 
 export default function CookieConsentManager() {
-  const consent = useCookieConsent();
-  const [isOpen, setIsOpen] = useState(false);
+  const {
+    consent,
+    consentReady,
+    hasConsentChoice,
+    showConsentDialog,
+    acceptAll,
+    rejectAll,
+    saveCustomConsent,
+    closeConsentSettings,
+  } = useCookieConsent();
+  const dialogRef = useRef(null);
+  const openerRef = useRef(null);
   const [isCustomizing, setIsCustomizing] = useState(false);
-  const [advertising, setAdvertising] = useState(false);
+  const [preferences, setPreferences] = useState({ analytics: false, advertising: false, personalization: false });
 
   useEffect(() => {
-    const open = () => {
-      const latest = readCookieConsent();
-      setAdvertising(latest.advertising);
-      setIsCustomizing(true);
-      setIsOpen(true);
-    };
+    if (!showConsentDialog) return undefined;
 
-    window.addEventListener(COOKIE_CONSENT_MANAGE_EVENT, open);
-    return () => window.removeEventListener(COOKIE_CONSENT_MANAGE_EVENT, open);
-  }, []);
+    openerRef.current = document.activeElement;
+    setIsCustomizing(hasConsentChoice);
+    setPreferences({
+      analytics: consent.analytics,
+      advertising: consent.advertising,
+      personalization: consent.personalization,
+    });
+    const focusId = window.requestAnimationFrame(() => getFocusableElements(dialogRef.current)[0]?.focus());
+    return () => window.cancelAnimationFrame(focusId);
+  }, [showConsentDialog, hasConsentChoice, consent]);
 
-  useEffect(() => {
-    if (!consent.decided) {
-      setAdvertising(false);
-      setIsOpen(true);
-    }
-  }, [consent.decided]);
-
-  const save = (nextAdvertising) => {
-    saveCookieConsent({ advertising: nextAdvertising });
-    setAdvertising(nextAdvertising);
-    setIsOpen(false);
-    setIsCustomizing(false);
+  const close = () => {
+    if (!hasConsentChoice) return;
+    closeConsentSettings();
+    window.setTimeout(() => openerRef.current?.focus?.(), 0);
   };
 
-  if (!isOpen) return null;
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      close();
+      return;
+    }
+    if (event.key !== "Tab") return;
+
+    const focusable = getFocusableElements(dialogRef.current);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!first || !last) return;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  const updatePreference = (key) => (event) => setPreferences((current) => ({ ...current, [key]: event.target.checked }));
+
+  if (!consentReady || !showConsentDialog) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[400] p-3 sm:p-5" role="region" aria-label="Informasjonskapsler">
-      <section className="mx-auto max-w-3xl rounded-lg border border-border bg-card p-5 shadow-[0_-18px_60px_rgba(0,0,0,0.25)] sm:p-6">
+    <div className="fixed inset-0 z-[400] flex items-end bg-black/50 p-3 sm:items-center sm:p-5">
+      <section
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cookie-consent-title"
+        aria-describedby="cookie-consent-description"
+        onKeyDown={handleKeyDown}
+        className="mx-auto max-h-[calc(100vh-1.5rem)] w-full max-w-3xl overflow-y-auto rounded-lg border border-border bg-card p-5 shadow-[0_18px_60px_rgba(0,0,0,0.45)] sm:max-h-[calc(100vh-2.5rem)] sm:p-6"
+      >
         <div className="flex flex-col gap-5">
-          <div>
-            <h2 className="text-lg font-bold text-foreground">Ditt personvernvalg</h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Vi bruker nødvendige informasjonskapsler for innlogging, sikkerhet og grunnleggende funksjoner. Google AdSense og annen annonseteknologi lastes bare etter at du har samtykket.
-            </p>
-            <Link href="/informasjonskapsler" className="mt-3 inline-flex text-sm font-semibold text-orange-500 hover:underline">
-              Les cookie-erklæringen
-            </Link>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 id="cookie-consent-title" className="text-lg font-bold text-foreground">Ditt personvernvalg</h2>
+              <p id="cookie-consent-description" className="mt-2 text-sm leading-6 text-muted-foreground">
+                Vi bruker nødvendige informasjonskapsler for innlogging, sikkerhet og grunnleggende funksjoner. Valgfrie tjenester for analyse og annonser lastes bare etter valget ditt.
+              </p>
+              <Link href="/informasjonskapsler" className="mt-3 inline-flex text-sm font-semibold text-orange-500 hover:underline">Les cookie-erklæringen</Link>
+            </div>
+            {hasConsentChoice && (
+              <button type="button" onClick={close} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground" aria-label="Lukk personvernvalg">
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            )}
           </div>
 
           {isCustomizing && (
             <div className="space-y-3 rounded-md border border-border bg-muted/20 p-4">
-              <div className="flex items-start justify-between gap-5">
-                <div>
-                  <p className="font-semibold text-foreground">Nødvendige</p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">Brukes for sikkerhet, innlogging og lagring av dette valget. Alltid på.</p>
-                </div>
-                <span className="text-xs font-semibold text-muted-foreground">Alltid på</span>
-              </div>
-              <label className="flex cursor-pointer items-start justify-between gap-5 border-t border-border pt-3">
-                <span>
-                  <span className="block font-semibold text-foreground">Annonser og måling</span>
-                  <span className="mt-1 block text-xs leading-5 text-muted-foreground">Tillater Google AdSense. Ingen Google-annonser eller adblock-sjekk kjøres uten dette valget.</span>
-                </span>
-                <input
-                  type="checkbox"
-                  checked={advertising}
-                  onChange={(event) => setAdvertising(event.target.checked)}
-                  className="mt-1 h-4 w-4 accent-orange-500"
-                />
-              </label>
+              <PreferenceRow title="Nødvendige" description="Brukes for sikkerhet, innlogging og lagring av dette valget. Alltid på." disabled />
+              <PreferenceRow title="Analyse" description="Hjelper oss å forstå hvordan nettstedet brukes." checked={preferences.analytics} onChange={updatePreference("analytics")} />
+              <PreferenceRow title="Annonser" description="Tillater Google AdSense når annonser er aktivert av TEKKNO." checked={preferences.advertising} onChange={updatePreference("advertising")} />
+              <PreferenceRow title="Personalisering" description="Tillater annonsepersonalisering når annonseløsningen støtter det." checked={preferences.personalization} onChange={updatePreference("personalization")} />
             </div>
           )}
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-            <button type="button" onClick={() => save(true)} className="min-h-11 rounded-md bg-orange-500 px-4 text-sm font-bold text-white transition-colors hover:bg-orange-600">
-              Godta alle
-            </button>
-            <button type="button" onClick={() => save(false)} className="min-h-11 rounded-md border border-border bg-background px-4 text-sm font-bold text-foreground transition-colors hover:bg-muted">
-              Avvis alle
-            </button>
+            <button type="button" onClick={acceptAll} className="min-h-11 rounded-md border border-orange-500 bg-background px-4 text-sm font-bold text-orange-500 transition-colors hover:bg-orange-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500">Godta alle</button>
+            <button type="button" onClick={rejectAll} className="min-h-11 rounded-md border border-orange-500 px-4 text-sm font-bold text-orange-500 transition-colors hover:bg-orange-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500">Avvis alle</button>
             {isCustomizing ? (
-              <button type="button" onClick={() => save(advertising)} className="min-h-11 rounded-md border border-border bg-background px-4 text-sm font-bold text-foreground transition-colors hover:bg-muted">
-                Lagre valg
-              </button>
+              <button type="button" onClick={() => saveCustomConsent(preferences)} className="min-h-11 rounded-md border border-border bg-background px-4 text-sm font-bold text-foreground transition-colors hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500">Lagre valg</button>
             ) : (
-              <button type="button" onClick={() => setIsCustomizing(true)} className="min-h-11 rounded-md border border-border bg-background px-4 text-sm font-bold text-foreground transition-colors hover:bg-muted">
-                Tilpass valg
-              </button>
+              <button type="button" onClick={() => setIsCustomizing(true)} className="min-h-11 rounded-md border border-border bg-background px-4 text-sm font-bold text-foreground transition-colors hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500">Tilpass valg</button>
             )}
           </div>
         </div>

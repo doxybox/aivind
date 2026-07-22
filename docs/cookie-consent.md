@@ -1,35 +1,58 @@
 # Cookie Consent
 
-TEKKNO bruker en lokal samtykkemekanisme for valg knyttet til annonser og maaling.
+TEKKNO lagrer samtykke for valgfrie tjenester i en førsteparts-cookie, `tekkno_consent`.
+Samtykket inneholder kun kategoriinnstillinger, versjon og tidspunkt. Det inneholder aldri navn,
+e-post, IP-adresse eller bruker-ID.
 
-## Hva mekanismen styrer
+## Lagring og levetid
 
-- Nodvendige cookies og nettleserlagring for innlogging, sikkerhet, redaksjonell forhandsvisning og brukergrensesnitt er alltid aktive.
-- Google AdSense lastes ikke for brukeren har valgt `Godta alle` eller aktivert `Annonser og maaling` under `Tilpass valg`.
-- Adblock-kontrollen kjores heller ikke for annonse-samtykke er gitt, slik at den ikke kontakter Googles annonse-endepunkt for samtykke.
-- Et avslag betyr at annonser og den tilhorende tredjepartslastingen forblir deaktivert.
+- Cookie: `tekkno_consent`
+- Levetid: 180 dager
+- Attributter: `Path=/`, `SameSite=Lax`, `Max-Age=15552000` og `Secure` på HTTPS
+- Versjon: `CONSENT_VERSION` i `src/lib/cookie-consent.js`
 
-Samtykket lagres lokalt i nettleseren under `tekkno-cookie-consent`. Det inneholder bare versjon, tidspunkt og om annonser er tillatt. Det inneholder ikke konto-ID, e-post eller andre personopplysninger.
+Verdien er URL-kodet JSON med `necessary`, `analytics`, `advertising`, `personalization`,
+`savedAt` og `version`. Ugyldige, utløpte eller versjonsutdaterte verdier behandles som manglende
+samtykke. Da vises dialogen igjen uten at applikasjonen kaster en feil.
 
-## Brukergrensesnitt
+Øk bare `CONSENT_VERSION` når formål, kategorier eller leverandører endres på en måte som krever
+nytt samtykke.
 
-- Banneret viser `Godta alle`, `Avvis alle` og `Tilpass valg` med like tilgjengelige valg.
-- `/informasjonskapsler` inneholder oversikten over teknologiene som brukes.
-- `Administrer cookies` er synlig i footeren og lar brukeren endre eller trekke tilbake valget.
+## Hva valgene styrer
 
-## Ved nye tjenester
+- **Nødvendige**: innlogging, sikkerhet og selve samtykkevalget. Alltid aktivt.
+- **Analyse**: analyseverktøy når slike er konfigurert.
+- **Annonser**: AdSense og adblock-kontrollen. AdSense-scriptet lastes ikke før dette er gitt.
+- **Personalisering**: Google-signal for annonsepersonalisering når annonseløsningen støtter det.
 
-Før en ny analyse-, markedsforings- eller sporingsleverandor tas i bruk skal dere:
+Før Google-script kan lastes setter appen Google Consent Mode til `denied`. Når valget lagres,
+sender `applyGoogleConsent` en `consent update`. Det finnes ingen statisk Analytics-, GTM- eller
+AdSense-loader i appen. `AdSlot` har også en egen guard som hindrer duplikate AdSense-scripts.
 
-1. Legge tjenesten til i cookie-erklaringen med leverandor, formal og varighet.
-2. Legge den bak et eget eller eksisterende samtykkevalg.
-3. Bekrefte at script, pixel eller nettverkskall ikke lastes for samtykke.
-4. Oppdatere personvernerklaringen og innhente juridisk vurdering ved behov.
+Når et samtykke trekkes tilbake stopper appen nye analyse- og annonsehandlinger uten reload. Et
+tredjepartsscript som allerede er lastet kan kreve en sideoppdatering for å fjernes helt fra den
+aktuelle siden.
 
-## Manuell lanseringssjekk
+## Google AdSense og CMP
 
-1. Start et nytt privat nettleservindu og apne forsiden.
-2. Velg `Avvis alle`; bekreft i nettverkspanelet at ingen kall gar til `googlesyndication.com`.
-3. Apne `Administrer cookies`, velg annonser, oppdater siden og bekreft at AdSense bare da kan lastes nar annonser er aktivert i Payload.
-4. Endre valget tilbake til avslag og bekreft at Google-scriptet ikke lastes ved neste sidevisning.
-5. Fyll inn full foretaksinformasjon, kontaktadresse og eventuelle databehandlerdetaljer i de juridiske sidene etter virksomhetens godkjenning.
+Denne dialogen styrer TEKKNOS egne integrasjoner, men er **ikke** en Google-sertifisert CMP.
+Før AdSense aktiveres for trafikk i Norge/EØS må virksomheten velge, konfigurere og juridisk
+godkjenne en passende Google-sertifisert CMP. Ikke vis både CMP-banneret og denne dialogen uten
+en integrasjonsplan; da må footer-lenken kobles til CMP-ens personverninnstillinger i stedet.
+
+Se også [adsense-setup.md](adsense-setup.md).
+
+## Manuell testplan
+
+1. Åpne nettstedet i inkognito. Dialogen skal vises, og ingen kall skal gå til Google AdSense.
+2. Velg **Avvis alle**, last inn siden på nytt og naviger til en annen side. Dialogen skal ikke
+   komme tilbake, og annonser skal fortsatt være deaktivert.
+3. Slett `tekkno_consent`, velg **Godta alle**, last inn på nytt og bekreft at dialogen er skjult.
+4. Slett cookien, velg **Tilpass valg**, aktiver analyse uten annonser og lagre. Bekreft etter
+   reload at bare analyseverdien er aktiv.
+5. Åpne **Personvernvalg** i footeren, endre til avslag og lagre. Bekreft at valget varer etter
+   reload.
+6. Test med tastatur: Tab skal holdes i dialogen, og Escape/lukk fungerer bare når innstillinger
+   åpnes på nytt etter et eksisterende valg.
+7. Øk `CONSENT_VERSION` lokalt, reload og bekreft at dialogen vises. Tilbakestill versjonen før
+   deploy med mindre nytt samtykke faktisk er nødvendig.

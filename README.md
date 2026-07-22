@@ -40,6 +40,13 @@ Stripe Checkout and Customer Portal keep card details, invoices, receipts, refun
 Stripe. Subscription access changes only after verified Stripe webhooks. Read
 [docs/stripe-billing.md](docs/stripe-billing.md) before enabling it.
 
+## Consent and advertising
+
+Optional analytics and advertising are gated behind the versioned `tekkno_consent` first-party cookie.
+The local consent UI is not a Google-certified CMP. Before enabling AdSense for EEA traffic, configure
+a suitable certified CMP and follow [docs/cookie-consent.md](docs/cookie-consent.md) and
+[docs/adsense-setup.md](docs/adsense-setup.md).
+
 ## Content source and rollback
 
 `CONTENT_SOURCE=legacy` remains the safe fallback. Payload public rendering can be enabled by setting

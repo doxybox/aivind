@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useCookieConsent } from "@/components/aivind/CookieConsentManager";
+import { useCookieConsent } from "@/components/aivind/ConsentProvider";
 
 const SLOT_BY_PLACEMENT = {
   "home-primary": "",
@@ -57,10 +57,10 @@ export default function AdSlot({
   const adRef = useRef(null);
   const requestedRef = useRef(false);
   const settings = useAdSenseSettings();
-  const consent = useCookieConsent();
+  const { consent, consentReady } = useCookieConsent();
   const client = settings?.client || "";
   const slot = settings?.slots?.[placement];
-  const canServeAds = Boolean(consent.advertising && settings?.enabled && client && slot);
+  const canServeAds = Boolean(consentReady && consent.advertising && settings?.enabled && client && slot);
 
   useEffect(() => {
     if (!canServeAds || requestedRef.current || !adRef.current) return undefined;

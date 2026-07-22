@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RefreshCw, ShieldAlert } from "lucide-react";
-import { useCookieConsent } from "@/components/aivind/CookieConsentManager";
+import { useCookieConsent } from "@/components/aivind/ConsentProvider";
 
 const isGateEnabled = () => process.env.NEXT_PUBLIC_ADBLOCK_GATE_ENABLED !== "false";
 
@@ -54,14 +54,14 @@ async function detectAdblock() {
 }
 
 export default function AdblockGate() {
-  const consent = useCookieConsent();
+  const { consent, consentReady } = useCookieConsent();
   const [isBlocked, setIsBlocked] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);
   const retryButtonRef = useRef(null);
 
   const checkForAdblock = useCallback(async () => {
-    if (!isGateEnabled() || !consent.advertising) {
+    if (!isGateEnabled() || !consentReady || !consent.advertising) {
       setIsBlocked(false);
       setHasChecked(true);
       return;
@@ -74,7 +74,7 @@ export default function AdblockGate() {
       setIsChecking(false);
       setHasChecked(true);
     }
-  }, [consent.advertising]);
+  }, [consent.advertising, consentReady]);
 
   useEffect(() => {
     checkForAdblock();
