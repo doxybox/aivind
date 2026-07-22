@@ -4,7 +4,7 @@ export default function PrivacyPage() {
   return (
     <InfoPageLayout
       title="Personvern"
-      kicker="Sist oppdatert 12. juli 2026"
+      kicker="Sist oppdatert 22. juli 2026"
       intro="Denne erklæringen forklarer hvilke personopplysninger TEKKNO behandler, hvorfor vi gjør det og hvilke rettigheter du har."
     >
       <InfoSection title="Behandlingsansvarlig">
@@ -22,7 +22,11 @@ export default function PrivacyPage() {
         <p>Opplysninger brukes for å levere konto- og innholdstjenester, ivareta sikkerhet, svare på henvendelser og sende kommunikasjon du uttrykkelig har bedt om. Behandlingen bygger på avtale, samtykke, rettslig plikt eller vår berettigede interesse i trygg og stabil drift.</p>
       </InfoSection>
       <InfoSection title="Lagring og deling">
-        <p>Vi lagrer opplysninger så lenge det er nødvendig for formålet eller lovpålagt. Data kan behandles av leverandører for database, hosting, autentisering og publisering under databehandleravtaler. Vi selger ikke personopplysninger.</p>
+        <p>Vi lagrer opplysninger så lenge det er nødvendig for formålet eller lovpålagt. Data kan behandles av leverandører for database, hosting, autentisering, publisering, e-post og medielevering under databehandleravtaler eller tilsvarende avtalegrunnlag. Vi selger ikke personopplysninger.</p>
+        <p>Enkelte leverandører kan behandle opplysninger utenfor EU/EØS. Ved slik behandling skal TEKKNO bruke et gyldig overføringsgrunnlag og nødvendige sikkerhetstiltak.</p>
+      </InfoSection>
+      <InfoSection title="Informasjonskapsler og annonser">
+        <p>Nødvendige informasjonskapsler brukes for blant annet innlogging, sikkerhet og grunnleggende drift. Annonseteknologi fra Google AdSense lastes bare dersom du har samtykket og annonser er aktivert av TEKKNO. Du kan når som helst endre valget ditt på siden for <a href="/informasjonskapsler" className="text-orange-500 hover:underline">informasjonskapsler</a>.</p>
       </InfoSection>
       <InfoSection title="Dine rettigheter">
         <p>Du kan be om innsyn, retting, sletting, begrensning, dataportabilitet eller protestere mot behandling. Samtykke kan trekkes tilbake. Du kan også klage til Datatilsynet.</p>

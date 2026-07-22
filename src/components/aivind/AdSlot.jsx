@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useCookieConsent } from "@/components/aivind/CookieConsentManager";
 
 const SLOT_BY_PLACEMENT = {
   "home-primary": "",
@@ -56,9 +57,10 @@ export default function AdSlot({
   const adRef = useRef(null);
   const requestedRef = useRef(false);
   const settings = useAdSenseSettings();
+  const consent = useCookieConsent();
   const client = settings?.client || "";
   const slot = settings?.slots?.[placement];
-  const canServeAds = Boolean(settings?.enabled && client && slot);
+  const canServeAds = Boolean(consent.advertising && settings?.enabled && client && slot);
 
   useEffect(() => {
     if (!canServeAds || requestedRef.current || !adRef.current) return undefined;
@@ -115,7 +117,7 @@ export default function AdSlot({
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#ff6a00] text-xl font-black text-[#ff6a00]">A</div>
             <div className="text-left">
               <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#ff6a00]">Annonse</p>
-              <p className="mt-1 text-sm font-medium text-zinc-400">{fallbackDescription}</p>
+              <p className="mt-1 text-sm font-medium text-zinc-400">{consent.advertising ? fallbackDescription : "Annonser vises etter samtykke"}</p>
             </div>
           </div>
         </>

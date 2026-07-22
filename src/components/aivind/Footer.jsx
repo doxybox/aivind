@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CheckCircle2, ChevronDown, ChevronRight, Instagram, Linkedin, Loader2, Moon, Rss, ShieldCheck, Sun, Youtube } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import BrandLogo from "@/components/aivind/BrandLogo";
+import { openCookiePreferences } from "@/lib/cookie-consent";
 
 const footerLinks = [
   { label: "Om oss", href: "/om-oss" },
@@ -10,6 +11,7 @@ const footerLinks = [
   { label: "Annonsering", href: "/annonsering" },
   { label: "Kontakt", href: "/kontakt" },
   { label: "Personvern", href: "/personvern" },
+  { label: "Informasjonskapsler", href: "/informasjonskapsler" },
   { label: "Vilkår", href: "/vilkar" },
 ];
 
@@ -163,6 +165,13 @@ export default function Footer() {
               <span aria-hidden="true">NO</span>
               <span>Norge</span>
               <ChevronDown className="w-3.5 h-3.5 text-muted-foreground ml-0.5" />
+            </button>
+            <button
+              type="button"
+              onClick={openCookiePreferences}
+              className="h-8 rounded-lg border border-border bg-muted/10 px-3 text-[12px] font-medium text-foreground transition-colors hover:bg-muted/30"
+            >
+              Administrer cookies
             </button>
             <button
               type="button"

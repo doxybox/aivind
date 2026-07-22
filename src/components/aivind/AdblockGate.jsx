@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RefreshCw, ShieldAlert } from "lucide-react";
+import { useCookieConsent } from "@/components/aivind/CookieConsentManager";
 
 const isGateEnabled = () => process.env.NEXT_PUBLIC_ADBLOCK_GATE_ENABLED !== "false";
 
@@ -53,13 +54,18 @@ async function detectAdblock() {
 }
 
 export default function AdblockGate() {
+  const consent = useCookieConsent();
   const [isBlocked, setIsBlocked] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);
   const retryButtonRef = useRef(null);
 
   const checkForAdblock = useCallback(async () => {
-    if (!isGateEnabled()) return;
+    if (!isGateEnabled() || !consent.advertising) {
+      setIsBlocked(false);
+      setHasChecked(true);
+      return;
+    }
 
     setIsChecking(true);
     try {
@@ -68,7 +74,7 @@ export default function AdblockGate() {
       setIsChecking(false);
       setHasChecked(true);
     }
-  }, []);
+  }, [consent.advertising]);
 
   useEffect(() => {
     checkForAdblock();
@@ -86,11 +92,7 @@ export default function AdblockGate() {
     };
   }, [isBlocked]);
 
-  if (!hasChecked) {
-    return <div className="fixed inset-0 z-[300] bg-background/95 backdrop-blur-xl" aria-hidden="true" />;
-  }
-
-  if (!isBlocked) return null;
+  if (!hasChecked || !isBlocked) return null;
 
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-xl" role="alertdialog" aria-modal="true" aria-labelledby="adblock-gate-title">

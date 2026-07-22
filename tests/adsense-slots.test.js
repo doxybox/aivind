@@ -11,10 +11,15 @@ function readProjectFile(filePath) {
 
 test("AdSense slots stay disabled until explicit public configuration is present", () => {
   const slot = readProjectFile("src/components/aivind/AdSlot.jsx");
+  const consent = readProjectFile("src/components/aivind/CookieConsentManager.jsx");
   const envExample = readProjectFile(".env.example");
   const payloadSettings = readProjectFile("src/payload/globals/AdvertisingSettings.js");
 
   assert.match(slot, /api\/adsense\/config/);
+  assert.match(slot, /consent\.advertising/);
+  assert.match(consent, /Godta alle/);
+  assert.match(consent, /Avvis alle/);
+  assert.match(consent, /Tilpass valg/);
   assert.doesNotMatch(slot, /NEXT_PUBLIC_ADSENSE_ENABLED/);
   assert.doesNotMatch(envExample, /NEXT_PUBLIC_ADSENSE_ENABLED/);
   assert.match(payloadSettings, /slug: "advertising-settings"/);

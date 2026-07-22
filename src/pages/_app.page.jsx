@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/lib/AuthContext";
 import UserNotRegisteredError from "@/components/UserNotRegisteredError";
 import ScrollToTop from "@/components/ScrollToTop";
 import AdblockGate from "@/components/aivind/AdblockGate";
+import CookieConsentManager from "@/components/aivind/CookieConsentManager";
 
 const LoadingScreen = () => (
   <div className="fixed inset-0 flex items-center justify-center">
@@ -47,6 +48,7 @@ export default function App({ Component, pageProps }) {
           <Component {...pageProps} />
         </AuthGate>
         <AdblockGate />
+        <CookieConsentManager />
         <Toaster />
       </QueryClientProvider>
     </AuthProvider>
