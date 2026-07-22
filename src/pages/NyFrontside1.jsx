@@ -16,7 +16,7 @@ import BrandLogo from "@/components/aivind/BrandLogo";
 import HeaderAccountMenu from "@/components/aivind/HeaderAccountMenu";
 import AdSlot from "@/components/aivind/AdSlot";
 
-const GridCard = ({ image, tag, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl" }) => (
+const GridCard = ({ image, type, accessLevel, paywallEnabled, title, href = "#", className, titleClass = "text-xl md:text-2xl" }) => (
   <Link href={href} className={`group relative rounded-xl overflow-hidden cursor-pointer ${className}`}>
     <div 
       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 

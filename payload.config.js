@@ -1,4 +1,5 @@
 import { postgresAdapter } from "@payloadcms/db-postgres";
+import { resendAdapter } from "@payloadcms/email-resend";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 import fs from "fs";
@@ -40,6 +41,13 @@ const payloadDatabaseUrl = process.env.PAYLOAD_DATABASE_URL || process.env.DATAB
 const payloadSecret = process.env.PAYLOAD_SECRET;
 const publicSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/, "");
 const expectedDatabaseFingerprint = process.env.PAYLOAD_DATABASE_FINGERPRINT_EXPECTED;
+const payloadEmailAdapter = process.env.RESEND_API_KEY && process.env.EMAIL_FROM
+  ? resendAdapter({
+      apiKey: process.env.RESEND_API_KEY,
+      defaultFromAddress: process.env.EMAIL_FROM,
+      defaultFromName: process.env.EMAIL_FROM_NAME || "TEKKNO",
+    })
+  : undefined;
 const isVercelServerless = process.env.VERCEL === "1";
 const defaultPayloadPoolMax = process.env.NODE_ENV === "production" ? 1 : 3;
 const configuredPoolMax = Number.parseInt(
@@ -112,6 +120,7 @@ export default buildConfig({
     },
     push: false,
   }),
+  ...(payloadEmailAdapter ? { email: payloadEmailAdapter } : {}),
   secret: payloadSecret,
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL,
   sharp,

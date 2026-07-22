@@ -12,7 +12,7 @@ This document is the production go/no-go source of truth for TEKKNO. It records 
 | Payload Admin staging | Green | `https://admin-staging.tekkno.no/admin` responds after a fresh deploy |
 | Content source | Green for staging | `CONTENT_SOURCE=payload`; strict Payload verifier passes |
 | Public rendering | Green | Homepage, category, article, health, 404 and protected-route smoke checks pass |
-| Security audit | Accepted for staging | No high or critical findings; moderate findings remain documented |
+| Security audit | Needs upstream remediation | No critical findings. Both applications retain high findings from Next.js' nested `sharp@0.34.x`; details are in `docs/dependency-and-build-warnings.md`. |
 | Runtime logs | Green at last check | No new public-app Vercel errors after the final content smoke check |
 | Editorial content | Ready for editorial approval | Six non-demo published QA articles, two categories, two authors and a hero slot render from Payload; editorial sign-off is still required |
 | Billing/Vipps | Parked | Must remain disabled unless a separate provider QA is approved |
@@ -38,7 +38,7 @@ Current Payload inventory:
 | PB-05 | Logged-in role QA is incomplete | P0 | QA lead (unassigned) | Done for automated staging QA | On 16 July 2026, the controlled runner passed reader, subscriber, premium-entitlement and editor checks; all four accounts were deleted | Complete manual Payload Admin/editor workflow sign-off as part of PB-01 | Complete the role matrix below and attach evidence without passwords | Yes |
 | PB-09 | Session-pooler client limit was reached | P1 | Eivind Von Dohlen | Done | Public staging Payload queries initially had no spare client because `PAYLOAD_DATABASE_POOL_MAX=1`; setting the bounded Payload pool to 2 restored article, category and slot queries on 16 July 2026 | Use transaction-pooler port 6543 for serverless app and Payload connections, with bounded client pools | Staging health, Payload verifier and role QA pass after deploy | Yes |
 | PB-06 | Production domain and DNS cutover are not approved | P1 | Release owner + DNS owner (unassigned) | Open | Only staging URLs are approved | Approve production public/admin domains, DNS records, TTL window and certificate plan | Resolve both domains over HTTPS and complete production-origin auth checks | Yes |
-| PB-07 | Moderate dependency findings remain | P2 | Dependency owner (unassigned) | In progress | Root: 8 moderate. Admin: 8 moderate, 1 low. No safe automatic fix | Track upstream fixes; do not use forced breaking upgrades during cutover | `npm audit` has no high/critical; accepted-risk sign-off references exact advisories | No |
+| PB-07 | Next.js nested Sharp vulnerability remains | P0 | Dependency owner (unassigned) | Open | Root: 0 critical, 2 high, 5 moderate. Admin: 0 critical, 2 high, 7 moderate, 1 low. The high findings are inherited from Next.js' nested `sharp@0.34.x`. | Track and apply the first compatible upstream Next.js release that updates nested Sharp; do not force an unsupported override. | `npm audit --omit=dev` is free of high/critical findings in both applications. | Yes |
 | PB-08 | Raw `<img>` build warnings remain | P2 | Frontend owner (unassigned) | Open | Next build reports image optimization warnings | Accept for launch or schedule provider-aware `next/image` migration | Build passes and release owner records the warning as non-blocking | No |
 
 ## Required Manual Actions
@@ -145,4 +145,4 @@ Rollback does not require reverse migrations or deletion of Payload content.
 
 ## Current Decision
 
-`NO-GO for production-default` until PB-01 through PB-06 are done. PB-07 and PB-08 are accepted non-blocking items only after named-owner sign-off.
+`NO-GO for production-default` until PB-01 through PB-07 are done. PB-08 is accepted as non-blocking after named-owner sign-off.

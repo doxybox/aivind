@@ -62,7 +62,7 @@ Production/staging env should include these groups as applicable:
 - Payload: `PAYLOAD_SECRET`, `PAYLOAD_DATABASE_URL` if different from app DB, `PAYLOAD_PUBLIC_SERVER_URL`.
 - Payload connection pool: use the Supabase session pooler on port `5432`. Set `PAYLOAD_DATABASE_POOL_MAX=1` for the public app and `2` for Payload Admin, whose SSR requires concurrent database work. Payload 3.86 Local API initialization hangs against transaction mode on port `6543` in this project. Migrations still require their reviewed connection flow.
 - Supabase Postgres metadata/client compatibility: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; service keys only where server-side code explicitly requires them.
-- Email/social only if enabled: `RESEND_API_KEY`, `EMAIL_FROM`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`.
+- Email/social only if enabled: `RESEND_API_KEY`, `EMAIL_FROM`, optional `EMAIL_FROM_NAME`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`. Payload uses the Resend adapter only when both `RESEND_API_KEY` and `EMAIL_FROM` are present.
 - Operations/analytics: `REEL_ANALYTICS_SECRET`, `CRON_SECRET`, optional `REEL_VIEW_RETENTION_DAYS` and `EMAIL_REPLY_TO`.
 - Billing only if active: `BILLING_PROVIDER`, `BILLING_PUBLIC_ORIGIN`, provider-specific env such as Vipps credentials.
 - Cloudflare only if active: `CLOUDFLARE_MEDIA_ENABLED=true`, account id, image/stream tokens, image account hash, webhook secret.

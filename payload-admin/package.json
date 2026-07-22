@@ -12,10 +12,13 @@
     "@payloadcms/db-postgres": "3.86.0",
     "@payloadcms/next": "3.86.0",
     "graphql": "^16.12.0",
-    "next": "^16.2.10",
+    "next": "^16.2.11",
     "payload": "3.86.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "sharp": "^0.35.2"
+  },
+  "overrides": {
+    "fast-uri": "3.1.4"
   }
 }
