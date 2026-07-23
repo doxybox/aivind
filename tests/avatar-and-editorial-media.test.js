@@ -66,6 +66,7 @@ test("Payload requires author profile images and exposes staff-only image and vi
   assert.equal(MediaAssets.admin.components.beforeList.includes("./src/payload/components/MediaAssetUploader.jsx"), true);
   assert.equal(MediaAssets.endpoints.some((endpoint) => endpoint.path === "/cloudflare-direct-upload"), true);
   assert.equal(MediaAssets.endpoints.some((endpoint) => endpoint.path === "/cloudflare-stream-direct-upload"), true);
+  assert.equal(MediaAssets.endpoints.some((endpoint) => endpoint.path === "/cloudflare-image-status"), true);
 
   const endpoint = readProjectFile("src/payload/endpoints/media-assets-cloudflare.js");
   const component = readProjectFile("src/payload/components/MediaAssetUploader.jsx");
@@ -74,11 +75,14 @@ test("Payload requires author profile images and exposes staff-only image and vi
   assert.match(endpoint, /createStreamDirectUpload/);
   assert.match(endpoint, /createMediaAssetForImageDirectUpload/);
   assert.match(endpoint, /createMediaAssetForStreamDirectUpload/);
+  assert.match(endpoint, /syncPayloadMediaAssetImage/);
   assert.match(endpoint, /validateStreamDirectUploadInput/);
   assert.doesNotMatch(endpoint, /CLOUDFLARE_IMAGES_API_TOKEN/);
   assert.doesNotMatch(endpoint, /CLOUDFLARE_STREAM_API_TOKEN/);
   assert.match(component, /cloudflare-direct-upload/);
   assert.match(component, /cloudflare-stream-direct-upload/);
+  assert.match(component, /cloudflare-image-status/);
+  assert.match(component, /syncUploadedImage/);
   assert.match(component, /application\/offset\+octet-stream/);
   assert.match(component, /FormData/);
 });

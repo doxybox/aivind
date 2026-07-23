@@ -1,7 +1,15 @@
-import { createImageDirectUpload, createStreamDirectUpload } from "../../lib/server/cloudflare-media.js";
+import {
+  createImageDirectUpload,
+  createStreamDirectUpload,
+  getImageDetails,
+} from "../../lib/server/cloudflare-media.js";
 import { validateImageDirectUploadInput } from "../../lib/server/cloudflare-images-policy.js";
 import { validateStreamDirectUploadInput } from "../../lib/server/cloudflare-stream-policy.js";
-import { createMediaAssetForImageDirectUpload, createMediaAssetForStreamDirectUpload } from "../../lib/server/media-assets-service.js";
+import {
+  createMediaAssetForImageDirectUpload,
+  createMediaAssetForStreamDirectUpload,
+  updateMediaAssetFromCloudflareImage,
+} from "../../lib/server/media-assets-service.js";
 import { hasPayloadRole } from "../access/roles.js";
 
 const EDITORIAL_MEDIA_ROLES = ["journalist", "editor", "admin", "desk", "moderator"];
@@ -90,6 +98,50 @@ export async function createPayloadMediaAssetStreamDirectUpload(req) {
       error: status >= 500 ? "Internal server error" : error.message,
       ...(error?.code ? { code: error.code } : {}),
       ...(error?.missing?.length ? { missing: error.missing } : {}),
+    }, status);
+  }
+}
+
+export async function syncPayloadMediaAssetImage(req) {
+  if (!req.user) return response({ error: "Authentication required" }, 401);
+  if (!hasPayloadRole(req.user, EDITORIAL_MEDIA_ROLES)) return response({ error: "Forbidden" }, 403);
+
+  try {
+    const { cloudflareImageId } = await req.json();
+    const imageId = String(cloudflareImageId || "").trim();
+    if (!/^[a-f0-9-]{16,64}$/i.test(imageId)) {
+      return response({ error: "Missing or invalid Cloudflare image ID." }, 400);
+    }
+
+    const cloudflareResponse = await getImageDetails(imageId);
+
+    const result = await updateMediaAssetFromCloudflareImage({
+      imageId,
+      cloudflareResponse,
+    });
+    const uploaded = result.image?.rawStatus?.uploaded === true;
+    const ready = uploaded && Boolean(result.image?.deliveryUrl);
+
+    return response({
+      ready,
+      cloudflareImageId: result.image?.cloudflareImageId || imageId,
+      image: result.image,
+      mediaAsset: result.mediaAsset,
+      message: ready
+        ? "Bildet er klart i Cloudflare Images."
+        : "Cloudflare behandler fortsatt bildet. Proev igjen om et par sekunder.",
+    }, ready ? 200 : 202);
+  } catch (error) {
+    const status = error?.status || 500;
+    if (status >= 500) {
+      console.error("[payload-media-assets:cloudflare-image-status]", {
+        message: error?.message,
+        status,
+        cloudflareErrors: error?.data?.errors,
+      });
+    }
+    return response({
+      error: status >= 500 ? "Could not verify the Cloudflare image." : error.message,
     }, status);
   }
 }

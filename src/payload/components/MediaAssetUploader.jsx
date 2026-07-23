@@ -22,6 +22,10 @@ function formatMegabytes(bytes) {
   return `${Math.round(bytes / (1024 * 1024))} MB`;
 }
 
+function wait(milliseconds) {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+}
+
 export default function MediaAssetUploader() {
   const fileInputRef = useRef(null);
   const [kind, setKind] = useState("image");
@@ -30,6 +34,26 @@ export default function MediaAssetUploader() {
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
   const uploadConfig = kind === "video" ? VIDEO_UPLOAD : IMAGE_UPLOAD;
+
+  async function syncUploadedImage(cloudflareImageId) {
+    for (let attempt = 0; attempt < 6; attempt += 1) {
+      const response = await fetch("/api/media-assets/cloudflare-image-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cloudflareImageId }),
+      });
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok && response.status !== 202) {
+        throw new Error(data?.error || "Kunne ikke kontrollere bildet hos Cloudflare.");
+      }
+      if (data?.ready) return data;
+
+      await wait(1_000);
+    }
+
+    return null;
+  }
 
   async function uploadMedia(event) {
     const file = event.target.files?.[0];
@@ -81,12 +105,16 @@ export default function MediaAssetUploader() {
       }
       if (!uploadResponse.ok) throw new Error(`Cloudflare kunne ikke motta ${uploadConfig.label}filen.`);
 
+      const imageSync = kind === "image"
+        ? await syncUploadedImage(data.cloudflareImageId)
+        : null;
+
       setMessage(kind === "video"
         ? "Videoen er lastet opp og behandles hos Cloudflare Stream. Media assets oppdateres nå."
         : "Bildet er lastet opp og lagt til i Media assets. Listen oppdateres nå.");
       setTitle("");
       setDescription("");
-      window.setTimeout(() => window.location.reload(), 900);
+      window.setTimeout(() => window.location.reload(), imageSync || kind === "video" ? 900 : 3_000);
     } catch (error) {
       setMessage(error?.message || `Kunne ikke laste opp ${uploadConfig.label}filen.`);
     } finally {

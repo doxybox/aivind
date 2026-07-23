@@ -2,6 +2,7 @@ import { editorsOnly, staffOnly } from "../access/roles.js";
 import {
   createPayloadMediaAssetDirectUpload,
   createPayloadMediaAssetStreamDirectUpload,
+  syncPayloadMediaAssetImage,
 } from "../endpoints/media-assets-cloudflare.js";
 
 export const MediaAssets = {
@@ -31,6 +32,11 @@ export const MediaAssets = {
       path: "/cloudflare-stream-direct-upload",
       method: "post",
       handler: createPayloadMediaAssetStreamDirectUpload,
+    },
+    {
+      path: "/cloudflare-image-status",
+      method: "post",
+      handler: syncPayloadMediaAssetImage,
     },
   ],
   fields: [
