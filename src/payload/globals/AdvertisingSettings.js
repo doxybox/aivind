@@ -1,5 +1,9 @@
 import { adManagersOnly } from "../access/roles.js";
 import { ValidationError } from "payload";
+import {
+  normalizeAdSensePublisherId,
+  normalizeAdSenseSlotId,
+} from "../../lib/adsense-normalization.js";
 
 const SLOT_FIELDS = [
   "homePrimary",
@@ -9,46 +13,47 @@ const SLOT_FIELDS = [
   "articleSidebarBottom",
 ];
 
-function normalizePublisherId(value) {
-  const rawValue = typeof value === "string" ? value.trim().replace(/\s+/g, "") : "";
-  const match = rawValue.match(/^(?:client=)?(ca-pub-\d{10,20})$/i);
-  return match ? match[1].toLowerCase() : "";
-}
-
-function normalizeSlotId(value) {
-  const rawValue = typeof value === "string" ? value.trim().replace(/\s+/g, "") : "";
-  return /^\d{6,20}$/.test(rawValue) ? rawValue : "";
-}
-
 function validatePublisherId(value) {
   if (!value) return true;
-  return normalizePublisherId(value) || "Bruk Publisher ID-en fra AdSense, for eksempel ca-pub-1234567890123456.";
+  return normalizeAdSensePublisherId(value)
+    || "Publisher ID må ha formatet ca-pub-1234567890123456.";
 }
 
 function validateSlotId(value) {
   if (!value) return true;
-  return normalizeSlotId(value) || "Bruk kun det numeriske slot-ID-et fra AdSense.";
+  return normalizeAdSenseSlotId(value)
+    || "Slot-ID skal kun inneholde tallet fra data-ad-slot.";
 }
 
 function validateEnabledSettings({ data, req }) {
-  const publisherId = normalizePublisherId(data?.adsenseClient);
-  const slots = data?.slots || {};
+  if (!data) return data;
+
+  const publisherId = normalizeAdSensePublisherId(data.adsenseClient);
+  const slots = { ...(data.slots || {}) };
 
   if (publisherId) data.adsenseClient = publisherId;
   for (const field of SLOT_FIELDS) {
-    const slotId = normalizeSlotId(slots[field]);
+    const slotId = normalizeAdSenseSlotId(slots[field]);
     if (slotId) slots[field] = slotId;
   }
+  data.slots = slots;
 
   if (!data?.adsenseEnabled) return data;
 
   const errors = [];
-  if (!publisherId) {
-    errors.push({ path: "adsenseClient", message: "Legg inn en gyldig Publisher ID før du aktiverer AdSense." });
-  }
+  const hasSlot = SLOT_FIELDS.some((field) => normalizeAdSenseSlotId(slots[field]));
 
-  if (!SLOT_FIELDS.some((field) => normalizeSlotId(slots[field]))) {
-    errors.push({ path: "slots", message: "Legg inn minst én numerisk AdSense slot-ID før du aktiverer annonser." });
+  if (!publisherId || !hasSlot) {
+    errors.push({
+      path: "adsenseEnabled",
+      message: "Legg inn en gyldig AdSense Publisher ID og minst én slot-ID før AdSense kan aktiveres.",
+    });
+  }
+  if (!publisherId) {
+    errors.push({ path: "adsenseClient", message: "Publisher ID må ha formatet ca-pub-1234567890123456." });
+  }
+  if (!hasSlot) {
+    errors.push({ path: "slots", message: "Slot-ID skal kun inneholde tallet fra data-ad-slot." });
   }
 
   if (errors.length > 0) {
@@ -83,7 +88,7 @@ export const AdvertisingSettings = {
       type: "checkbox",
       defaultValue: false,
       admin: {
-        description: "Aktiveres først når Publisher ID og minst én slot-ID er lagret. Manglende felt vises med en konkret feilmelding.",
+        description: "Slå bare på dette etter at nettstedet er godkjent i Google AdSense, samtykkeløsningen er konfigurert og ads.txt er publisert. Annonser vises kun på plasseringer som har en gyldig slot-ID.",
       },
     },
     {
@@ -93,19 +98,52 @@ export const AdvertisingSettings = {
       validate: validatePublisherId,
       admin: {
         placeholder: "ca-pub-1234567890123456",
-        description: "Lim inn bare Publisher ID-en, eller client=ca-pub-... fra AdSense. Dette er ikke en API-nøkkel.",
+        description: "Finnes i Google AdSense og starter med «ca-pub-». Lim kun inn Publisher ID-en, ikke hele script-koden eller en API-nøkkel. Verdier som client=ca-pub-... og AdSense-script normaliseres automatisk.",
       },
     },
     {
       name: "slots",
-      label: "AdSense slot-ID-er",
+      label: "AdSense annonseplasseringer",
       type: "group",
+      admin: {
+        description: "Slik finner du slot-ID-en: Gå til Google AdSense → Annonser → Etter annonseenhet. Opprett en annonseenhet og kopier tallet som står i data-ad-slot. Eksempel: data-ad-slot=\"1234567890\" betyr at du skal skrive inn 1234567890. Opprett annonseenheter i Google AdSense og lim kun inn tallet fra data-ad-slot, ikke hele annonsekoden.",
+      },
       fields: [
-        { name: "homePrimary", label: "Forside - hovedflate (970 x 250)", type: "text", validate: validateSlotId },
-        { name: "homeSecondary", label: "Forside - bunnflate (970 x 250)", type: "text", validate: validateSlotId },
-        { name: "categoryBottom", label: "Kategoriside - bunnflate (970 x 250)", type: "text", validate: validateSlotId },
-        { name: "articleSidebarTop", label: "Artikkel - sidebar topp (300 x 600)", type: "text", validate: validateSlotId },
-        { name: "articleSidebarBottom", label: "Artikkel - sidebar bunn (300 x 250)", type: "text", validate: validateSlotId },
+        {
+          name: "homePrimary",
+          label: "Forside – hovedflate",
+          type: "text",
+          validate: validateSlotId,
+          admin: { placeholder: "1234567890", description: "Anbefalt plassering: bred annonse mellom toppseksjonen og hovedinnholdet. Lim inn tallet fra data-ad-slot for annonseenheten på toppen av forsiden." },
+        },
+        {
+          name: "homeSecondary",
+          label: "Forside – bunnflate",
+          type: "text",
+          validate: validateSlotId,
+          admin: { placeholder: "1234567890", description: "Lim inn tallet fra data-ad-slot for annonseenheten nederst på forsiden." },
+        },
+        {
+          name: "categoryBottom",
+          label: "Kategoriside – bunnflate",
+          type: "text",
+          validate: validateSlotId,
+          admin: { placeholder: "1234567890", description: "Lim inn tallet fra data-ad-slot for annonseenheten nederst på kategorisider." },
+        },
+        {
+          name: "articleSidebarTop",
+          label: "Artikkel – sidebar topp",
+          type: "text",
+          validate: validateSlotId,
+          admin: { placeholder: "1234567890", description: "Lim inn tallet fra data-ad-slot for den øverste annonseenheten i artikkelens sidefelt." },
+        },
+        {
+          name: "articleSidebarBottom",
+          label: "Artikkel – sidebar bunn",
+          type: "text",
+          validate: validateSlotId,
+          admin: { placeholder: "1234567890", description: "Lim inn tallet fra data-ad-slot for den nederste annonseenheten i artikkelens sidefelt." },
+        },
       ],
     },
   ],

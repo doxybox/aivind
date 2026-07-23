@@ -1,4 +1,8 @@
 import { getPayloadClient } from "./payload-client.js";
+import {
+  normalizeAdSensePublisherId,
+  normalizeAdSenseSlotId,
+} from "../adsense-normalization.js";
 
 const SLOT_FIELD_BY_PLACEMENT = {
   "home-primary": "homePrimary",
@@ -8,22 +12,12 @@ const SLOT_FIELD_BY_PLACEMENT = {
   "article-sidebar-bottom": "articleSidebarBottom",
 };
 
-function normalizePublisherId(value) {
-  const publisherId = typeof value === "string" ? value.trim() : "";
-  return /^ca-pub-\d{10,20}$/.test(publisherId) ? publisherId : "";
-}
-
-function normalizeSlotId(value) {
-  const slotId = typeof value === "string" ? value.trim() : "";
-  return /^\d{6,20}$/.test(slotId) ? slotId : "";
-}
-
 export function toPublicAdSenseSettings(settings = {}) {
-  const client = normalizePublisherId(settings.adsenseClient);
+  const client = normalizeAdSensePublisherId(settings.adsenseClient);
   const sourceSlots = settings.slots || {};
   const slots = Object.fromEntries(
     Object.entries(SLOT_FIELD_BY_PLACEMENT)
-      .map(([placement, field]) => [placement, normalizeSlotId(sourceSlots[field])])
+      .map(([placement, field]) => [placement, normalizeAdSenseSlotId(sourceSlots[field])])
       .filter(([, slot]) => Boolean(slot)),
   );
 
