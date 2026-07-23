@@ -1,4 +1,5 @@
 import { editorsOnly } from "../access/roles.js";
+import { ValidationError } from "payload";
 
 const IMMUTABLE_COMMERCE_FIELDS = ["planKey", "interval"];
 
@@ -12,13 +13,24 @@ function validatePrice(value) {
     || "Pris ma vaere et heltall i NOK og kan ikke vaere negativ.";
 }
 
-function lockCommerceIdentity({ data, originalDoc, operation }) {
+function lockCommerceIdentity({ data, originalDoc, operation, req }) {
   if (operation !== "update" || !originalDoc) return data;
 
-  for (const field of IMMUTABLE_COMMERCE_FIELDS) {
-    if (data?.[field] !== undefined && data[field] !== originalDoc[field]) {
-      throw new Error(`${field} kan ikke endres etter at en abonnementsplan er opprettet.`);
-    }
+  const errors = IMMUTABLE_COMMERCE_FIELDS
+    .filter((field) => data?.[field] !== undefined && data[field] !== originalDoc[field])
+    .map((field) => ({
+      path: field,
+      message: field === "planKey"
+        ? "Plan-nøkkelen kan ikke endres etter opprettelse. Opprett en ny plan i stedet."
+        : "Faktureringsperioden kan ikke endres etter opprettelse. Opprett en ny plan i stedet.",
+    }));
+
+  if (errors.length > 0) {
+    throw new ValidationError({
+      collection: "subscription-plans",
+      errors,
+      req,
+    });
   }
 
   return data;

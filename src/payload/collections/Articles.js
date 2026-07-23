@@ -1,10 +1,11 @@
 import { editorsOnly, staffOnly } from "../access/roles.js";
+import { ValidationError } from "payload";
 
 function hasEditorialValue(value) {
   return Array.isArray(value) ? value.length > 0 : Boolean(value && String(value).trim());
 }
 
-function syncEditorialPublicationState({ data, originalDoc }) {
+function syncEditorialPublicationState({ data, originalDoc, req }) {
   if (!data) return data;
 
   if (data._status === "published") {
@@ -16,18 +17,27 @@ function syncEditorialPublicationState({ data, originalDoc }) {
   const isTransitionToPublished = nextDoc.status === "published" && originalDoc?.status !== "published";
   if (!isTransitionToPublished) return data;
 
-  const missing = [];
-  if (!hasEditorialValue(nextDoc.title)) missing.push("tittel");
-  if (!hasEditorialValue(nextDoc.slug)) missing.push("slug");
-  if (!hasEditorialValue(nextDoc.excerpt)) missing.push("ingress");
-  if (!hasEditorialValue(nextDoc.content)) missing.push("artikkeltekst");
-  if (!hasEditorialValue(nextDoc.authors)) missing.push("forfatter");
-  if (!hasEditorialValue(nextDoc.categories)) missing.push("kategori");
-  if (!hasEditorialValue(nextDoc.seoTitle)) missing.push("SEO-tittel");
-  if (!hasEditorialValue(nextDoc.seoDescription)) missing.push("SEO-beskrivelse");
+  const requiredFields = [
+    ["title", "Legg inn en tittel før publisering."],
+    ["slug", "Legg inn en slug før publisering."],
+    ["excerpt", "Legg inn en ingress før publisering."],
+    ["content", "Legg inn artikkeltekst før publisering."],
+    ["authors", "Velg minst én forfatter før publisering."],
+    ["categories", "Velg minst én kategori før publisering."],
+    ["seoTitle", "Legg inn en SEO-tittel før publisering."],
+    ["seoDescription", "Legg inn en SEO-beskrivelse før publisering."],
+  ];
 
-  if (missing.length > 0) {
-    throw new Error(`Kan ikke publisere artikkelen ennå. Mangler: ${missing.join(", ")}.`);
+  const errors = requiredFields
+    .filter(([field]) => !hasEditorialValue(nextDoc[field]))
+    .map(([path, message]) => ({ path, message }));
+
+  if (errors.length > 0) {
+    throw new ValidationError({
+      collection: "articles",
+      errors,
+      req,
+    });
   }
 
   return data;
