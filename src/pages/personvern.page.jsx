@@ -8,7 +8,7 @@ export default function PrivacyPage() {
       intro="Denne erklæringen forklarer hvilke personopplysninger TEKKNO behandler, hvorfor vi gjør det og hvilke rettigheter du har."
     >
       <InfoSection title="Behandlingsansvarlig">
-        <p>TEKKNO Media AS er behandlingsansvarlig for personopplysninger som behandles gjennom nettstedet. Personvernhenvendelser kan sendes til <a href="mailto:personvern@tekkno.no" className="text-orange-500 hover:underline">personvern@tekkno.no</a>.</p>
+        <p>Døhlen Media AS, org.nr. 938 063 338, drifter TEKKNO og er behandlingsansvarlig for personopplysninger som behandles gjennom nettstedet. Personvernhenvendelser kan sendes til <a href="mailto:personvern@tekkno.no" className="text-orange-500 hover:underline">personvern@tekkno.no</a>.</p>
       </InfoSection>
       <InfoSection title="Opplysninger vi behandler">
         <p>Vi kan behandle kontoopplysninger som navn og e-post, innstillinger du lagrer, lagrede artikler, abonnementsstatus og tekniske opplysninger som er nødvendige for sikker drift.</p>

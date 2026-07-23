@@ -1,5 +1,7 @@
 const brandName = "TEKKNO";
 const supportEmail = process.env.EMAIL_REPLY_TO || "redaksjon@tekkno.no";
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || process.env.BETTER_AUTH_URL || "https://tekkno.no").replace(/\/$/, "");
+const brandLogoUrl = `${siteUrl}/images/tekkno-logo-light.png`;
 
 function escapeHtml(value) {
   return String(value || "")
@@ -38,12 +40,7 @@ function createTransactionalEmail({ preheader, title, greeting, body, actionLabe
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:620px;background:#ffffff;border-radius:16px;overflow:hidden;">
             <tr>
               <td style="padding:28px 36px;background:#111827;border-bottom:4px solid #ff6a00;">
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-                  <tr>
-                    <td style="width:32px;height:32px;background:#ff6a00;border-radius:8px;text-align:center;vertical-align:middle;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:800;color:#ffffff;line-height:32px;">T</td>
-                    <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:800;letter-spacing:1px;color:#ffffff;">${brandName}</td>
-                  </tr>
-                </table>
+                <img src="${escapeHtml(brandLogoUrl)}" alt="${brandName}" width="220" style="display:block;width:220px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;" />
               </td>
             </tr>
             <tr>
@@ -69,7 +66,7 @@ function createTransactionalEmail({ preheader, title, greeting, body, actionLabe
               </td>
             </tr>
           </table>
-          <p style="margin:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#717680;">&copy; ${brandName}. Teknologi, forklart.</p>
+          <p style="margin:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#717680;">&copy; ${new Date().getFullYear()} TEKKNO.NO &middot; Drevet av Døhlen Media AS &middot; Org.nr. 938 063 338. Alle rettigheter reservert.</p>
         </td>
       </tr>
     </table>
@@ -83,7 +80,7 @@ export function createVerificationEmail({ user, url }) {
 
   return {
     subject,
-    text: `${greeting},\n\nTakk for at du opprettet konto hos TEKKNO. Bekreft e-postadressen din ved å åpne lenken nedenfor:\n\n${url}\n\nHvis du ikke opprettet en konto hos TEKKNO, kan du se bort fra denne e-posten.\n\nTEKKNO`,
+    text: `${greeting},\n\nTakk for at du opprettet konto hos TEKKNO. Bekreft e-postadressen din ved å åpne lenken nedenfor:\n\n${url}\n\nHvis du ikke opprettet en konto hos TEKKNO, kan du se bort fra denne e-posten.\n\nTEKKNO.NO\nDrevet av Døhlen Media AS · Org.nr. 938 063 338`,
     html: createTransactionalEmail({
       preheader: "Bekreft e-postadressen din og fullfør opprettelsen av kontoen.",
       title: "Bekreft e-posten din",
@@ -102,7 +99,7 @@ export function createPasswordResetEmail({ user, url }) {
 
   return {
     subject,
-    text: `${greeting},\n\nVi har mottatt en forespørsel om å tilbakestille passordet ditt. Åpne lenken nedenfor for å velge et nytt passord:\n\n${url}\n\nHvis du ikke ba om å tilbakestille passordet, kan du trygt se bort fra denne e-posten.\n\nTEKKNO`,
+    text: `${greeting},\n\nVi har mottatt en forespørsel om å tilbakestille passordet ditt. Åpne lenken nedenfor for å velge et nytt passord:\n\n${url}\n\nHvis du ikke ba om å tilbakestille passordet, kan du trygt se bort fra denne e-posten.\n\nTEKKNO.NO\nDrevet av Døhlen Media AS · Org.nr. 938 063 338`,
     html: createTransactionalEmail({
       preheader: "Velg et nytt passord for TEKKNO-kontoen din.",
       title: "Tilbakestill passordet ditt",

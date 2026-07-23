@@ -177,7 +177,7 @@ export default function Footer() {
         <div className="border-t border-border/50 py-5 flex flex-col md:flex-row items-center w-full">
           <div className="flex-1 flex justify-center md:justify-start w-full md:w-auto mb-4 md:mb-0">
             <p className="text-[10px] font-mono text-muted-foreground tracking-widest uppercase mt-1 leading-none">
-              © {new Date().getFullYear()} TEKKNO MEDIA AS. ALLE RETTIGHETER RESERVERT.
+              © {new Date().getFullYear()} TEKKNO.NO · DØHLEN MEDIA AS · ORG.NR. 938 063 338. ALLE RETTIGHETER RESERVERT.
             </p>
           </div>
 

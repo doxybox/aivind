@@ -27,9 +27,14 @@ export default function Navbar({ onSearchClick }) {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="shrink-0" aria-label="TEKKNO forside">
-            <BrandLogo className="h-9 max-w-[154px]" priority />
-          </Link>
+          <div className="shrink-0">
+            <Link href="/" className="block" aria-label="TEKKNO forside">
+              <BrandLogo className="h-9 max-w-[154px]" priority />
+            </Link>
+            <p className="mt-0.5 hidden text-[6px] font-medium uppercase tracking-[0.08em] text-muted-foreground xl:block">
+              TEKKNO.no · Drevet av Døhlen Media AS · Org.nr. 938 063 338
+            </p>
+          </div>
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-1.5">

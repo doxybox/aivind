@@ -30,9 +30,14 @@ export default function InfoPageLayout({ title, kicker, intro, description, chil
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-xl">
         <div className="max-w-[1400px] mx-auto h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
           <div className="flex items-center gap-8 min-w-0">
-            <Link href="/" className="shrink-0" aria-label="TEKKNO forside">
-              <BrandLogo className="h-9 max-w-[154px]" priority />
-            </Link>
+            <div className="shrink-0">
+              <Link href="/" className="block" aria-label="TEKKNO forside">
+                <BrandLogo className="h-9 max-w-[154px]" priority />
+              </Link>
+              <p className="mt-0.5 hidden text-[6px] font-medium uppercase tracking-[0.08em] text-muted-foreground xl:block">
+                TEKKNO.no · Drevet av Døhlen Media AS · Org.nr. 938 063 338
+              </p>
+            </div>
             <nav className="hidden lg:flex items-center gap-5" aria-label="Kategorier">
               {categoryNavItems.map((item) => (
                 <Link key={item.href} href={item.href} className="text-[11px] font-bold text-muted-foreground hover:text-orange-500 transition-colors">

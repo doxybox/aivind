@@ -302,9 +302,14 @@ export default function NyFrontside1({ payloadHomepageContent = null }) {
       {/* Header */}
       <header className="h-[72px] flex items-center justify-between px-6 bg-white dark:bg-[#161a22] border-b border-zinc-200 dark:border-white/5 sticky top-0 z-50 transition-colors duration-300">
         <div className="flex items-center gap-10">
-          <Link href="/" className="shrink-0" aria-label="TEKKNO forside">
-            <BrandLogo className="h-10 max-w-[172px]" priority />
-          </Link>
+          <div className="shrink-0">
+            <Link href="/" className="block" aria-label="TEKKNO forside">
+              <BrandLogo className="h-10 max-w-[172px]" priority />
+            </Link>
+            <p className="mt-0.5 hidden text-[7px] font-medium uppercase tracking-[0.08em] text-zinc-500 xl:block dark:text-zinc-400">
+              TEKKNO.no · Drevet av Døhlen Media AS · Org.nr. 938 063 338
+            </p>
+          </div>
           
           <nav className="hidden lg:flex items-center gap-6">
             {categoryNavItems.map((item) => (

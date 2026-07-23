@@ -21,8 +21,10 @@
   },
   "overrides": {
     "fast-uri": "3.1.4",
+    "dompurify": "3.4.12",
     "next": {
       "sharp": "$sharp"
-    }
+    },
+    "postcss": "8.5.22"
   }
 }

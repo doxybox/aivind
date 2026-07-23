@@ -12,6 +12,9 @@ test("verification email contains a branded CTA and a plain text fallback", () =
 
   assert.equal(email.subject, "Bekreft e-posten din hos TEKKNO");
   assert.match(email.html, /TEKKNO/);
+  assert.match(email.html, /\/images\/tekkno-logo-light\.png/);
+  assert.match(email.html, /Døhlen Media AS/);
+  assert.match(email.html, /938 063 338/);
   assert.match(email.html, /Bekreft e-postadresse/);
   assert.match(email.html, /token=abc&amp;callbackURL/);
   assert.match(email.text, /Hei Kari/);

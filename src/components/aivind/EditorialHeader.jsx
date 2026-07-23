@@ -45,9 +45,14 @@ export default function EditorialHeader({ onSearchClick }) {
 
       <header className="sticky top-0 z-50 flex h-[72px] items-center justify-between border-b border-zinc-200 bg-white px-6 transition-colors duration-300 dark:border-white/5 dark:bg-[#161a22]">
         <div className="flex items-center gap-10">
-          <Link href="/" className="shrink-0" aria-label="TEKKNO forside">
-            <BrandLogo className="h-10 max-w-[172px]" priority />
-          </Link>
+          <div className="shrink-0">
+            <Link href="/" className="block" aria-label="TEKKNO forside">
+              <BrandLogo className="h-10 max-w-[172px]" priority />
+            </Link>
+            <p className="mt-0.5 hidden text-[7px] font-medium uppercase tracking-[0.08em] text-zinc-500 xl:block dark:text-zinc-400">
+              TEKKNO.no · Drevet av Døhlen Media AS · Org.nr. 938 063 338
+            </p>
+          </div>
           <nav className="hidden items-center gap-6 lg:flex" aria-label="Hovedmeny">
             {categoryNavItems.map((item) => (
               <Link key={item.href} href={item.href} className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
