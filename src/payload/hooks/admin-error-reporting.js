@@ -32,6 +32,19 @@ export function reportPayloadAdminError({ collection, error, req, result }) {
     userId: req?.user?.id || null,
   }, "Payload admin request failed");
 
+  // Keep a safe, searchable record in the serverless runtime logs too. The
+  // Payload logger is not consistently forwarded by every Vercel runtime.
+  console.error("[payload-admin-error]", {
+    collection: collection?.slug || null,
+    errorId,
+    errorName: error?.name || "Error",
+    errorMessage: getSafeErrorMessage(error),
+    method: req?.method || null,
+    path: getRequestPath(req),
+    status,
+    userId: req?.user?.id || null,
+  });
+
   // Validation and access errors already carry a safe, actionable Payload
   // response. Only replace unexpected server errors.
   if (status < 500) return;
