@@ -34,9 +34,6 @@ export default function InfoPageLayout({ title, kicker, intro, description, chil
               <Link href="/" className="block" aria-label="TEKKNO forside">
                 <BrandLogo className="h-9 max-w-[154px]" priority />
               </Link>
-              <p className="mt-0.5 hidden text-[6px] font-medium uppercase tracking-[0.08em] text-muted-foreground xl:block">
-                TEKKNO.no · Drevet av Døhlen Media AS · Org.nr. 938 063 338
-              </p>
             </div>
             <nav className="hidden lg:flex items-center gap-5" aria-label="Kategorier">
               {categoryNavItems.map((item) => (

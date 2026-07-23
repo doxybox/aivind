@@ -31,9 +31,6 @@ export default function Navbar({ onSearchClick }) {
             <Link href="/" className="block" aria-label="TEKKNO forside">
               <BrandLogo className="h-9 max-w-[154px]" priority />
             </Link>
-            <p className="mt-0.5 hidden text-[6px] font-medium uppercase tracking-[0.08em] text-muted-foreground xl:block">
-              TEKKNO.no · Drevet av Døhlen Media AS · Org.nr. 938 063 338
-            </p>
           </div>
 
           {/* Desktop nav links */}
