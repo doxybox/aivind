@@ -5,6 +5,10 @@ import { db } from "@/db/client";
 import { ensureReaderRoleAndProfile } from "@/lib/server/user-records";
 import { sendAuthEmail } from "@/lib/email";
 import { isEmailDeliveryConfigured } from "@/lib/auth-launch-mode";
+import {
+  createPasswordResetEmail,
+  createVerificationEmail,
+} from "@/lib/email-templates";
 
 const appUrl = process.env.BETTER_AUTH_URL || "http://localhost:3000";
 const localTrustedOrigins =
@@ -70,12 +74,7 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     revokeSessionsOnPasswordReset: true,
     sendResetPassword: async ({ user, url }) => {
-      await sendAuthEmail({
-        to: user.email,
-        subject: "Tilbakestill passordet ditt hos TEKKNO",
-        text: `Trykk på lenken for å sette nytt passord: ${url}`,
-        html: `<p>Trykk på lenken for å sette nytt passord:</p><p><a href="${url}">${url}</a></p>`,
-      });
+      await sendAuthEmail({ to: user.email, ...createPasswordResetEmail({ user, url }) });
     },
   },
   emailVerification: {
@@ -83,12 +82,7 @@ export const auth = betterAuth({
     sendOnSignIn: emailDeliveryEnabled,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
-      await sendAuthEmail({
-        to: user.email,
-        subject: "Bekreft e-posten din hos TEKKNO",
-        text: `Trykk på lenken for å bekrefte e-posten din: ${url}`,
-        html: `<p>Trykk på lenken for å bekrefte e-posten din:</p><p><a href="${url}">${url}</a></p>`,
-      });
+      await sendAuthEmail({ to: user.email, ...createVerificationEmail({ user, url }) });
     },
   },
   socialProviders,
