@@ -57,10 +57,11 @@ const configuredPoolMax = Number.parseInt(
 );
 const hasConfiguredPoolMax = Number.isInteger(configuredPoolMax) && configuredPoolMax > 0;
 // Payload Admin can make nested SSR queries when it checks document locks before
-// editing or deleting. A one-connection pool deadlocks those requests on Vercel,
-// while more than two connections per instance exhausts the Supabase pool.
+// editing or deleting. Serverless requests need at least three connections to
+// avoid starving the lock check; the cap prevents one Vercel instance from
+// monopolising the database pool.
 const payloadPoolMax = isVercelServerless
-  ? 2
+  ? Math.min(Math.max(hasConfiguredPoolMax ? configuredPoolMax : 4, 3), 4)
   : hasConfiguredPoolMax
     ? configuredPoolMax
     : defaultPayloadPoolMax;
@@ -116,7 +117,7 @@ export default buildConfig({
       connectionString: payloadDatabaseUrl,
       max: payloadPoolMax,
       // Serverless instances must not keep pooled Supabase sessions alive between requests.
-      connectionTimeoutMillis: 10_000,
+      connectionTimeoutMillis: isVercelServerless ? 30_000 : 10_000,
       idleTimeoutMillis: isVercelServerless ? 5_000 : 30_000,
       allowExitOnIdle: isVercelServerless,
     },
