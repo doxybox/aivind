@@ -24,8 +24,12 @@ test("AdSense slots stay disabled until explicit public configuration is present
   assert.doesNotMatch(envExample, /NEXT_PUBLIC_ADSENSE_ENABLED/);
   assert.match(payloadSettings, /slug: "advertising-settings"/);
   assert.match(payloadSettings, /adsenseEnabled/);
-  assert.match(payloadSettings, /Slå bare på etter at nettstedet er godkjent/);
+  assert.match(payloadSettings, /ValidationError/);
+  assert.match(payloadSettings, /client=\)\?/);
+  assert.match(payloadSettings, /ca-pub-\\d\{10,20\}/);
+  assert.match(payloadSettings, /konkret feilmelding/);
   assert.match(payloadSettings, /API-nøkkel/);
+  assert.doesNotMatch(payloadSettings, /throw new Error\(/);
   assert.doesNotMatch(payloadSettings, /Ã|â|�/);
 });
 
