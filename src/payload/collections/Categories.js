@@ -33,10 +33,13 @@ export const Categories = {
       type: "relationship",
       relationTo: "media-assets",
       filterOptions: {
-        type: { equals: "image" },
+        and: [
+          { type: { equals: "image" } },
+          { status: { equals: "ready" } },
+        ],
       },
       admin: {
-        description: "Vises i toppen av kategorisiden. Kun bildefiler kan velges. Lar du feltet sta tomt, brukes dagens reservebilde.",
+        description: "Last opp bildet under Media Assets først. Kun ferdigbehandlede bilder kan velges her. Lar du feltet sta tomt, brukes dagens reservebilde.",
       },
     },
     { name: "parent", type: "relationship", relationTo: "categories" },
