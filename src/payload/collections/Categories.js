@@ -32,8 +32,11 @@ export const Categories = {
       label: "Kategori-bilde",
       type: "relationship",
       relationTo: "media-assets",
+      filterOptions: {
+        type: { equals: "image" },
+      },
       admin: {
-        description: "Vises i toppen av kategorisiden. Lar du feltet sta tomt, brukes dagens reservebilde.",
+        description: "Vises i toppen av kategorisiden. Kun bildefiler kan velges. Lar du feltet sta tomt, brukes dagens reservebilde.",
       },
     },
     { name: "parent", type: "relationship", relationTo: "categories" },

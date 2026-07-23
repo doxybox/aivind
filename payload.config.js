@@ -8,6 +8,7 @@ import path from "path";
 import { createHash } from "crypto";
 import { collections, globals } from "./src/payload/collections/index.js";
 import { createPayloadPreviewToken } from "./src/lib/server/payload-preview.js";
+import { reportPayloadAdminError } from "./src/payload/hooks/admin-error-reporting.js";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -120,6 +121,9 @@ export default buildConfig({
     },
     push: false,
   }),
+  hooks: {
+    afterError: [reportPayloadAdminError],
+  },
   ...(payloadEmailAdapter ? { email: payloadEmailAdapter } : {}),
   secret: payloadSecret,
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL,

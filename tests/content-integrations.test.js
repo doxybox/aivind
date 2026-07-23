@@ -76,9 +76,20 @@ test("articles, categories and authors are Payload-owned CMS models", () => {
 
   assert.ok(categories.fields.some((field) => field.name === "parent" && field.relationTo === "categories"));
   assert.ok(categories.fields.some((field) => field.name === "existingRoute"));
+  const categoryHeroMedia = categories.fields.find((field) => field.name === "heroMedia");
+  assert.deepEqual(categoryHeroMedia.filterOptions, { type: { equals: "image" } });
 
   assert.ok(authors.fields.some((field) => field.name === "profileImage" && field.relationTo === "media-assets"));
   assert.ok(authors.fields.some((field) => field.name === "isActive"));
+});
+
+test("Payload reports unexpected admin errors safely with a traceable incident id", () => {
+  const config = readProjectFile("payload.config.js");
+  const adminErrorHook = readProjectFile("src/payload/hooks/admin-error-reporting.js");
+
+  assert.match(config, /afterError: \[reportPayloadAdminError\]/);
+  assert.match(adminErrorHook, /Feilkode/);
+  assert.doesNotMatch(adminErrorHook, /error\.stack/);
 });
 
 test("Payload owns comment moderation and editorial replies", () => {
