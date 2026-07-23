@@ -23,7 +23,7 @@ export default function TermsPage() {
         <p>Vi arbeider for korrekte opplysninger og stabil drift, men kan ikke garantere at tjenesten alltid er feilfri eller tilgjengelig. Journalistisk innhold er generell informasjon og erstatter ikke individuell juridisk, medisinsk eller økonomisk rådgivning.</p>
       </InfoSection>
       <InfoSection title="Kontakt og endringer">
-        <p>Spørsmål om vilkårene kan sendes til <a href="mailto:kontakt@tekkno.no" className="text-orange-500 hover:underline">kontakt@tekkno.no</a>. Vesentlige endringer publiseres her og får ny oppdateringsdato.</p>
+        <p>Spørsmål om vilkårene kan sendes til <a href="mailto:redaksjon@tekkno.no" className="text-orange-500 hover:underline">redaksjon@tekkno.no</a>. Vesentlige endringer publiseres her og får ny oppdateringsdato.</p>
       </InfoSection>
     </InfoPageLayout>
   );

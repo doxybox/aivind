@@ -12,7 +12,7 @@ export default function EditorialPage() {
         <p>Produkter som er lånt eller mottatt til test gir ikke leverandøren innflytelse over konklusjonen. Sponsede saker og annonser merkes tydelig.</p>
       </InfoSection>
       <InfoSection title="Rettelser og tilsvar">
-        <p>Finner du en mulig feil, send en presis beskrivelse og lenke til saken til <a href="mailto:redaksjonen@tekkno.no" className="text-orange-500 hover:underline">redaksjonen@tekkno.no</a>. Vesentlige rettelser skal fremgå av artikkelen.</p>
+        <p>Finner du en mulig feil, send en presis beskrivelse og lenke til saken til <a href="mailto:redaksjon@tekkno.no" className="text-orange-500 hover:underline">redaksjon@tekkno.no</a>. Vesentlige rettelser skal fremgå av artikkelen.</p>
         <p>Personer og virksomheter som utsettes for sterke faktiske beskyldninger skal få rimelig anledning til å svare.</p>
       </InfoSection>
       <InfoSection title="Tips og kildevern">

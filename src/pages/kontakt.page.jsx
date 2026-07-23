@@ -8,10 +8,10 @@ export default function ContactPage() {
       intro="Velg kontaktpunktet som passer henvendelsen din. Ikke send passord, betalingsinformasjon eller andre sensitive personopplysninger på e-post."
     >
       <InfoSection title="Generelle henvendelser">
-        <p><a href="mailto:kontakt@tekkno.no" className="text-orange-500 hover:underline">kontakt@tekkno.no</a></p>
+        <p><a href="mailto:redaksjon@tekkno.no" className="text-orange-500 hover:underline">redaksjon@tekkno.no</a></p>
       </InfoSection>
       <InfoSection title="Redaksjon og tips">
-        <p>For nyhetstips, rettelser og spørsmål om journalistikken: <a href="mailto:redaksjonen@tekkno.no" className="text-orange-500 hover:underline">redaksjonen@tekkno.no</a>.</p>
+        <p>For nyhetstips, rettelser og spørsmål om journalistikken: <a href="mailto:redaksjon@tekkno.no" className="text-orange-500 hover:underline">redaksjon@tekkno.no</a>.</p>
       </InfoSection>
       <InfoSection title="Annonsering">
         <p>For kommersielle forespørsler: <a href="mailto:annonsering@tekkno.no" className="text-orange-500 hover:underline">annonsering@tekkno.no</a>.</p>
