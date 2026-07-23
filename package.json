@@ -105,7 +105,7 @@
     "react-markdown": "^9.0.1",
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.4",
-    "sharp": "^0.35.2",
+    "sharp": "0.35.3",
     "sonner": "^2.0.1",
     "stripe": "^22.3.2",
     "tailwind-merge": "^3.0.2",
@@ -139,6 +139,9 @@
     "flatted": "3.4.2",
     "form-data": "4.0.6",
     "minimatch": "3.1.5",
+    "next": {
+      "sharp": "$sharp"
+    },
     "postcss": "$postcss",
     "socket.io-parser": "4.2.6",
     "ws": "8.21.0"
